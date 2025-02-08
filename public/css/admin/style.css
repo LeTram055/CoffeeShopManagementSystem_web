@@ -1,0 +1,145 @@
+body {
+    display: flex;
+    min-height: 100vh;
+    margin: 0;
+    
+}
+
+/*navbar*/
+.navbar-bg {
+    background-color: #0049ab;
+    position: fixed;
+    
+    width: 100%;
+    top: 0;
+    z-index: 100;
+    color: white;
+    font-weight: 600;
+}
+
+.navbar .dropdown-menu {
+    position: absolute; /* Đảm bảo dropdown không ảnh hưởng đến chiều cao của navbar */
+    top: 50px; /* Cách sidebar */
+}
+
+.navbar-brand {
+    font-family: 'Prata', cursive;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+
+/*  */
+.navbar-nav {
+    position: relative;
+}
+
+
+
+/*sidebar*/
+.sidebar {
+    height: 100vh;
+    background-color: #f1f1f1;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 200px;
+    z-index: 99;
+    overflow-y: auto;
+    padding-top: 50px;
+    padding-left: 0;
+    padding-right: 0;
+    transition: left 0.3s ease; /* Thêm hiệu ứng chuyển động , width 0.3s ease */
+}
+
+#main-content {
+    padding-top: 60px;
+    margin-left: 200px;
+    width: calc(100% - 200px);
+    transition: margin-left 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        left: -200px; /* Ẩn sidebar ngoài màn hình */
+    }
+
+    .sidebar.active {
+        left: 0; /* Trượt sidebar vào màn hình khi nhấn nút */
+    }
+
+    /* Đặt lại margin cho nội dung khi sidebar ẩn */
+    #main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    /* Hiển thị overlay trên màn hình nhỏ */
+    #overlay.active {
+        display: block;
+    }
+}
+
+#overlay {
+    position: fixed;
+    display: none;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 98;
+}
+
+#overlay.active {
+    display: block;
+}
+
+/* Màu chữ mặc định của sidebar */
+.sidebar .nav-link {
+    border-bottom: 1px solid #0049ab;
+    color: black; 
+    font-weight: 500;
+    transition: background-color 0.3s, color 0.3s; /* Hiệu ứng chuyển màu */
+}
+
+/* Màu chữ khi hover */
+.sidebar .nav-link:hover {
+    background-color: #e0f7fae7; 
+}
+
+/* Màu chữ và nền khi được chọn (active) */
+.sidebar .nav-link.active {
+    background-color: #0049ab; 
+    color: #fff; 
+}
+
+/* Màu biểu tượng khi active */
+.sidebar .nav-link.active i {
+    color: #fff; 
+}
+
+/* Màu nền và biểu tượng khi hover trên mục đang active */
+.sidebar .nav-link.active:hover {
+    background-color: #053370; 
+    
+}
+
+.nav-link i {
+    margin-right: 10px; /* Điều chỉnh khoảng cách giữa icon và chữ */
+    min-width: 20px; /* Đảm bảo icon có kích thước đồng nhất */
+    text-align: center;
+}
+
+/*Tiêu đề*/
+.title2 {
+    font-weight: 600;
+    color: #0049ab;
+}
+
+.img-type {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+}
+
