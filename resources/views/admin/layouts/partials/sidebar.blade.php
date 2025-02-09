@@ -7,7 +7,7 @@
 
                 <li class="nav-item">
                     <a class="nav-link {{ request()->is('admin/home*') ? 'active' : '' }}"
-                        href="{{ route('admin.home') }}">
+                        href="{{ route('admin.home.index') }}">
                         <i class="fas fa-fw fa-tachometer-alt"></i>&nbsp;
                         Trang chủ
                     </a>
@@ -21,7 +21,8 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="">
+                    <a class="nav-link {{ request()->is('admin/category*') ? 'active' : '' }}"
+                        href="{{ route('admin.category.index') }}">
                         <i class="fa-solid fa-ellipsis-v"></i>&nbsp;
                         Danh mục
                     </a>

@@ -6,7 +6,7 @@
         </button>
 
         <!-- Logo -->
-        <a class="navbar-brand" href="">
+        <a class="navbar-brand" href="{{ route('admin.home.index') }}">
             <img src="{{ asset('images/logo_nbg.png') }}" alt="Ánh Dương Hotel" style="height: 40px;">
             Hope Cafe
         </a>
