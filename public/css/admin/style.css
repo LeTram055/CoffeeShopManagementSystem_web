@@ -143,3 +143,28 @@ body {
     object-fit: contain;
 }
 
+/*Tiêu đề bảng*/
+.table th {
+    vertical-align: top; /* Căn chỉnh tiêu đề lên trên */
+}
+
+/*Sắp xếp*/
+.table thead th a {
+    color: inherit;         /* Giữ nguyên màu sắc từ thẻ cha */
+    text-decoration: none;  /* Bỏ gạch chân của thẻ <a> */
+    font-weight: inherit;   /* Giữ nguyên độ đậm chữ từ thẻ cha */
+}
+
+/*Nút Tìm kiếm*/
+.btn-bg {
+    background-color: #0049ab;
+    color: white;
+    
+}
+
+.btn-bg:hover {
+    border: 1px solid #0049ab;
+    background-color: #fff;
+    color: black;
+    
+}
