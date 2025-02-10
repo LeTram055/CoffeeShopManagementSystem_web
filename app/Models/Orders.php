@@ -23,6 +23,10 @@ class Orders extends Model
     ];
     protected $guarded = ['order_id'];
     protected $primaryKey = 'order_id';
+
+    protected $casts = [
+        'created_at' => 'datetime',
+    ];
     public $timestamps = false;
 
     public function table()

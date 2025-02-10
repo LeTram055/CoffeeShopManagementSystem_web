@@ -19,6 +19,10 @@ class Ingredients extends Model
     ];
     protected $guarded = ['ingredient_id'];
     protected $primaryKey = 'ingredient_id';
+
+    protected $casts = [
+        'last_updated' => 'datetime',
+    ];
     public $timestamps = false;
 
     public function logs()

@@ -20,6 +20,10 @@ class Promotions extends Model
     ];
     protected $guarded = ['promotion_id'];
     protected $primaryKey = 'promotion_id';
+    protected $casts = [
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
+    ];
     public $timestamps = false;
 
     public function order()

@@ -21,6 +21,9 @@ class Payments extends Model
 ];
     protected $guarded = ['payment_id'];
     protected $primaryKey = 'payment_id';
+    protected $casts = [
+        'payment_time' => 'datetime',
+    ];
     public $timestamps = false;
 
     public function order()

@@ -18,6 +18,10 @@ class IngredientLogs extends Model
         'change_at'];
     protected $guarded = ['log_id'];
     protected $primaryKey = 'log_id';
+
+    protected $casts = [
+        'change_at' => 'datetime',
+    ];
     public $timestamps = false;
 
     public function ingredient()
