@@ -5,6 +5,11 @@ body {
     
 }
 
+.feature-title {
+    font-family: 'Prata', cursive;
+    font-weight: bold;
+}
+
 /*navbar*/
 .navbar-bg {
     background-color: #0049ab;
@@ -130,6 +135,17 @@ body {
     min-width: 20px; /* Đảm bảo icon có kích thước đồng nhất */
     text-align: center;
 }
+
+/* Đổ bóng */
+.custom-shadow {
+    box-shadow: 0 4px 10px #0049ab; 
+    transition: all 0.3s ease-in-out;
+}
+
+.custom-shadow:hover {
+    box-shadow: 0 6px 15px #053370; 
+}
+
 
 /*Tiêu đề*/
 .title2 {
