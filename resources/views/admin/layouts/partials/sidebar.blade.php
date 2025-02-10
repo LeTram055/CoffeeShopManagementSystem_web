@@ -30,13 +30,14 @@
 
                 <li class="nav-item">
                     <a class="nav-link" href="">
-                        <i class="fa-solid fa-file-invoice"></i>&nbsp;
+                        <i class="fa-solid fa-table"></i>&nbsp;
                         Bàn
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="">
+                    <a class="nav-link {{ request()->is('admin/ingredient') ? 'active' : '' }}"
+                        href="{{ route('admin.ingredient.index') }}">
                         <i class="fa-solid fa-file-invoice"></i>&nbsp;
                         Nguyên liệu
                     </a>

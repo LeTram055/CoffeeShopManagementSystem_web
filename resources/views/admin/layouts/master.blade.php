@@ -46,7 +46,7 @@
             <div class="px-4" id="main-content">
                 <div
                     class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-                    <h1 class="h2">@yield('feature-title')</h1>
+                    <h1 class="h2 feature-title">@yield('feature-title')</h1>
 
                 </div>
                 @yield('content')
