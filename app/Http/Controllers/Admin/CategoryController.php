@@ -38,7 +38,7 @@ class CategoryController extends Controller
         }
 
         // Lấy ra danh sách các category 10 phần tử mỗi trang
-        $categories = $query->paginate(10);
+        $categories = $query->get();
 
         return view('admin.category.index')
             ->with('categories', $categories)

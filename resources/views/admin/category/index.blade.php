@@ -66,11 +66,12 @@ Quản lý danh mục
                 <td>
                     <div class="d-flex justify-content-center">
                         <a href="{{ route('admin.category.edit', ['category_id' => $category->category_id]) }}"
-                            class="btn btn-warning btn-sm">Sửa</a>
+                            class="btn btn-warning btn-sm"><i class="fa-solid fa-pen-to-square"></i></a>
                         <form class="mx-1" name=frmDelete method="post" action="{{ route('admin.category.delete') }}">
                             @csrf
                             <input type="hidden" name="category_id" value="{{ $category->category_id }}">
-                            <button type="submit" class="btn btn-danger btn-sm btn-sm delete-category-btn">Xóa</button>
+                            <button type="submit" class="btn btn-danger btn-sm btn-sm delete-category-btn"><i
+                                    class="fa-solid fa-trash"></i></button>
                         </form>
                     </div>
 
