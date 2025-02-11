@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\IngredientController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -41,3 +42,32 @@ Route::get('admin/category/edit',
 Route::post('admin/category/update',
 [CategoryController::class, 'update'])
 ->name('admin.category.update');
+
+//Ingredient
+Route::get('admin/ingredient',
+[IngredientController::class, 'index'])
+->name('admin.ingredient.index');
+
+Route::get('admin/ingredient/export-excel',
+[IngredientController::class, 'exportExcel'])
+->name('admin.ingredient.exportExcel');
+
+Route::post('admin/ingredient/delete',
+[IngredientController::class, 'destroy'])
+->name('admin.ingredient.delete');
+
+Route::get('admin/ingredient/create',
+[IngredientController::class, 'create'])
+->name('admin.ingredient.create');
+
+Route::post('admin/ingredient/save',
+[IngredientController::class, 'save'])
+->name('admin.ingredient.save');
+
+Route::get('admin/ingredient/edit',
+[IngredientController::class, 'edit'])
+->name('admin.ingredient.edit');
+
+Route::post('admin/ingredient/update',
+[IngredientController::class, 'update'])
+->name('admin.ingredient.update');
