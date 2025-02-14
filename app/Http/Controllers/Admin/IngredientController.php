@@ -97,6 +97,14 @@ class IngredientController extends Controller
         $ingredient->min_quantity = $request->min_quantity;
         $ingredient->save();
 
+        $ingredientLog = new IngredientLogs();
+        $ingredientLog->ingredient_id = $ingredient->ingredient_id;
+        $ingredientLog->quantity_change = $ingredient->quantity; 
+        $ingredientLog->reason = 'Thêm mới nguyên liệu';
+        $ingredientLog->employee_id = 2; 
+        $ingredientLog->changed_at = now();
+        $ingredientLog->save();
+
         Session::flash('alert-success', 'Thêm nguyên liệu thành công');
         return redirect()->route('admin.ingredient.index');
     }
