@@ -48,7 +48,7 @@ body {
     position: fixed;
     top: 0;
     left: 0;
-    width: 200px;
+    width: 220px;
     z-index: 99;
     overflow-y: auto;
     padding-top: 50px;
@@ -59,14 +59,14 @@ body {
 
 #main-content {
     padding-top: 60px;
-    margin-left: 200px;
-    width: calc(100% - 200px);
+    margin-left: 220px;
+    width: calc(100% - 220px);
     transition: margin-left 0.3s ease;
 }
 
 @media (max-width: 768px) {
     .sidebar {
-        left: -200px; /* Ẩn sidebar ngoài màn hình */
+        left: -220px; /* Ẩn sidebar ngoài màn hình */
     }
 
     .sidebar.active {

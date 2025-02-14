@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\IngredientController;
+use App\Http\Controllers\Admin\IngredientLogController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -71,3 +72,16 @@ Route::get('admin/ingredient/edit',
 Route::post('admin/ingredient/update',
 [IngredientController::class, 'update'])
 ->name('admin.ingredient.update');
+
+//Ingredient Log
+Route::get('admin/ingredientlog',
+[IngredientLogController::class, 'index'])
+->name('admin.ingredientlog.index');
+
+Route::get('admin/ingredientlog/export-excel',
+[IngredientLogController::class, 'exportExcel'])
+->name('admin.ingredientlog.exportExcel');
+
+Route::post('admin/ingredientlog/delete',
+[IngredientLogController::class, 'destroy'])
+->name('admin.ingredientlog.delete');

@@ -36,11 +36,27 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->is('admin/ingredient') ? 'active' : '' }}"
-                        href="{{ route('admin.ingredient.index') }}">
+                    <a class="nav-link {{ request()->is('admin/ingredient*') ? 'active' : ''}}"
+                        data-bs-toggle="collapse" href="#ingredientMenu" role="button" aria-expanded="false">
                         <i class="fa-solid fa-file-invoice"></i>&nbsp;
-                        Nguyên liệu
+                        Quản lý nguyên liệu
                     </a>
+                    <div class="collapse" id="ingredientMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->is('admin/ingredient*') && !request()->is('admin/ingredientlog*') ? 'active' : '' }}"
+                                    href="{{ route('admin.ingredient.index') }}">
+                                    Nguyên liệu
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->is('admin/ingredientlog*') ? 'active' : '' }}"
+                                    href="{{ route('admin.ingredientlog.index') }}">
+                                    Log nguyên liệu
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
 
                 <li class="nav-item">

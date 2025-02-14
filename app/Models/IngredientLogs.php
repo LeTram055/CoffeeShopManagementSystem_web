@@ -15,12 +15,12 @@ class IngredientLogs extends Model
         'quantity_change', 
         'reason', 
         'employee_id',
-        'change_at'];
+        'changed_at'];
     protected $guarded = ['log_id'];
     protected $primaryKey = 'log_id';
 
     protected $casts = [
-        'change_at' => 'datetime',
+        'changed_at' => 'datetime',
     ];
     public $timestamps = false;
 
