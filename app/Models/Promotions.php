@@ -14,6 +14,7 @@ class Promotions extends Model
         'name', 
         'discount_type', 
         'discount_value',
+        'min_order_value',
         'start_date', 
         'end_date',
         'is_active'

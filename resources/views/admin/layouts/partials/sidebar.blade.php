@@ -60,6 +60,14 @@
                 </li>
 
                 <li class="nav-item">
+                    <a class="nav-link {{ request()->is('admin/promotion*') ? 'active' : '' }}"
+                        href="{{ route('admin.promotion.index') }}">
+                        <i class="fa-solid fa-percent"></i></i>&nbsp;
+                        Quảng cáo
+                    </a>
+                </li>
+
+                <li class="nav-item">
                     <a class="nav-link" href="">
                         <i class="fa-solid fa-calendar"></i>&nbsp;
                         Hóa đơn
