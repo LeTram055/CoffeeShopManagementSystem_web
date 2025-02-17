@@ -75,14 +75,16 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="">
+                    <a class="nav-link  {{ request()->is('admin/employee*') ? 'active' : '' }}"
+                        href="{{ route('admin.employee.index') }}">
                         <i class="fa-solid fa-users"></i>&nbsp;
                         Nhân viên
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="">
+                    <a class="nav-link {{ request()->is('admin/customer*') ? 'active' : '' }}"
+                        href="{{ route('admin.customer.index') }}">
                         <i class="fa-solid fa-address-book"></i>&nbsp;
                         Khách hàng
                     </a>

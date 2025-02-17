@@ -6,6 +6,8 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\IngredientController;
 use App\Http\Controllers\Admin\IngredientLogController;
 use App\Http\Controllers\Admin\PromotionController;
+use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\EmployeeController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -115,3 +117,62 @@ Route::get('admin/promotion/edit',
 Route::post('admin/promotion/update',
 [PromotionController::class, 'update'])
 ->name('admin.promotion.update');
+
+//Customer
+Route::get('admin/customer',
+[CustomerController::class, 'index'])
+->name('admin.customer.index');
+
+Route::get('admin/customer/export-excel',
+[CustomerController::class, 'exportExcel'])
+->name('admin.customer.exportExcel');
+
+// Route::post('admin/customer/delete',
+// [CustomerController::class, 'destroy'])
+// ->name('admin.customer.delete');
+
+Route::get('admin/customer/create',
+[CustomerController::class, 'create'])
+->name('admin.customer.create');
+
+Route::post('admin/customer/save',
+[CustomerController::class, 'save'])
+->name('admin.customer.save');
+
+Route::get('admin/customer/edit',
+[CustomerController::class, 'edit'])
+->name('admin.customer.edit');
+
+Route::post('admin/customer/update',
+[CustomerController::class, 'update'])
+->name('admin.customer.update');
+
+
+//Employee
+Route::get('admin/employee',
+[EmployeeController::class, 'index'])
+->name('admin.employee.index');
+
+Route::get('admin/employee/export-excel',
+[EmployeeController::class, 'exportExcel'])
+->name('admin.employee.exportExcel');
+
+Route::post('admin/employee/delete',
+[EmployeeController::class, 'destroy'])
+->name('admin.employee.delete');
+
+Route::get('admin/employee/create',
+[EmployeeController::class, 'create'])
+->name('admin.employee.create');
+
+Route::post('admin/employee/save',
+[EmployeeController::class, 'save'])
+->name('admin.employee.save');
+
+Route::get('admin/employee/edit',
+[EmployeeController::class, 'edit'])
+->name('admin.employee.edit');
+
+Route::post('admin/employee/update',
+[EmployeeController::class, 'update'])
+->name('admin.employee.update');

@@ -11,20 +11,24 @@ class Employees extends Model
     protected $table = 'employees';
     
     protected $fillable = [
-        'account_id',
         'name',
+        'username',
+        'password',
+        'role',
+        'status',
         'phone_number',
         'email',
         'address',
+        'start_date',
     ];
     protected $guarded = ['employee_id'];
     protected $primaryKey = 'employee_id';
+
+    protected $casts = [
+        'start_date' => 'datetime',
+    ];
     public $timestamps = false;
 
-    public function account()
-    {
-        return $this->belongsTo(Accounts::class, 'account_id', 'account_id');
-    }
 
     public function ingredientLogs()
     {
