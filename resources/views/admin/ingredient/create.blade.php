@@ -17,7 +17,7 @@ Quản lý nguyên liệu
 
             <div class="form-group mb-3">
                 <label for="name" class="form-label fw-semibold">Tên nguyên liệu:</label>
-                <input type="text" class="form-control rounded-2" id="name" name="name"
+                <input type="text" class="form-control rounded-2" id="name" name="name" value="{{ old('name') }}"
                     placeholder="Nhập tên nguyên liệu">
                 @error('name')
                 <small class="form-text text-danger">{{ $message }}</small>
@@ -27,7 +27,7 @@ Quản lý nguyên liệu
             <div class="form-group mb-3">
                 <label for="quantity" class="form-label fw-semibold">Số lượng:</label>
                 <input type="number" step="0.01" class="form-control rounded-2" id="quantity" name="quantity"
-                    placeholder="Nhập số lượng">
+                    value="{{ old('quantity') }}" placeholder="Nhập số lượng">
                 @error('quantity')
                 <small class="form-text text-danger">{{ $message }}</small>
                 @enderror
@@ -35,7 +35,7 @@ Quản lý nguyên liệu
 
             <div class="form-group mb-3">
                 <label for="unit" class="form-label fw-semibold">Đơn vị:</label>
-                <input type="text" class="form-control rounded-2" id="unit" name="unit"
+                <input type="text" class="form-control rounded-2" id="unit" name="unit" value="{{ old('unit') }}"
                     placeholder="Nhập đơn vị (vd: kg, lít, g)">
                 @error('unit')
                 <small class="form-text text-danger">{{ $message }}</small>
@@ -45,7 +45,7 @@ Quản lý nguyên liệu
             <div class="form-group mb-3">
                 <label for="min_quantity" class="form-label fw-semibold">Số lượng tối thiểu:</label>
                 <input type="number" step="0.01" class="form-control rounded-2" id="min_quantity" name="min_quantity"
-                    placeholder="Nhập số lượng tối thiểu">
+                    value="{{ old('min_quantity') }}" placeholder="Nhập số lượng tối thiểu">
                 @error('min_quantity')
                 <small class="form-text text-danger">{{ $message }}</small>
                 @enderror

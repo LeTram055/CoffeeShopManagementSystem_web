@@ -17,7 +17,7 @@ Quản lý khách hàng
             @csrf
 
 
-            <input type="hidden" name="customer_id" value="{{ $customer->customer_id }}">
+            <input type="hidden" name="customer_id" value="{{ old('name', $customer->customer_id) }}">
 
             <div class="form-group mb-3">
                 <label for="name" class="form-label fw-semibold">Tên khách hàng:</label>
@@ -31,7 +31,7 @@ Quản lý khách hàng
             <div class="form-group mb-3">
                 <label for="phone_number" class="form-label fw-semibold">Số điện thoại:</label>
                 <input type="text" class="form-control rounded-2" id="phone_number" name="phone_number"
-                    value="{{ $customer->phone_number }}" placeholder="Nhập số điện thoại">
+                    value="{{ old('phone_number',$customer->phone_number) }}" placeholder="Nhập số điện thoại">
                 @error('phone_number')
                 <small class="form-text text-danger">{{ $message }}</small>
                 @enderror
@@ -40,7 +40,7 @@ Quản lý khách hàng
             <div class="form-group mb-3">
                 <label for="notes" class="form-label fw-semibold">Ghi chú:</label>
                 <textarea class="form-control rounded-2" id="notes" name="notes" rows="3"
-                    placeholder="Nhập ghi chú">{{ $customer->notes }}</textarea>
+                    placeholder="Nhập ghi chú">{{ old('notes', $customer->notes) }}</textarea>
                 @error('notes')
                 <small class="form-text text-danger">{{ $message }}</small>
                 @enderror

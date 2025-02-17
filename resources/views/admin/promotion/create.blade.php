@@ -16,8 +16,8 @@ Quản lý quảng cáo
 
             <div class="form-group mb-3">
                 <label for="name" class="form-label fw-semibold">Tên quảng cáo:</label>
-                <input type="text" class="form-control rounded-2" id="name" name="name" placeholder="Nhập tên quảng cáo"
-                    required>
+                <input type="text" class="form-control rounded-2" id="name" name="name" value="{{ old('name') }}"
+                    placeholder="Nhập tên quảng cáo" required>
                 @error('name')
                 <small class="text-danger">{{ $message }}</small>
                 @enderror
@@ -37,7 +37,7 @@ Quản lý quảng cáo
             <div class="form-group mb-3">
                 <label for="discount_value" class="form-label fw-semibold">Giá trị giảm giá:</label>
                 <input type="number" class="form-control rounded-2" id="discount_value" name="discount_value"
-                    placeholder="Nhập giá trị giảm giá" required>
+                    value="{{ old('discount_value') }}" placeholder="Nhập giá trị giảm giá" required>
                 @error('discount_value')
                 <small class="text-danger">{{ $message }}</small>
                 @enderror
@@ -47,7 +47,7 @@ Quản lý quảng cáo
                 <label for="min_order_value" class="form-label fw-semibold">Giá trị tối thiểu áp dụng khuyến
                     mãi:</label>
                 <input type="number" class="form-control rounded-2" id="min_order_value" name="min_order_value"
-                    placeholder="Nhập giá trị giảm giá" required>
+                    value="{{ old('min_order_value') }}" placeholder="Nhập giá trị giảm giá" required>
                 @error('min_order_value')
                 <small class="text-danger">{{ $message }}</small>
                 @enderror
@@ -55,7 +55,8 @@ Quản lý quảng cáo
 
             <div class="form-group mb-3">
                 <label for="start_date" class="form-label fw-semibold">Ngày bắt đầu:</label>
-                <input type="datetime-local" class="form-control rounded-2" id="start_date" name="start_date" required>
+                <input type="datetime-local" class="form-control rounded-2" id="start_date" name="start_date"
+                    value="{{ old('start_date') }}" required>
                 @error('start_date')
                 <small class="text-danger">{{ $message }}</small>
                 @enderror
@@ -63,7 +64,8 @@ Quản lý quảng cáo
 
             <div class="form-group mb-3">
                 <label for="end_date" class="form-label fw-semibold">Ngày kết thúc:</label>
-                <input type="datetime-local" class="form-control rounded-2" id="end_date" name="end_date" required>
+                <input type="datetime-local" class="form-control rounded-2" id="end_date" name="end_date"
+                    value="{{ old('end_date') }}" required>
                 @error('end_date')
                 <small class="text-danger">{{ $message }}</small>
                 @enderror

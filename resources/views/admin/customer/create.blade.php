@@ -18,7 +18,7 @@ Quản lý khách hàng
             <div class="form-group mb-3">
                 <label for="name" class="form-label fw-semibold">Tên khách hàng:</label>
                 <input type="text" class="form-control rounded-2" id="name" name="name"
-                    placeholder="Nhập tên khách hàng" value="">
+                    placeholder="Nhập tên khách hàng" value="{{ old('name') }}">
                 @error('name')
                 <small class="form-text text-danger">{{ $message }}</small>
                 @enderror
@@ -27,7 +27,7 @@ Quản lý khách hàng
             <div class="form-group mb-3">
                 <label for="phone_number" class="form-label fw-semibold">Số điện thoại:</label>
                 <input type="text" class="form-control rounded-2" id="phone_number" name="phone_number"
-                    placeholder="Nhập số điện thoại" value="">
+                    placeholder="Nhập số điện thoại" value="{{ old('phone_number') }}">
                 @error('phone_number')
                 <small class="form-text text-danger">{{ $message }}</small>
                 @enderror
@@ -35,7 +35,8 @@ Quản lý khách hàng
 
             <div class="form-group mb-3">
                 <label for="notes" class="form-label fw-semibold">Ghi chú:</label>
-                <textarea class="form-control rounded-2" id="notes" name="notes" placeholder="Nhập ghi chú"></textarea>
+                <textarea class="form-control rounded-2" id="notes" name="notes"
+                    placeholder="Nhập ghi chú">{{ old('notes') }}</textarea>
                 @error('notes')
                 <small class="form-text text-danger">{{ $message }}</small>
                 @enderror

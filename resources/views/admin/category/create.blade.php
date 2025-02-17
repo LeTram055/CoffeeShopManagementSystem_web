@@ -17,7 +17,7 @@ Quản lý danh mục
 
             <div class="form-group mb-3">
                 <label for="name" class="form-label fw-semibold">Tên danh mục:</label>
-                <input type="text" class="form-control rounded-2" id="name" name="name" value=""
+                <input type="text" class="form-control rounded-2" id="name" name="name" value="{{ old('name') }}"
                     placeholder="Nhập tên danh mục">
                 @error('name')
                 <small id="name" class="form-text text-danger">{{ $message }}</small>

@@ -17,8 +17,8 @@ Cập nhật nguyên liệu
             <input type="hidden" name="ingredient_id" value="{{ $ingredient->ingredient_id }}">
             <div class="form-group mb-3">
                 <label for="name" class="form-label fw-semibold">Tên nguyên liệu:</label>
-                <input type="text" class="form-control rounded-2" id="name" name="name" value="{{ $ingredient->name }}"
-                    placeholder="Nhập tên nguyên liệu">
+                <input type="text" class="form-control rounded-2" id="name" name="name"
+                    value="{{ old('name', $ingredient->name) }}" placeholder="Nhập tên nguyên liệu">
                 @error('name')
                 <small class="form-text text-danger">{{ $message }}</small>
                 @enderror
@@ -26,14 +26,15 @@ Cập nhật nguyên liệu
             <div class="form-group mb-3">
                 <label for="quantity" class="form-label fw-semibold">Số lượng:</label>
                 <input type="number" step="0.01" class="form-control rounded-2" id="quantity" name="quantity"
-                    value="{{ $ingredient->quantity }}">
+                    value="{{ old('quantity', $ingredient->quantity) }}">
                 @error('quantity')
                 <small class="form-text text-danger">{{ $message }}</small>
                 @enderror
             </div>
             <div class="form-group mb-3">
                 <label for="unit" class="form-label fw-semibold">Đơn vị:</label>
-                <input type="text" class="form-control rounded-2" id="unit" name="unit" value="{{ $ingredient->unit }}">
+                <input type="text" class="form-control rounded-2" id="unit" name="unit"
+                    value="{{ old('unit', $ingredient->unit) }}">
                 @error('unit')
                 <small class="form-text text-danger">{{ $message }}</small>
                 @enderror
@@ -41,7 +42,7 @@ Cập nhật nguyên liệu
             <div class="form-group mb-3">
                 <label for="min_quantity" class="form-label fw-semibold">Số lượng tối thiểu:</label>
                 <input type="number" step="0.01" class="form-control rounded-2" id="min_quantity" name="min_quantity"
-                    value="{{ $ingredient->min_quantity }}">
+                    value="{{ old('min_quantity',$ingredient->min_quantity) }}">
                 @error('min_quantity')
                 <small class="form-text text-danger">{{ $message }}</small>
                 @enderror

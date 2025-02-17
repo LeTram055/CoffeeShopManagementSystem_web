@@ -17,8 +17,8 @@ Quản lý danh mục
             <input type="hidden" name="category_id" value="{{ $category->category_id }}">
             <div class="form-group mb-3">
                 <label for="name" class="form-label fw-semibold">Tên danh mục:</label>
-                <input type="text" class="form-control rounded-2" id="name" name="name" value="{{ $category->name }}"
-                    placeholder="Nhập tên danh mục">
+                <input type="text" class="form-control rounded-2" id="name" name="name"
+                    value="{{ old('name', $category->name) }}" placeholder="Nhập tên danh mục">
                 @error('name')
                 <small id="name" class="form-text text-danger">{{ $message }}</small>
                 @enderror
