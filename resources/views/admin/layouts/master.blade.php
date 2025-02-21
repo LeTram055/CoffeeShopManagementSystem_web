@@ -26,7 +26,7 @@
         @yield('title')</title>
 
     <!-- Các custom style dành riêng cho từng view -->
-    <!-- @yield('custom-css') -->
+    @yield('custom-css')
 </head>
 
 <body class="d-flex flex-column min-vh-100">

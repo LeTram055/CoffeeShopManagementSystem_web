@@ -10,8 +10,8 @@ class MenuIngredients extends Model
     use HasFactory;
     protected $table = 'menu_ingredients';
     protected $fillable = ['item_id', 'ingredient_id', 'quantity_per_unit'];
-    protected $guarded = ['ingredient_id', 'item_id'];
-    protected $primaryKey = ['item_id', 'ingredient_id'];
+    //protected $guarded = ['ingredient_id', 'item_id'];
+    //protected $primaryKey = ['item_id', 'ingredient_id'];
 
     public $timestamps = false;
 
