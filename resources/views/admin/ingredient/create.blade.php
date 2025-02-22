@@ -52,6 +52,7 @@ Quản lý nguyên liệu
             </div>
 
             <button type="submit" class="btn btn-primary fw-semibold">Lưu</button>
+            <a href="{{ route('admin.ingredient.index') }}" class="btn btn-secondary">Hủy</a>
         </form>
     </div>
 </div>

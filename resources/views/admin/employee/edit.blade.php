@@ -11,7 +11,7 @@ Chỉnh sửa nhân viên
 @section('content')
 <div class="row justify-content-center align-items-center">
     <div class="col-6 border rounded-3 p-5 custom-shadow">
-        <h3 class="text-center title2 mb-4">Chỉnh sửa thông tin nhân viên</h3>
+        <h3 class="text-center title2 mb-4">Cập nhật thông tin nhân viên</h3>
         <form name="frmEdit" id="frmEdit" method="post"
             action="{{ route('admin.employee.update', $employee->employee_id) }}">
             @csrf
@@ -104,6 +104,7 @@ Chỉnh sửa nhân viên
             </div>
 
             <button type="submit" class="btn btn-primary fw-semibold">Lưu</button>
+            <a href="{{ route('admin.employee.index') }}" class="btn btn-secondary">Hủy</a>
         </form>
     </div>
 </div>

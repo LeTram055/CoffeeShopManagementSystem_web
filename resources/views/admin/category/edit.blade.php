@@ -24,6 +24,7 @@ Quản lý danh mục
                 @enderror
             </div>
             <button type="submit" name="submit" class="btn btn-primary fw-semibold">Lưu</button>
+            <a href="{{ route('admin.category.index') }}" class="btn btn-secondary">Hủy</a>
         </form>
     </div>
 </div>

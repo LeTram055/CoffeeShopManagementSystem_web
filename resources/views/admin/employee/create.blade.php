@@ -92,6 +92,7 @@ Quản lý nhân viên
             </div>
 
             <button type="submit" class="btn btn-primary fw-semibold">Lưu</button>
+            <a href="{{ route('admin.employee.index') }}" class="btn btn-secondary">Hủy</a>
         </form>
     </div>
 </div>

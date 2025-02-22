@@ -22,7 +22,7 @@ Chỉnh sửa sản phẩm
 @section('content')
 <div class="row justify-content-center align-items-center">
     <div class="col-8 border rounded-3 p-5 custom-shadow">
-        <h3 class="text-center title2 mb-4">Chỉnh sửa sản phẩm</h3>
+        <h3 class="text-center title2 mb-4">Cập nhật sản phẩm</h3>
         <form name="frmEdit" id="frmEdit" method="post" action="{{ route('admin.menuitem.update') }}"
             enctype="multipart/form-data">
             @csrf
@@ -130,6 +130,7 @@ Chỉnh sửa sản phẩm
 
 
             <button type="submit" name="submit" class="btn btn-primary fw-semibold">Lưu</button>
+            <a href="{{ route('admin.menuitem.index') }}" class="btn btn-secondary">Hủy</a>
         </form>
     </div>
 </div>

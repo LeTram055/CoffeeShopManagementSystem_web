@@ -96,6 +96,7 @@ Quản lý sản phẩm
             </div>
 
             <button type="submit" name="submit" class="btn btn-primary fw-semibold">Lưu</button>
+            <a href="{{ route('admin.menuitem.index') }}" class="btn btn-secondary">Hủy</a>
         </form>
     </div>
 </div>

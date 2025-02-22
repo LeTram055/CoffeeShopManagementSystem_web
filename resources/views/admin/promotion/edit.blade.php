@@ -76,6 +76,7 @@ Quản lý quảng cáo
                 <label class="form-check-label" for="is_active">Kích hoạt</label>
             </div>
             <button type="submit" class="btn btn-primary fw-semibold">Lưu</button>
+            <a href="{{ route('admin.promotion.index') }}" class="btn btn-secondary">Hủy</a>
         </form>
     </div>
 </div>
