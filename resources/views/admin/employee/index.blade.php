@@ -141,11 +141,11 @@ Quản lý nhân viên
                     {{ $roles[$employee->role] ?? 'Không xác định' }}
                 </td>
 
-                <td>{{ $employee->phone_number }}</td>
+                <td class="text-center">{{ $employee->phone_number }}</td>
                 <td>{{ $employee->email }}</td>
                 <td>{{ $employee->address }}</td>
-                <td>{{ $employee->start_date->format('d/m/Y') }}</td>
-                <td>
+                <td class="text-center">{{ $employee->start_date->format('d/m/Y') }}</td>
+                <td class="text-center">
                     @php
                     $statuses = [
                     'active' => 'Đang hoạt động',

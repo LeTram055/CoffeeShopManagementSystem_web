@@ -174,9 +174,9 @@ Quản lý hóa đơn
                 <td class="text-center">{{ $payment->payment_id }}</td>
                 <td>{{ $payment->employee->name }}</td>
                 <td>{{ $payment->order->customer->name }}</td>
-                <td class="text-center">{{ number_format($payment->order->total_price, 0, ',', '.') }} đ</td>
-                <td class="text-center">{{ number_format($payment->discount_amount, 0, ',', '.') }} đ</td>
-                <td class="text-center">{{ number_format($payment->final_price, 0, ',', '.') }} đ</td>
+                <td class="text-end">{{ number_format($payment->order->total_price, 0, ',', '.') }} đ</td>
+                <td class="text-end">{{ number_format($payment->discount_amount, 0, ',', '.') }} đ</td>
+                <td class="text-end">{{ number_format($payment->final_price, 0, ',', '.') }} đ</td>
                 <td class="text-center">
                     @php
                     $method = [
@@ -186,7 +186,7 @@ Quản lý hóa đơn
                     @endphp
                     {{ $method[$payment->payment_method] ?? 'Không xác định' }}
                 </td>
-                <td>{{ $payment->payment_time->format('H:i:s d/m/Y') }}</td>
+                <td class="text-center">{{ $payment->payment_time->format('H:i:s d/m/Y') }}</td>
                 <td class="text-center">
                     <button class="btn btn-info btn-sm view-payment-detail" data-id="{{ $payment->payment_id }}">
                         <i class="fa-solid fa-circle-info"></i>

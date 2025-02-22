@@ -73,7 +73,7 @@ Quản lý khách hàng
             <tr>
                 <td class="text-center">{{ $customer->customer_id }}</td>
                 <td>{{ $customer->name }}</td>
-                <td>{{ $customer->phone_number }}</td>
+                <td class="text-center">{{ $customer->phone_number }}</td>
                 <td>{{ $customer->notes }}</td>
                 <td>
                     <div class="d-flex justify-content-center">

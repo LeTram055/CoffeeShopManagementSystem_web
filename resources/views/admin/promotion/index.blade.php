@@ -124,9 +124,27 @@
                     <tr>
                         <td class="text-center">{{ $promotion->promotion_id }}</td>
                         <td>{{ $promotion->name }}</td>
-                        <td>{{ $promotion->discount_type }}</td>
-                        <td class="text-end">{{ $promotion->discount_value }}</td>
-                        <td class="text-end">{{ $promotion->min_order_value }}</td>
+                        <td class="text-center">
+                            @php
+                            $type = [
+                            'percentage' => 'Phần trăm',
+                            'fixed' => 'Cố định'
+                            ];
+
+                            @endphp
+                            {{ $type[$promotion->discount_type] ?? '' }}
+                        </td>
+                        <td class="text-end">
+                            @if($promotion->discount_type === 'percentage')
+                            {{ number_format($promotion->discount_value, 0, ',', '.') }}%
+                            @else
+                            {{ number_format($promotion->discount_value, 0, ',', '.') }} đ
+                            @endif
+                        </td>
+                        <td class="text-end">
+                            {{ number_format($promotion->min_order_value, 0, ',', '.') }} đ
+                        </td>
+
                         <td class="text-end">{{ $promotion->start_date->format('H:i:s d/m/Y') }}</td>
                         <td class="text-end">{{ $promotion->end_date->format('H:i:s d/m/Y') }}</td>
                         <td class="text-center">{{ $promotion->is_active ? 'Hoạt động' : 'Không hoạt động' }}</td>
