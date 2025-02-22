@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\MenuItemController;
 use App\Http\Controllers\Admin\PaymentController;
+use App\Http\Controllers\Admin\TableController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -231,3 +232,32 @@ Route::get('admin/payment/export-excel',
 Route::post('admin/payment/delete',
 [PaymentController::class, 'destroy'])
 ->name('admin.payment.delete');
+
+//Table
+Route::get('admin/table/index',
+[TableController::class, 'index'])
+->name('admin.table.index');
+
+Route::get('admin/table/export-excel',
+[TableController::class, 'exportExcel'])
+->name('admin.table.exportExcel');
+
+Route::post('admin/table/delete',
+[TableController::class, 'destroy'])
+->name('admin.table.delete');
+
+Route::get('admin/table/create',
+[TableController::class, 'create'])
+->name('admin.table.create');
+
+Route::post('admin/table/save',
+[TableController::class, 'save'])
+->name('admin.table.save');
+
+Route::get('admin/table/edit',
+[TableController::class, 'edit'])
+->name('admin.table.edit');
+
+Route::post('admin/table/update',
+[TableController::class, 'update'])
+->name('admin.table.update');

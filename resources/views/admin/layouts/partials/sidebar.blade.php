@@ -30,7 +30,8 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="">
+                    <a class="nav-link {{ request()->is('admin/table*') ? 'active' : '' }}"
+                        href="{{ route('admin.table.index') }}">
                         <i class="fa-solid fa-table"></i>
                         Quản lý bàn
                     </a>

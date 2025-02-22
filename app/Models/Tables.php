@@ -10,15 +10,10 @@ class Tables extends Model
     use HasFactory;
     protected $table = 'tables';
     
-    protected $fillable = ['name', 'area_id', 'status_id'];
+    protected $fillable = ['name', 'status_id'];
     protected $guarded = ['table_id'];
     protected $primaryKey = 'table_id';
     public $timestamps = false;
-
-    public function area()
-    {
-        return $this->belongsTo(TableAreas::class, 'area_id', 'area_id');
-    }
 
     public function status()
     {
