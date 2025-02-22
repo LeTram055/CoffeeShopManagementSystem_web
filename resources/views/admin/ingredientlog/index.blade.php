@@ -90,8 +90,6 @@ Quản lý log nguyên liệu
                         @endif
                     </a>
                 </th>
-
-                <th class="text-center">Hành động</th>
             </tr>
         </thead>
 
@@ -104,14 +102,7 @@ Quản lý log nguyên liệu
                 <td>{{ $log->reason ?? 'Không có' }}</td>
                 <td>{{ $log->employee->name }}</td>
                 <td class="text-center">{{ $log->changed_at->format('H:i:s d/m/Y') }}</td>
-                <td class="text-center">
-                    <form class="d-inline" method="post"
-                        action="{{ route('admin.ingredientlog.delete', $log->log_id) }}">
-                        @csrf
-                        <button type="submit" class="btn btn-danger btn-sm delete-log-btn"><i
-                                class="fa-solid fa-trash"></i></button>
-                    </form>
-                </td>
+
             </tr>
             @endforeach
         </tbody>

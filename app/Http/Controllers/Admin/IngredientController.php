@@ -143,14 +143,13 @@ class IngredientController extends Controller
     {
         $request->validate([
             'name' => 'required|unique:ingredients,name,' . $request->ingredient_id . ',ingredient_id',
-            'quantity' => 'required|numeric|min:0',
+            'change_value' => 'nullable|numeric|min:0',
             'unit' => 'required',
             'min_quantity' => 'required|numeric|min:0',
         ], [
             'name.required' => 'Vui lòng nhập tên nguyên liệu',
             'name.unique' => 'Nguyên liệu đã tồn tại',
-            'quantity.required' => 'Vui lòng nhập số lượng',
-            'quantity.numeric' => 'Số lượng phải là số',
+            'change_value.numeric' => 'Số lượng thay đổi phải là số',
             'unit.required' => 'Vui lòng nhập đơn vị tính',
             'min_quantity.required' => 'Vui lòng nhập số lượng tối thiểu',
             'min_quantity.numeric' => 'Số lượng tối thiểu phải là số',
@@ -160,16 +159,27 @@ class IngredientController extends Controller
         
         $oldQuantity = $ingredient->quantity;
 
+        if ($request->filled('change_value')) {
+            $changeValue = $request->change_value;
+            if ($request->change_type === 'increase') {
+                $newQuantity = $oldQuantity + $changeValue;
+            } else {
+                $newQuantity = $oldQuantity - $changeValue;
+            }
+        } else {
+            $newQuantity = $oldQuantity; // Nếu không có thay đổi
+        }
+
         $ingredient->name = $request->name;
-        $ingredient->quantity = $request->quantity;
+        $ingredient->quantity = $newQuantity;
         $ingredient->unit = $request->unit;
         $ingredient->min_quantity = $request->min_quantity;
         $ingredient->save();
 
-        if ($oldQuantity != $request->quantity) {
+        if ($oldQuantity != $newQuantity) {
             $ingredientLog = new IngredientLogs();
             $ingredientLog->ingredient_id = $ingredient->ingredient_id;
-            $ingredientLog->quantity_change = $request->quantity - $oldQuantity;
+            $ingredientLog->quantity_change = $newQuantity - $oldQuantity;
             $ingredientLog->reason = $request->reason ?? 'Cập nhật số lượng nguyên liệu';
             $ingredientLog->employee_id = 2;
             $ingredientLog->changed_at = now();
