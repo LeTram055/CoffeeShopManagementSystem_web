@@ -27,8 +27,9 @@ class Promotions extends Model
     ];
     public $timestamps = false;
 
-    public function order()
+    public function payments()
     {
-        return $this->hasMany(Orders::class, 'promotion_id', 'promotion_id');
+        return $this->hasMany(Payments::class, 'promotion_id', 'promotion_id');
     }
+
 }

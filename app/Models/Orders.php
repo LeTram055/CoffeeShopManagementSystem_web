@@ -16,14 +16,11 @@ class Orders extends Model
         'order_type', 
         'total_price',
         'status',
-        'promotion_id',
-        'discount_amount',
-        'final_price',
         'created_at'
     ];
     protected $guarded = ['order_id'];
     protected $primaryKey = 'order_id';
-
+    protected $dateFormat = 'H:i:s d/m/Y';
     protected $casts = [
         'created_at' => 'datetime',
     ];
@@ -49,8 +46,4 @@ class Orders extends Model
         return $this->hasMany(OrderItems::class, 'order_id', 'order_id');
     }
 
-    public function promotion()
-    {
-        return $this->belongsTo(Promotions::class, 'promotion_id', 'promotion_id');
-    }
 }

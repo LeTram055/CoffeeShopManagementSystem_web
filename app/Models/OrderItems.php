@@ -10,8 +10,7 @@ class OrderItems extends Model
     use HasFactory;
     protected $table = 'order_items';
     protected $fillable = ['order_id', 'item_id', 'quantity'];
-    protected $guarded = ['order_id', 'item_id'];
-    protected $primaryKey = ['order_id', 'item_id'];
+
     public $timestamps = false;
 
     public function order()

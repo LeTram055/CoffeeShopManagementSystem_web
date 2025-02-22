@@ -31,4 +31,9 @@ class MenuItems extends Model
     {
         return $this->hasMany(MenuIngredients::class, 'item_id', 'item_id');
     }
+
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItems::class, 'item_id', 'item_id');
+    }
 }

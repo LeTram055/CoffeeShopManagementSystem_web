@@ -53,7 +53,7 @@ Quản lý thực đơn
                 value="{{ request('search') }}">
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
         <select class="form-select" name="available">
             <option value="">Tất cả</option>
             <option value="1" {{ request('available') === "1" ? 'selected' : '' }}>Còn hàng</option>

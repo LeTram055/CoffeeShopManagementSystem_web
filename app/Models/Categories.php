@@ -15,7 +15,7 @@ class Categories extends Model
     protected $primaryKey = 'category_id';
     public $timestamps = false;
 
-    public function item()
+    public function items()
     {
         return $this->hasMany(MenuItems::class, 'category_id', 'category_id');
     }
