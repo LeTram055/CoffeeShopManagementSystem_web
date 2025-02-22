@@ -8,6 +8,8 @@ use App\Http\Controllers\Admin\IngredientLogController;
 use App\Http\Controllers\Admin\PromotionController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\EmployeeController;
+use App\Http\Controllers\Admin\MenuItemController;
+use App\Http\Controllers\Admin\PaymentController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -176,3 +178,56 @@ Route::get('admin/employee/edit',
 Route::post('admin/employee/update',
 [EmployeeController::class, 'update'])
 ->name('admin.employee.update');
+
+//Menu Item
+Route::get('admin/menuitem',
+[MenuItemController::class, 'index'])
+->name('admin.menuitem.index');
+
+Route::get('/admin/menuitem/{id}',
+ [MenuItemController::class, 'show'])
+ ->whereNumber('id')
+ ->name('admin.menuitem.show');
+
+Route::get('admin/menuitem/export-excel', 
+[MenuItemController::class, 'exportExcel'])
+->name('admin.menuitem.exportExcel');
+
+Route::post('admin/menuitem/delete',
+[MenuItemController::class, 'destroy'])
+->name('admin.menuitem.delete');
+
+Route::get('admin/menuitem/create',
+[MenuItemController::class, 'create'])
+->name('admin.menuitem.create');
+
+Route::post('admin/menuitem/save',
+[MenuItemController::class, 'save'])
+->name('admin.menuitem.save');
+
+Route::get('admin/menuitem/edit',
+[MenuItemController::class, 'edit'])
+->name('admin.menuitem.edit');
+
+Route::post('admin/menuitem/update',
+[MenuItemController::class, 'update'])
+->name('admin.menuitem.update');
+
+//Payment
+Route::get('admin/payment/index',
+[PaymentController::class, 'index'])
+->name('admin.payment.index');
+
+Route::get('admin/payment/{id}', 
+[PaymentController::class, 'show'])
+->whereNumber('id')
+->name('admin.payment.show');
+
+
+Route::get('admin/payment/export-excel',
+[PaymentController::class, 'exportExcel'])
+->name('admin.payment.exportExcel');
+
+Route::post('admin/payment/delete',
+[PaymentController::class, 'destroy'])
+->name('admin.payment.delete');

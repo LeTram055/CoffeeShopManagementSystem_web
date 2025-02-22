@@ -13,14 +13,16 @@ class Payments extends Model
     protected $fillable = [
         'order_id', 
         'employee_id',
-        'amount',
+        'discount_amount',
+        'final_price',
         'payment_method',
         'amount_received',
-        'change_given',
         'payment_time',
+        'promotion_id',
 ];
     protected $guarded = ['payment_id'];
     protected $primaryKey = 'payment_id';
+    protected $dateFormat = 'H:i:s d/m/Y';
     protected $casts = [
         'payment_time' => 'datetime',
     ];
@@ -34,5 +36,10 @@ class Payments extends Model
     public function employee()
     {
         return $this->belongsTo(Employees::class, 'employee_id', 'employee_id');
+    }
+
+    public function promotion()
+    {
+        return $this->belongsTo(Promotions::class, 'promotion_id', 'promotion_id');
     }
 }

@@ -14,17 +14,18 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="">
-                        <i class="fa-solid fa-navicon"></i>&nbsp;
-                        Thực đơn
-                    </a>
-                </li>
-
-                <li class="nav-item">
                     <a class="nav-link {{ request()->is('admin/category*') ? 'active' : '' }}"
                         href="{{ route('admin.category.index') }}">
                         <i class="fa-solid fa-ellipsis-v"></i>&nbsp;
                         Danh mục
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('admin/menuitem*') ? 'active' : '' }}"
+                        href="{{ route('admin.menuitem.index') }}">
+                        <i class="fa-solid fa-navicon"></i>&nbsp;
+                        Thực đơn
                     </a>
                 </li>
 
@@ -68,7 +69,8 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="">
+                    <a class="nav-link {{ request()->is('admin/payment*') ? 'active' :'' }}"
+                        href=" {{ route('admin.payment.index') }}">
                         <i class="fa-solid fa-calendar"></i>&nbsp;
                         Hóa đơn
                     </a>
