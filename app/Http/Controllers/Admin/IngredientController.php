@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
 
 use App\Models\Ingredients;
 use App\Models\IngredientLogs;
@@ -181,7 +182,7 @@ class IngredientController extends Controller
             $ingredientLog->ingredient_id = $ingredient->ingredient_id;
             $ingredientLog->quantity_change = $newQuantity - $oldQuantity;
             $ingredientLog->reason = $request->reason ?? 'Cập nhật số lượng nguyên liệu';
-            $ingredientLog->employee_id = 2;
+            $ingredientLog->employee_id = Auth::user()->employee_id;
             $ingredientLog->changed_at = now();
              $ingredientLog->save();
         
