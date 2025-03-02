@@ -124,7 +124,7 @@ class IngredientController extends Controller
         $ingredientLog->ingredient_id = $ingredient->ingredient_id;
         $ingredientLog->quantity_change = $ingredient->quantity; 
         $ingredientLog->reason = 'Thêm mới nguyên liệu';
-        $ingredientLog->employee_id = 2; 
+        $ingredientLog->employee_id = Auth::user()->employee_id; 
         $ingredientLog->changed_at = now();
         $ingredientLog->save();
 
