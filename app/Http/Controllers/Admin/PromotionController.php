@@ -110,6 +110,7 @@ class PromotionController extends Controller
         $promotion->name = $request->name;
         $promotion->discount_type = $request->discount_type;
         $promotion->discount_value = $request->discount_value;
+        $promotion->min_order_value = $request->min_order_value;
         $promotion->start_date = $request->start_date;
         $promotion->end_date = $request->end_date;
         $promotion->is_active = $request->is_active;
@@ -158,6 +159,7 @@ class PromotionController extends Controller
         $promotion->name = $request->name;
         $promotion->discount_type = $request->discount_type;
         $promotion->discount_value = $request->discount_value;
+        $promotion->min_order_value = $request->min_order_value;
         $promotion->start_date = $request->start_date;
         $promotion->end_date = $request->end_date;
         $promotion->is_active = $request->is_active;
