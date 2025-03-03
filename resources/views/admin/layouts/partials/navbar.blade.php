@@ -14,13 +14,26 @@
     </div>
 
     <!-- Thông tin người dùng -->
-    <ul class="navbar-nav px-3 ml-auto">
-
-
-
-        <li class="nav-item">
-            <a class="nav-link" href="">Đăng nhập</a>
+    <ul class="navbar-nav px-3 ms-auto">
+        @if(Auth::check())
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Xin chào, {{ Auth::user()->name }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="{{ route('password.change') }}">Đổi mật khẩu</a></li>
+                <li>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="dropdown-item">Đăng xuất</button>
+                    </form>
+                </li>
+            </ul>
         </li>
-
+        @else
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('login') }}">Đăng nhập</a>
+        </li>
+        @endif
     </ul>
 </nav>
