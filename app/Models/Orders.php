@@ -20,7 +20,7 @@ class Orders extends Model
     ];
     protected $guarded = ['order_id'];
     protected $primaryKey = 'order_id';
-    protected $dateFormat = 'H:i:s d/m/Y';
+    //protected $dateFormat = 'H:i:s d/m/Y';
     protected $casts = [
         'created_at' => 'datetime',
     ];

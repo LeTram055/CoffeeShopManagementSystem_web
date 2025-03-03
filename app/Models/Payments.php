@@ -22,7 +22,7 @@ class Payments extends Model
 ];
     protected $guarded = ['payment_id'];
     protected $primaryKey = 'payment_id';
-    protected $dateFormat = 'H:i:s d/m/Y';
+    
     protected $casts = [
         'payment_time' => 'datetime',
     ];
