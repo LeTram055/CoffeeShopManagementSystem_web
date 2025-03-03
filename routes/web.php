@@ -12,10 +12,34 @@ use App\Http\Controllers\Admin\MenuItemController;
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\TableController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+use App\Http\Controllers\AuthController;
 
+Route::get('/', [AuthController::class, 'showLoginForm']);
+Route::get('/admin', [AuthController::class, 'showLoginForm']);
+Route::get('/staff_counter', [AuthController::class, 'showLoginForm']);
+
+//Auth
+Route::get('login', 
+[AuthController::class, 'showLoginForm'])
+->name('login');
+Route::post('login', 
+[AuthController::class, 'login'])
+->name('login.post');
+Route::post('logout',
+ [AuthController::class, 'logout'])
+->name('logout');
+Route::get('/password/change',
+ [AuthController::class, 'showChangePasswordForm'])
+->name('password.change')
+->middleware('auth');
+Route::post('/password/change', 
+[AuthController::class, 'updatePassword'])
+->name('password.update')
+->middleware('auth');
+
+
+//Amin
+Route::middleware(['auth', 'role:admin'])->group(function () {
 //Home
 Route::get('admin/home', 
 [HomeController::class, 'index'])
@@ -261,3 +285,7 @@ Route::get('admin/table/edit',
 Route::post('admin/table/update',
 [TableController::class, 'update'])
 ->name('admin.table.update');
+});
+//-----------------------------------------------------------------------------//
+//Staff Counter
+require base_path('routes/staff_counter.php');
