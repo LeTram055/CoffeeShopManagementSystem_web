@@ -23,15 +23,12 @@ class OrderController extends Controller
             $q->where('is_available', 1);
         }])->get();
 
-        $tables = Tables::whereHas('status', function ($q) {
-            $q->where('name', 'Trống');
-        })->with('status')->get();
+        
 
         $customers = Customers::get();
         
         return view('staff_counter.order.index')
         ->with('categories',$categories)
-        ->with('tables',$tables)
         ->with('customers',$customers);
     }
 
@@ -68,7 +65,7 @@ class OrderController extends Controller
     {
         // Định nghĩa các rules xác thực
         $rules = [
-            'order_type' => 'required|in:dine_in,takeaway',
+            
             'items'      => 'required|array|min:1',
             'items.*.id' => 'required|exists:menu_items,item_id',
             'items.*.quantity' => 'required|numeric|min:1',
@@ -77,8 +74,7 @@ class OrderController extends Controller
         ];
 
         $messages = [
-            'order_type.required' => 'Vui lòng chọn loại đơn hàng',
-            'order_type.in' => 'Loại đơn hàng không hợp lệ',
+            
             'items.required' => 'Vui lòng chọn ít nhất 1 món ăn',
             'items.array' => 'Danh sách món ăn không hợp lệ',
             'items.min' => 'Danh sách món ăn không hợp lệ',
@@ -92,18 +88,7 @@ class OrderController extends Controller
             'customer_id.exists' => 'Khách hàng không tồn tại',
         ];
 
-        // Nếu đơn hàng là dùng tại chỗ thì bắt buộc phải có bàn
-        if ($request->order_type === 'dine_in') {
-            $rules['table_id'] = 'required|exists:tables,table_id';
-            $messages['table_id.required'] = 'Vui lòng chọn bàn';
-            $messages['table_id.exists'] = 'Bàn không tồn tại';
-        } else {
-            $request->merge(['table_id' => null]);
-        }
-
         $validated = $request->validate($rules, $messages);
-
-        
 
         // Tính tổng tiền đơn hàng
         $totalPrice = 0;
@@ -112,34 +97,15 @@ class OrderController extends Controller
             $totalPrice += $item->price * $itemData['quantity'];
         }
 
-        $tableId = $validated['table_id'] ?? null;
-        if($validated['order_type'] === 'takeaway'){
-            $status = 'pending_payment';
-        } else {
-            $status = 'confirmed';
-        }
-
         // Tạo đơn hàng mới 
         $order = Orders::create([
-            'table_id'   => $tableId,
+            'table_id'   => null,
             'customer_id'=> $validated['customer_id'],
-            'order_type' => $validated['order_type'],
+            'order_type' => 'takeaway',
             'total_price'=> $totalPrice,
-            'status'     => $status,
+            'status'     => 'pending_payment',
             'created_at' => Carbon::now(),
         ]);
-
-        if ($tableId) {
-        // Lấy trạng thái "Đang sử dụng" từ bảng table_statuses
-        $status =TableStatuses::where('name', 'Đang sử dụng')->first();
-        if ($status) {
-            $table = Tables::find($tableId);
-            if ($table) {
-                $table->status_id = $status->status_id;
-                $table->save();
-            }
-        }
-    }
 
         // Tạo các bản ghi chi tiết đơn hàng
         foreach ($validated['items'] as $itemData) {

@@ -156,25 +156,6 @@
             <div id="orderError" class="alert alert-danger mb-1 d-none"></div>
 
             <h4 class="title2 text-center">Thông tin đơn hàng</h4>
-            <!-- Chọn hình thức đơn hàng -->
-            <div class="mb-3">
-                <label class="form-label fw-bold">Hình thức đặt hàng:</label>
-                <div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input order-type" type="radio" name="order_type" id="takeaway"
-                            value="takeaway" checked>
-                        <label class="form-check-label" for="takeaway">Mang đi</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input order-type" type="radio" name="order_type" id="dine_in"
-                            value="dine_in">
-                        <label class="form-check-label" for="dine_in">Dùng tại chỗ</label>
-                    </div>
-                    <!-- Nếu chọn dùng tại chỗ, hiển thị nút chọn bàn -->
-                    <button id="chooseTableBtn" type="button" class="btn btn-outline-primary btn-sm d-none">Chọn
-                        bàn</button>
-                </div>
-            </div>
 
             <!-- Ô chọn khách hàng -->
             <div class="mb-3">
@@ -220,30 +201,6 @@
             </div>
 
 
-        </div>
-    </div>
-</div>
-
-<!-- Modal chọn bàn -->
-<div class="modal fade" id="tableModal" tabindex="-1" aria-labelledby="tableModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Chọn bàn</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
-            </div>
-            <div class="modal-body">
-                <select id="tableSelect" class="form-select">
-                    <option value="">-- Chọn bàn --</option>
-                    @foreach($tables as $table)
-                    <option value="{{ $table->table_id }}">Bàn {{ $table->table_number }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                <button type="button" id="saveTable" class="btn btn-primary">Chọn</button>
-            </div>
         </div>
     </div>
 </div>
@@ -445,38 +402,13 @@ $('#orderItemsContainer').on('click', '.remove-item', function() {
     renderOrderItems();
 });
 
-// Xử lý thay đổi hình thức đặt hàng
-$('input.order-type').on('change', function() {
-    if ($(this).val() === 'dine_in') {
-        $('#chooseTableBtn').removeClass('d-none');
-    } else {
-        $('#chooseTableBtn').addClass('d-none');
-    }
-});
-
-// Mở modal chọn bàn khi click nút "Chọn bàn"
-$('#chooseTableBtn').on('click', function() {
-    $('#tableModal').modal('show');
-});
-
-// Lưu bàn khi chọn trong modal
-$('#saveTable').on('click', function() {
-    const selectedTable = $('#tableSelect').val();
-    if (selectedTable) {
-        $('#chooseTableBtn').text('Bàn: ' + $('#tableSelect option:selected').text());
-        $('#tableModal').modal('hide');
-    } else {
-        alert('Vui lòng chọn bàn.');
-    }
-});
-
-// Xử lý submit đơn hàng (demo: in log đơn hàng ra console)
+// Xử lý submit đơn hàng
 $('#submitOrder').on('click', function() {
     const orderType = $('input.order-type:checked').val();
     let orderData = {
-        order_type: orderType,
+
         items: orderItems,
-        table_id: orderType === 'dine_in' ? $('#tableSelect').val() : null,
+
         customer_id: $('#customerSelect').val()
     };
     $.ajax({
