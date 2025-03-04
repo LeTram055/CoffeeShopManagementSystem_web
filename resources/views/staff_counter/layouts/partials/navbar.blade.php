@@ -14,10 +14,10 @@
     <div class="collapse navbar-collapse m-1" id="navbarToggler">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-                <a class="nav-link text-white" href="{{ route('staff_counter.order.index') }}">Đặt hàng</a>
+                <a class="nav-link text-white" href=" {{ route('staff_counter.confirmorder.index') }}">Đơn hàng</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white" href=" {{ route('staff_counter.confirmorder.index') }}">Đơn hàng</a>
+                <a class="nav-link text-white" href="{{ route('staff_counter.order.index') }}">Đặt hàng</a>
             </li>
         </ul>
         <!-- Thông tin người dùng -->
