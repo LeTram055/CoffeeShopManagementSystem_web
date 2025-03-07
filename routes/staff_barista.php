@@ -2,6 +2,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StaffBarista\MenuController;
 use App\Http\Controllers\StaffBarista\IngredientController;
+use App\Http\Controllers\StaffBarista\OrderController;
 
 Route::get('staff-barista/menu-items', 
 [MenuController::class, 'index']);
@@ -20,3 +21,9 @@ Route::get('staff-barista/ingredients',
 
 Route::put('staff-barista/ingredients/{id}/update-quantity',
  [IngredientController::class, 'updateQuantity']);
+
+Route::get('staff-barista/orders',
+[OrderController::class, 'index']);
+
+Route::post('staff-barista/orders/{id}/complete', 
+[OrderController::class, 'completeOrder']);
