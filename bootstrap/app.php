@@ -13,6 +13,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->validateCsrfTokens(except: [
+        'staff-barista/*',
+        'staff-service/*',
+        ]);
         $middleware->alias([
     'role' => CheckRole::class,
 ]);

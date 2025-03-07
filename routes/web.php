@@ -289,3 +289,7 @@ Route::post('admin/table/update',
 //-----------------------------------------------------------------------------//
 //Staff Counter
 require base_path('routes/staff_counter.php');
+
+//-----------------------------------------------------------------------------//
+//Staff Barista
+require base_path('routes/staff_barista.php');
