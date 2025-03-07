@@ -171,6 +171,11 @@ class IngredientController extends Controller
             $newQuantity = $oldQuantity; // Nếu không có thay đổi
         }
 
+        if ($newQuantity < 0) {
+            Session::flash('alert-danger', 'Số lượng nguyên liệu không thể nhỏ hơn 0');
+            return redirect()->route('admin.ingredient.edit', ['ingredient_id' => $request->ingredient_id]);
+        }
+
         $ingredient->name = $request->name;
         $ingredient->quantity = $newQuantity;
         $ingredient->unit = $request->unit;

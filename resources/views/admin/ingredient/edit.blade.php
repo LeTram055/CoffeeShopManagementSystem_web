@@ -9,6 +9,14 @@ Cập nhật nguyên liệu
 @endsection
 
 @section('content')
+<div class="flash-message">
+    @foreach (['danger', 'warning', 'success', 'info'] as $msg)
+    @if(Session::has('alert-' . $msg))
+    <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }} <button type="button" class="btn-close"
+            data-bs-dismiss="alert" aria-label="Close"></p>
+    @endif
+    @endforeach
+</div>
 <div class="row justify-content-center align-items-center">
     <div class="col-6 border rounded-3 p-5 custom-shadow">
         <h3 class="text-center title2">Cập nhật nguyên liệu</h3>
@@ -42,14 +50,7 @@ Cập nhật nguyên liệu
                         placeholder="Nhập số lượng thay đổi" value="{{ old('change_value') }}">
                 </div>
             </div>
-            <!-- <div class="form-group mb-3">
-                <label for="quantity" class="form-label fw-semibold">Số lượng:</label>
-                <input type="number" step="0.01" class="form-control rounded-2" id="quantity" name="quantity"
-                    value="{{ old('quantity', $ingredient->quantity) }}">
-                @error('quantity')
-                <small class="form-text text-danger">{{ $message }}</small>
-                @enderror
-            </div> -->
+            
             <div class="form-group mb-3">
                 <label for="unit" class="form-label fw-semibold">Đơn vị:</label>
                 <input type="text" class="form-control rounded-2" id="unit" name="unit"
