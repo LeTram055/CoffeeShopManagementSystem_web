@@ -151,6 +151,7 @@ class IngredientController extends Controller
             'name.required' => 'Vui lòng nhập tên nguyên liệu',
             'name.unique' => 'Nguyên liệu đã tồn tại',
             'change_value.numeric' => 'Số lượng thay đổi phải là số',
+            'change_value.min' => 'Số lượng thay đổi phải lớn hơn hoặc bằng 0',
             'unit.required' => 'Vui lòng nhập đơn vị tính',
             'min_quantity.required' => 'Vui lòng nhập số lượng tối thiểu',
             'min_quantity.numeric' => 'Số lượng tối thiểu phải là số',

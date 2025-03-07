@@ -48,9 +48,12 @@ Cập nhật nguyên liệu
                     <label for="change_value" class="form-label fw-semibold">Số lượng thay đổi:</label>
                     <input type="number" step="0.01" class="form-control" id="change_value" name="change_value"
                         placeholder="Nhập số lượng thay đổi" value="{{ old('change_value') }}">
+                    @error('change_value')
+                    <small class="form-text text-danger">{{ $message }}</small>
+                    @enderror
                 </div>
             </div>
-            
+
             <div class="form-group mb-3">
                 <label for="unit" class="form-label fw-semibold">Đơn vị:</label>
                 <input type="text" class="form-control rounded-2" id="unit" name="unit"
