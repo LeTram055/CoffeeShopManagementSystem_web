@@ -103,7 +103,7 @@ class OrderController extends Controller
             'customer_id'=> $validated['customer_id'],
             'order_type' => 'takeaway',
             'total_price'=> $totalPrice,
-            'status'     => 'pending_payment',
+            'status'     => 'confirmed',
             'created_at' => Carbon::now(),
         ]);
 

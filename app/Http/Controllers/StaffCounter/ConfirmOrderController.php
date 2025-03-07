@@ -31,8 +31,14 @@ class ConfirmOrderController extends Controller
         }
 
         if ($takeawayStatus !== 'all') {
-            $takeawayQuery->where('status', $takeawayStatus);
+            if ($takeawayStatus === 'confirmed') {
+                // Trạng thái "Chờ nhận món" tương ứng với "confirmed"
+                $takeawayQuery->where('status', 'confirmed');
+            } else {
+                $takeawayQuery->where('status', $takeawayStatus);
+            }
         }
+        
 
         $dineInOrders = $dineInQuery->orderBy('created_at', 'desc')->get();
         $takeawayOrders = $takeawayQuery->orderBy('created_at', 'desc')->get();

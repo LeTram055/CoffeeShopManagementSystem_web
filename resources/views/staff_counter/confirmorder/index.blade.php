@@ -118,12 +118,19 @@
             <ul class="nav nav-tabs">
                 <li class="nav-item">
                     <a class="nav-link text-black {{ request('takeaway_status', 'pending_payment') == 'pending_payment' ? 'active' : '' }}"
-                        href="{{ route('staff_counter.confirmorder.index', ['takeaway_status' => 'pending_payment', 'dine_in_status' => request('dine_in_status', 'pending_payment')]) }}">Chờ
-                        thanh toán</a>
+                        href="{{ route('staff_counter.confirmorder.index', ['takeaway_status' => 'pending_payment', 'dine_in_status' => request('dine_in_status', 'pending_payment')]) }}">
+                        Chờ thanh toán
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-black {{ request('takeaway_status', 'confirmed') == 'confirmed' ? 'active' : '' }}"
+                        href="{{ route('staff_counter.confirmorder.index', ['takeaway_status' => 'confirmed', 'dine_in_status' => request('dine_in_status', 'pending_payment')]) }}">
+                        Chờ nhận món
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-black {{ request('takeaway_status') == 'all' ? 'active' : '' }}"
-                        href="{{ route('staff_counter.confirmorder.index', ['takeaway_status' => 'all', 'dine_in_status' => request('dine_in_status', 'pending_payment')]) }}">Tất
+                        href="{{ route('staff_counter.confirmorder.index', ['takeaway_status' => 'all', 'dine_in_status' => request('dine_in_status', 'confirmed')]) }}">Tất
                         cả</a>
                 </li>
             </ul>
@@ -145,13 +152,14 @@
                         <p>Tổng tiền: {{ number_format($order->total_price, 0, ',', '.') }} VND</p>
                         <button class="btn btn-primary btn-sm view-order-btn" data-id="{{ $order->order_id }}">Xem chi
                             tiết</button>
-                        @if($order->status == 'pending_payment')
+                        @if($order->status == 'confirmed')
                         <button class="btn btn-success btn-sm edit-order-btn my-1"
                             data-id="{{ $order->order_id }}">Chỉnh
                             sửa</button>
                         <button class="btn btn-danger btn-sm cancel-order-btn" data-id="{{ $order->order_id }}">Hủy
                             đơn</button>
-
+                        @endif
+                        @if($order->status == 'pending_payment')
                         <button class="btn btn-warning btn-sm payment-btn" data-id="{{ $order->order_id }}">Thanh
                             toán</button>
                         @endif
@@ -179,7 +187,7 @@
         </div>
     </div>
 </div>
-<!-- Modal Chỉnh sửa đơn hàng (cho đơn hàng mang đi pending_payment) -->
+<!-- Modal Chỉnh sửa đơn hàng (cho đơn hàng mang đi confirmed) -->
 <div class="modal fade" id="editOrderModal" tabindex="-1" aria-labelledby="editOrderModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
 
@@ -395,7 +403,7 @@ $(document).ready(function() {
         window.open('/staff_counter/confirmorder/print-invoice/' + orderId, '_blank');
     });
 
-    //Khi nhấn nút "Chỉnh sửa" cho đơn hàng mang đi pending_payment
+    //Khi nhấn nút "Chỉnh sửa" cho đơn hàng mang đi confirmed
     $('.edit-order-btn').on('click', function() {
         let orderId = $(this).data('id');
         $.ajax({
