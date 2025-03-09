@@ -116,23 +116,29 @@
         <div class="takeaway-column">
             <h4 class="title2">Đơn hàng mang đi</h4>
             <ul class="nav nav-tabs">
+                @php
+                $currentTakeawayStatus = request('takeaway_status', 'pending_payment');
+                @endphp
+
                 <li class="nav-item">
-                    <a class="nav-link text-black {{ request('takeaway_status', 'pending_payment') == 'pending_payment' ? 'active' : '' }}"
+                    <a class="nav-link text-black {{ $currentTakeawayStatus == 'pending_payment' ? 'active' : '' }}"
                         href="{{ route('staff_counter.confirmorder.index', ['takeaway_status' => 'pending_payment', 'dine_in_status' => request('dine_in_status', 'pending_payment')]) }}">
                         Chờ thanh toán
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-black {{ request('takeaway_status', 'confirmed') == 'confirmed' ? 'active' : '' }}"
+                    <a class="nav-link text-black {{ $currentTakeawayStatus == 'confirmed' ? 'active' : '' }}"
                         href="{{ route('staff_counter.confirmorder.index', ['takeaway_status' => 'confirmed', 'dine_in_status' => request('dine_in_status', 'pending_payment')]) }}">
                         Chờ nhận món
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-black {{ request('takeaway_status') == 'all' ? 'active' : '' }}"
-                        href="{{ route('staff_counter.confirmorder.index', ['takeaway_status' => 'all', 'dine_in_status' => request('dine_in_status', 'confirmed')]) }}">Tất
-                        cả</a>
+                    <a class="nav-link text-black {{ $currentTakeawayStatus == 'all' ? 'active' : '' }}"
+                        href="{{ route('staff_counter.confirmorder.index', ['takeaway_status' => 'all', 'dine_in_status' => request('dine_in_status', 'confirmed')]) }}">
+                        Tất cả
+                    </a>
                 </li>
+
             </ul>
             <div class="order-list mt-3">
                 @foreach ($takeawayOrders as $order)
@@ -445,7 +451,7 @@ $(document).ready(function() {
                                 </div>
                             </td>
                             <td class="text-end">${new Intl.NumberFormat('vi-VN').format(item.item.price)} VND</td>
-                            <td><input type="text" class="form-control form-control-sm note-input" value="${item.note}" data-index="${index}" placeholder="Ghi chú..." style="width: 100%;"></td>
+                            <td><input type="text" class="form-control form-control-sm note-input" value="${item.note ?? ''}" data-index="${index}" placeholder="Ghi chú..." style="width: 100%;"></td>
                             <td class="text-center"><button class="btn btn-sm btn-danger remove-edit-item" data-index="${index}"><i class="fa-solid fa-trash"></i></button></td>
                         </tr>`;
                     });
