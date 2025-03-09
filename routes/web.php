@@ -293,3 +293,7 @@ require base_path('routes/staff_counter.php');
 //-----------------------------------------------------------------------------//
 //Staff Barista
 require base_path('routes/staff_barista.php');
+
+//-----------------------------------------------------------------------------//
+//auth app
+require base_path('routes/auth_app.php');

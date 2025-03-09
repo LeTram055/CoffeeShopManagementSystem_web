@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->validateCsrfTokens(except: [
         'staff-barista/*',
         'staff-service/*',
+        'auth-app/*',
         ]);
         $middleware->alias([
     'role' => CheckRole::class,
