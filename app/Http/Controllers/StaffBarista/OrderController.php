@@ -16,7 +16,7 @@ class OrderController extends Controller
     public function index()
     {   
         try {
-            $orders = Orders::with(['orderItems.item', 'table'])->get();
+            $orders = Orders::with(['orderItems.item', 'table', 'customer'])->get();
             foreach ($orders as $order) {
                 $order->table_number = $order->table ? $order->table->table_number : null;
                 foreach ($order->orderItems as $orderItem) {
