@@ -1,6 +1,7 @@
 <?php
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StaffServe\OrderController;
+use App\Http\Controllers\StaffServe\PaymentController;
 
 Route::get('staff-serve/tables', 
 [OrderController::class, 'getTable']);
@@ -33,3 +34,10 @@ Route::get('staff-serve/promotions/{orderId}',
 
 Route::post('staff-serve/payment/create',
 [OrderController::class, 'createPayment']);
+
+Route::get('staff-serve/payment/paid-orders', 
+[PaymentController::class, 'getPaidOrders']);
+
+Route::get('staff-serve/payment/invoice/{paymentId}', 
+[PaymentController::class, 'getInvoice'])
+->name('staff-serve.payment.invoice');
