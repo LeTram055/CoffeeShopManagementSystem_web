@@ -48,7 +48,8 @@ class MenuItemController extends Controller
             'price' => $menuItem->price,
             'description' => $menuItem->description,
             'image_url' => asset('storage/uploads/' . $menuItem->image_url),
-            'ingredients' => $menuItem->ingredients
+            'ingredients' => $menuItem->ingredients,
+            'is_available' => $menuItem->is_available
         ]);
     }
 

@@ -56,7 +56,7 @@ class CategoryController extends Controller
     public function destroy(Request $request)
     {
         $category = Categories::find($request->input('category_id'));
-        if ($category->item->count() > 0) {
+        if ($category->items->count() > 0) {
             Session::flash('alert-danger', 'Không thể xóa danh mục này vì nó đang có sản phẩm.');
             return redirect()->route('admin.category.index');
         }
