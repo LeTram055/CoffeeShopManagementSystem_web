@@ -32,7 +32,7 @@ class AuthController extends Controller
             return back()->withErrors(['username' => 'Tên đăng nhập không tồn tại.'])->withInput();
         }
 
-        if ($employee->role != 'admin' && $employee->role != 'staff_counter') {
+        if ($employee->role != 'admin' && $employee->role != 'staff_counter' && $employee->role != 'staff_barista') {
             return back()->withErrors(['username' => 'Tài khoản không có quyền truy cập.'])->withInput();
         }
 
@@ -51,6 +51,8 @@ class AuthController extends Controller
                 return redirect()->route('admin.home.index');
             } elseif ($employee->role === 'staff_counter') {
                 return redirect()->route('staff_counter.home.index');
+            } elseif ($employee->role === 'staff_barista') {
+                return redirect()->route('staff_baristas.order.index');
             } else {
                 // Nếu role không hợp lệ, đăng xuất và thông báo lỗi
                 Auth::logout();

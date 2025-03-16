@@ -126,8 +126,11 @@
                 <div class="flash-message">
                     @foreach (['danger', 'warning', 'success', 'info'] as $msg)
                     @if(Session::has('alert-' . $msg))
-                    <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }} <button type="button"
-                            class="btn-close" data-bs-dismiss="alert" aria-label="Close"></p>
+                    <p class="alert alert-{{ $msg }} position-relative">
+                        {{ Session::get('alert-' . $msg) }}
+                        <button type="button" class="btn-close position-absolute end-0 me-2" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
+                    </p>
                     @endif
                     @endforeach
                 </div>
@@ -175,6 +178,14 @@
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
     </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+    $(document).ready(function() {
+        // Tự động đóng thông báo sau 5 giây
+        setTimeout(function() {
+            $('.flash-message .alert').fadeOut('slow');
+        }, 5000);
+    });
+    </script>
 
 </body>
 
