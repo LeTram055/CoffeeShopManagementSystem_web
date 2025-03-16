@@ -1,47 +1,90 @@
 @extends('admin.layouts.master')
 
-@section('title', 'Quản lý khuyến mãi')
+@section('custom-css')
+<style>
+.custom-tabs .nav-link {
+    color: #555;
+    font-weight: 500;
+    border-radius: 8px 8px 0 0;
+    transition: all 0.3s ease-in-out;
+    padding: 10px 15px;
+}
 
-@section('feature-title', 'Quản lý khuyến mãi')
+.custom-tabs .nav-link:hover {
+    color: #000;
+    background: #f8f9fa;
+    border-color: #dee2e6 #dee2e6 transparent;
+}
+
+.custom-tabs .nav-link.active {
+    color: #fff;
+    background: #0049ab;
+    border-color: #0049ab #0049ab transparent;
+    font-weight: bold;
+    box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
+}
+</style>
+
+@endsection
+
+@section('title')
+Quản lý khuyến mãi
+@endsection
+
+@section('feature-title')
+Quản lý khuyến mãi
+@endsection
 
 @section('content')
 <div class="flash-message">
     @foreach (['danger', 'warning', 'success', 'info'] as $msg)
     @if(Session::has('alert-' . $msg))
-    <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }} <button type="button" class="btn-close"
-            data-bs-dismiss="alert" aria-label="Close"></button></p>
+    <p class="alert alert-{{ $msg }} position-relative">
+        {{ Session::get('alert-' . $msg) }}
+        <button type="button" class="btn-close position-absolute end-0 me-2" data-bs-dismiss="alert"
+            aria-label="Close"></button>
+    </p>
     @endif
     @endforeach
 </div>
 
-<form method="GET" action="{{ route('admin.promotion.index') }}" class="row mb-3 justify-content-center">
-    <div class="col-md-6">
-        <div class="input-group">
-            <input type="text" name="search" class="form-control rounded" placeholder="Tìm kiếm khuyến mãi..."
-                value="{{ request('search') }}">
-            <button class="btn btn-bg rounded ms-2" type="submit">Tìm kiếm</button>
-        </div>
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <div class="d-flex gap-2">
+        <a href="{{ route('admin.promotion.create') }}" class="btn btn-outline-primary">
+            <i class="fas fa-plus"></i> Thêm mới
+        </a>
+        <a href="{{ route('admin.promotion.exportExcel') }}" class="btn btn-outline-success">
+            <i class="fas fa-file-excel"></i> Xuất Excel
+        </a>
+        <a href="{{ route('admin.promotion.index') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-sync-alt"></i> Làm mới
+        </a>
     </div>
-</form>
-
-<div class="d-flex justify-content-between mb-3">
-    <a href="{{ route('admin.promotion.create') }}" class="btn btn-primary">Thêm mới</a>
-    <a href="{{ route('admin.promotion.exportExcel') }}" class="btn btn-success">Xuất Excel</a>
+    <form method="GET" action="{{ route('admin.promotion.index') }}" class="d-flex" style="max-width: 50%;">
+        <div class="input-group">
+            <input type="text" name="search" class="form-control" placeholder="Tìm kiếm danh mục..."
+                value="{{ request('search') }}">
+            <button class="btn btn-bg" type="submit">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </form>
 </div>
 
-<ul class="nav nav-tabs" id="promotionTabs">
+<ul class="nav nav-tabs custom-tabs" id="promotionTabs">
     <li class="nav-item">
-        <a class="nav-link active text-dark" id="all-promotions-tab" data-toggle="tab" href="#all-promotions">Tất cả</a>
+        <a class="nav-link active" id="all-promotions-tab" data-toggle="tab" href="#all-promotions">Tất cả</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link text-dark" id="valid-promotions-tab" data-toggle="tab" href="#valid-promotions">Hợp
+        <a class="nav-link" id="valid-promotions-tab" data-toggle="tab" href="#valid-promotions">Hợp
             lệ</a>
     </li>
 </ul>
+
 <div class="tab-content mt-3">
     <div class="tab-pane fade show active" id="all-promotions">
         <div class="table-responsive">
-            <table class="table table-striped table-sm">
+            <table class="table table-striped table-hover">
                 <thead>
                     <tr>
                         <th class="text-center">
@@ -119,7 +162,7 @@
                         <th class="text-center">Hành động</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="table-group-divider">
                     @foreach ($promotions as $promotion)
                     <tr>
                         <td class="text-center">{{ $promotion->promotion_id }}</td>
@@ -148,19 +191,20 @@
                         <td class="text-end">{{ $promotion->start_date->format('H:i:s d/m/Y') }}</td>
                         <td class="text-end">{{ $promotion->end_date->format('H:i:s d/m/Y') }}</td>
                         <td class="text-center">{{ $promotion->is_active ? 'Hoạt động' : 'Không hoạt động' }}</td>
-                        <td>
-                            <div class="d-flex justify-content-center">
-                                <a href="{{ route('admin.promotion.edit', ['promotion_id' => $promotion->promotion_id]) }}"
-                                    class="btn btn-warning btn-sm"><i class="fa-solid fa-pen-to-square"></i></a>
-                                <form class="mx-1" method="POST" name=frmDelete
-                                    action="{{ route('admin.promotion.delete') }}">
-                                    @csrf
-                                    <input type="hidden" name="promotion_id" value="{{ $promotion->promotion_id }}">
-
-                                    <button type="submit" class="btn btn-danger btn-sm delete-promotion-btn"><i
-                                            class="fa-solid fa-trash"></i></button>
-                                </form>
-                            </div>
+                        <td class="text-center">
+                            <a href="{{ route('admin.promotion.edit', ['promotion_id' => $promotion->promotion_id]) }}"
+                                class="text-warning mx-2">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form class="d-inline delete-form" method="post"
+                                action="{{ route('admin.promotion.delete') }}">
+                                @csrf
+                                <input type="hidden" name="promotion_id" value="{{ $promotion->promotion_id }}">
+                                <button type="submit"
+                                    class="btn btn-link text-danger p-0 border-0 delete-promotion-btn">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
                         </td>
                     </tr>
                     @endforeach
@@ -248,7 +292,7 @@
                         <th class="text-center">Hành động</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="table-group-divider">
                     @foreach ($validPromotions as $promotion)
                     <tr>
                         <td class="text-center">{{ $promotion->promotion_id }}</td>
@@ -259,19 +303,20 @@
                         <td class="text-end">{{ $promotion->start_date->format('H:i:s d/m/Y') }}</td>
                         <td class="text-end">{{ $promotion->end_date->format('H:i:s d/m/Y') }}</td>
                         <td class="text-center">{{ $promotion->is_active ? 'Hoạt động' : 'Không hoạt động' }}</td>
-                        <td>
-                            <div class="d-flex justify-content-center">
-                                <a href="{{ route('admin.promotion.edit', ['promotion_id' => $promotion->promotion_id]) }}"
-                                    class="btn btn-warning btn-sm"><i class="fa-solid fa-pen-to-square"></i></a>
-                                <form class="mx-1" method="POST" name=frmDelete
-                                    action="{{ route('admin.promotion.delete') }}">
-                                    @csrf
-                                    <input type="hidden" name="promotion_id" value="{{ $promotion->promotion_id }}">
-
-                                    <button type="submit" class="btn btn-danger btn-sm delete-promotion-btn"><i
-                                            class="fa-solid fa-trash"></i></button>
-                                </form>
-                            </div>
+                        <td class="text-center">
+                            <a href="{{ route('admin.promotion.edit', ['promotion_id' => $promotion->promotion_id]) }}"
+                                class="text-warning mx-2">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form class="d-inline delete-form" method="post"
+                                action="{{ route('admin.promotion.delete') }}">
+                                @csrf
+                                <input type="hidden" name="promotion_id" value="{{ $promotion->promotion_id }}">
+                                <button type="submit"
+                                    class="btn btn-link text-danger p-0 border-0 delete-promotion-btn">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
                         </td>
                     </tr>
                     @endforeach
@@ -332,6 +377,11 @@ $(document).ready(function() {
     $('#confirm-delete').on('click', function() {
         formToSubmit.submit();
     });
+
+    // Tự động đóng thông báo sau 5 giây
+    setTimeout(function() {
+        $('.flash-message .alert').fadeOut('slow');
+    }, 5000);
 });
 </script>
 @endsection

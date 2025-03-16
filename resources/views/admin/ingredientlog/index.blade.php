@@ -12,28 +12,37 @@ Quản lý log nguyên liệu
 <div class="flash-message">
     @foreach (['danger', 'warning', 'success', 'info'] as $msg)
     @if(Session::has('alert-' . $msg))
-    <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }} <button type="button" class="btn-close"
-            data-bs-dismiss="alert" aria-label="Close"></p>
+    <p class="alert alert-{{ $msg }} position-relative">
+        {{ Session::get('alert-' . $msg) }}
+        <button type="button" class="btn-close position-absolute end-0 me-2" data-bs-dismiss="alert"
+            aria-label="Close"></button>
+    </p>
     @endif
     @endforeach
 </div>
 
-<form method="GET" action="{{ route('admin.ingredientlog.index') }}" class="row mb-3 justify-content-center">
-    <div class="col-md-6">
-        <div class="input-group">
-            <input type="text" name="search" class="form-control rounded" placeholder="Tìm kiếm log nguyên liệu..."
-                value="{{ request('search') }}">
-            <button class="btn btn-bg rounded ms-2" type="submit">Tìm kiếm</button>
-        </div>
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <div class="d-flex gap-2">
+        <a href="{{ route('admin.ingredientlog.exportExcel') }}" class="btn btn-outline-success">
+            <i class="fas fa-file-excel"></i> Xuất Excel
+        </a>
+        <a href="{{ route('admin.ingredientlog.index') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-sync-alt"></i> Làm mới
+        </a>
     </div>
-</form>
-
-<div class="d-flex justify-content-end mb-3">
-    <a href="{{ route('admin.ingredientlog.exportExcel') }}" class="btn btn-success">Xuất Excel</a>
+    <form method="GET" action="{{ route('admin.ingredientlog.index') }}" class="d-flex" style="max-width: 50%;">
+        <div class="input-group">
+            <input type="text" name="search" class="form-control" placeholder="Tìm kiếm danh mục..."
+                value="{{ request('search') }}">
+            <button class="btn btn-bg" type="submit">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </form>
 </div>
 
 <div class="table-responsive">
-    <table class="table table-striped table-sm">
+    <table class="table table-striped table-hover">
         <thead>
             <tr>
                 <th class="text-center">
@@ -93,7 +102,7 @@ Quản lý log nguyên liệu
             </tr>
         </thead>
 
-        <tbody>
+        <tbody class="table-group-divider">
             @foreach ($ingredientLogs as $log)
             <tr>
                 <td class="text-center">{{ $log->log_id }}</td>
@@ -140,6 +149,11 @@ $(document).ready(function() {
     $('#confirm-delete').on('click', function() {
         formToSubmit.submit();
     });
+
+    // Tự động đóng thông báo sau 5 giây
+    setTimeout(function() {
+        $('.flash-message .alert').fadeOut('slow');
+    }, 5000);
 });
 </script>
 @endsection

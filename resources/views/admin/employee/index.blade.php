@@ -12,29 +12,40 @@ Quản lý nhân viên
 <div class="flash-message">
     @foreach (['danger', 'warning', 'success', 'info'] as $msg)
     @if(Session::has('alert-' . $msg))
-    <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }} <button type="button" class="btn-close"
-            data-bs-dismiss="alert" aria-label="Close"></p>
+    <p class="alert alert-{{ $msg }} position-relative">
+        {{ Session::get('alert-' . $msg) }}
+        <button type="button" class="btn-close position-absolute end-0 me-2" data-bs-dismiss="alert"
+            aria-label="Close"></button>
+    </p>
     @endif
     @endforeach
 </div>
 
-<form method="GET" action="{{ route('admin.employee.index') }}" class="row mb-3 justify-content-center">
-    <div class="col-md-6">
-        <div class="input-group">
-            <input type="text" name="search" class="form-control rounded" placeholder="Tìm kiếm nhân viên..."
-                value="{{ request('search') }}">
-            <button class="btn btn-bg rounded ms-2" type="submit">Tìm kiếm</button>
-        </div>
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <div class="d-flex gap-2">
+        <a href="{{ route('admin.employee.create') }}" class="btn btn-outline-primary">
+            <i class="fas fa-plus"></i> Thêm mới
+        </a>
+        <a href="{{ route('admin.employee.exportExcel') }}" class="btn btn-outline-success">
+            <i class="fas fa-file-excel"></i> Xuất Excel
+        </a>
+        <a href="{{ route('admin.employee.index') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-sync-alt"></i> Làm mới
+        </a>
     </div>
-</form>
-
-<div class="d-flex justify-content-between mb-3">
-    <a href="{{ route('admin.employee.create') }}" class="btn btn-primary">Thêm mới</a>
-    <a href="{{ route('admin.employee.exportExcel') }}" class="btn btn-success">Xuất Excel</a>
+    <form method="GET" action="{{ route('admin.employee.index') }}" class="d-flex" style="max-width: 50%;">
+        <div class="input-group">
+            <input type="text" name="search" class="form-control" placeholder="Tìm kiếm danh mục..."
+                value="{{ request('search') }}">
+            <button class="btn btn-bg" type="submit">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </form>
 </div>
 
 <div class="table-responsive">
-    <table class="table table-striped table-sm">
+    <table class="table table-striped table-hover">
         <thead>
             <tr>
                 <th class="text-center">
@@ -123,7 +134,7 @@ Quản lý nhân viên
                 <th class="text-center">Hành động</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody class="table-group-divider">
             @foreach ($employees as $employee)
             <tr>
                 <td class="text-center">{{ $employee->employee_id }}</td>
@@ -156,17 +167,18 @@ Quản lý nhân viên
                 </td>
 
 
-                <td>
-                    <div class="d-flex justify-content-center">
-                        <a href="{{ route('admin.employee.edit', ['employee_id' => $employee->employee_id]) }}"
-                            class="btn btn-warning btn-sm"><i class="fa-solid fa-pen-to-square"></i></a>
-                        <form class="mx-1" name="frmDelete" method="post" action="{{ route('admin.employee.delete') }}">
-                            @csrf
-                            <input type="hidden" name="employee_id" value="{{ $employee->employee_id }}">
-                            <button type="submit" class="btn btn-danger btn-sm delete-employee-btn"><i
-                                    class="fa-solid fa-trash"></i></button>
-                        </form>
-                    </div>
+                <td class="text-center">
+                    <a href="{{ route('admin.employee.edit', ['employee_id' => $employee->employee_id]) }}"
+                        class="text-warning mx-2">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <form class="d-inline delete-form" method="post" action="{{ route('admin.employee.delete') }}">
+                        @csrf
+                        <input type="hidden" name="employee_id" value="{{ $employee->employee_id }}">
+                        <button type="submit" class="btn btn-link text-danger p-0 border-0 delete-employee-btn">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </form>
                 </td>
             </tr>
             @endforeach
@@ -213,6 +225,11 @@ $(document).ready(function() {
     $('#confirm-delete').on('click', function() {
         formToSubmit.submit();
     });
+
+    // Tự động đóng thông báo sau 5 giây
+    setTimeout(function() {
+        $('.flash-message .alert').fadeOut('slow');
+    }, 5000);
 });
 </script>
 @endsection

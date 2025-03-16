@@ -3,13 +3,96 @@
 @section('custom-css')
 <style>
 .card {
-    box-shadow: 0px 4px 10px #0049ab;
+    box-shadow: 0px 4px 8px rgba(0, 73, 171, 0.5);
     transition: transform 0.2s ease-in-out;
 }
 
 .card:hover {
     transform: scale(1.01);
-    box-shadow: 0px 6px 15px #0049ab;
+    box-shadow: 0px 6px 12px rgba(0, 73, 171, 0.7);
+}
+
+.card-img-container {
+    position: relative;
+    height: 160px;
+
+}
+
+.card-img-top {
+    height: 100%;
+    object-fit: cover;
+}
+
+.stock-status {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(249, 246, 246, 0.62);
+}
+
+.stock-status i {
+    font-size: 18px;
+}
+
+.card-body {
+    padding: 5px;
+    text-align: center;
+}
+
+.card-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.card-text {
+    font-size: 14px;
+    font-weight: bold;
+    color: red;
+    margin-bottom: 5px;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+}
+
+#modalStatus {
+    font-size: 14px;
+    border-radius: 20px;
+    padding: 8px 12px;
+    top: 15px;
+    right: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.custom-tabs .nav-link {
+    color: #555;
+    font-weight: 500;
+    border-radius: 8px 8px 0 0;
+    transition: all 0.3s ease-in-out;
+    padding: 10px 15px;
+}
+
+.custom-tabs .nav-link:hover {
+    color: #000;
+    background: #f8f9fa;
+    border-color: #dee2e6 #dee2e6 transparent;
+}
+
+.custom-tabs .nav-link.active {
+    color: #fff;
+    background: #0049ab;
+    border-color: #0049ab #0049ab transparent;
+    font-weight: bold;
+    box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
 }
 
 #modalImage {
@@ -37,89 +120,102 @@ Quản lý thực đơn
 <div class="flash-message">
     @foreach (['danger', 'warning', 'success', 'info'] as $msg)
     @if(Session::has('alert-' . $msg))
-    <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <p class="alert alert-{{ $msg }} position-relative">
+        {{ Session::get('alert-' . $msg) }}
+        <button type="button" class="btn-close position-absolute end-0 me-2" data-bs-dismiss="alert"
+            aria-label="Close"></button>
     </p>
     @endif
     @endforeach
 </div>
 
-<!-- Tìm kiếm sản phẩm -->
-<form method="GET" action="{{ route('admin.menuitem.index') }}"
-    class="row g-2 mb-3 justify-content-center align-items-center">
-    <div class="col-md-4">
-        <div class="input-group">
-            <input type="text" name="search" class="form-control rounded" placeholder="Tìm kiếm sản phẩm..."
-                value="{{ request('search') }}">
-        </div>
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <div class="d-flex gap-2">
+        <a href="{{ route('admin.menuitem.create') }}" class="btn btn-outline-primary">
+            <i class="fas fa-plus"></i> Thêm mới
+        </a>
+        <a href="{{ route('admin.menuitem.exportExcel') }}" class="btn btn-outline-success">
+            <i class="fas fa-file-excel"></i> Xuất Excel
+        </a>
+        <a href="{{ route('admin.menuitem.index') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-sync-alt"></i> Làm mới
+        </a>
     </div>
-    <div class="col-md-2">
-        <select class="form-select" name="available">
+    <form method="GET" action="{{ route('admin.menuitem.index') }}" class="d-flex gap-2" style="max-width: 60%;">
+        <!-- Bộ lọc -->
+        <select class="form-select w-auto" name="available">
             <option value="">Tất cả</option>
             <option value="1" {{ request('available') === "1" ? 'selected' : '' }}>Còn hàng</option>
             <option value="0" {{ request('available') === "0" ? 'selected' : '' }}>Hết hàng</option>
         </select>
-    </div>
-    <div class="col-md-2">
-        <button class="btn btn-bg rounded " type="submit">Tìm kiếm</button>
-    </div>
-</form>
 
-
-
-<!-- Nút thêm sản phẩm mới và xuất excel -->
-<div class="d-flex justify-content-between mb-3">
-
-    <a href="{{ route('admin.menuitem.create') }}" class="btn btn-primary">Thêm mới</a>
-    <a href="{{ route('admin.menuitem.exportExcel') }}" class="btn btn-success">Xuất Excel</a>
+        <!-- Tìm kiếm -->
+        <div class="input-group">
+            <input type="text" name="search" class="form-control rounded-start" placeholder="Tìm kiếm sản phẩm..."
+                value="{{ request('search') }}">
+            <button class="btn btn-bg rounded-end" type="submit">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </form>
 </div>
 
-<ul class="nav nav-tabs" id="categoryTabs">
+<ul class="nav nav-tabs custom-tabs" id="categoryTabs">
     <li class="nav-item">
-        <a class="nav-link text-dark active" data-bs-toggle="tab" href="#category-all">
+        <a class="nav-link active" data-bs-toggle="tab" href="#category-all">
             Tất cả
         </a>
     </li>
     @foreach ($categories as $index => $category)
     <li class="nav-item">
-        <a class="nav-link text-dark" data-bs-toggle="tab" href="#category-{{ $category->category_id }}">
+        <a class="nav-link" data-bs-toggle="tab" href="#category-{{ $category->category_id }}">
             {{ $category->name }}
         </a>
     </li>
     @endforeach
 </ul>
 
+
 <div class="tab-content mt-3">
     <div class="tab-pane fade show active" id="category-all">
         <div class="row">
             @foreach ($categories as $category)
             @foreach ($category->items as $item)
+
             <div class="col-lg-3 col-md-4 col-sm-6">
                 <div class="card mb-3">
-                    <img src="{{ asset('storage/uploads/'. $item->image_url) }}" class="card-img-top"
-                        alt="{{ $item->name }}" style="height: 200px; object-fit: cover;">
-                    <div class="card-body text-center">
+                    <div class="card-img-container">
+                        <img src="{{ asset('storage/uploads/'. $item->image_url) }}" class="card-img-top"
+                            alt="{{ $item->name }}">
+                        <div class="stock-status">
+                            <i
+                                class="fa-solid {{ $item->is_available ? 'fa-check-circle text-success' : 'fa-times-circle text-danger' }}"></i>
+                        </div>
+                    </div>
+                    <div class="card-body">
                         <h5 class="card-title">{{ $item->name }}</h5>
-                        <p class="card-text text-danger fw-bold">{{ number_format($item->price, 0, ',', '.') }} đ</p>
-                        <p class="fw-bold {{ $item->is_available ? 'text-success' : 'text-danger' }}">
-                            {{ $item->is_available ? 'Còn hàng' : 'Hết hàng' }}
-                        </p>
-                        <div class="d-flex justify-content-center">
-                            <button class="btn btn-info btn-sm me-2 view-details" data-id="{{ $item->item_id }}"><i
-                                    class="fa-solid fa-circle-info"></i></button>
+                        <p class="card-text">{{ number_format($item->price, 0, ',', '.') }} đ</p>
+                        <div class="action-buttons">
+                            <button class="btn btn-link text-info view-details" data-id="{{ $item->item_id }}">
+                                <i class="fa-solid fa-circle-info"></i>
+                            </button>
                             <a href="{{ route('admin.menuitem.edit', ['item_id' => $item->item_id]) }}"
-                                class="btn btn-warning btn-sm me-2"><i class="fa-solid fa-pen-to-square"></i></a>
+                                class="btn btn-link text-warning">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </a>
                             <form method="POST" action="{{ route('admin.menuitem.delete') }}"
                                 class="d-inline delete-form">
                                 @csrf
                                 <input type="hidden" name="item_id" value="{{ $item->item_id }}">
-                                <button type="button" class="btn btn-danger btn-sm delete-item-btn"><i
-                                        class="fa-solid fa-trash"></i></button>
+                                <button type="button" class="btn btn-link text-danger delete-item-btn">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
+
             @endforeach
             @endforeach
         </div>
@@ -131,25 +227,32 @@ Quản lý thực đơn
             @foreach ($category->items as $item)
             <div class="col-lg-3 col-md-4 col-sm-6">
                 <div class="card mb-3">
-                    <img src="{{ asset('storage/uploads/'. $item->image_url) }}" class="card-img-top"
-                        alt="{{ $item->name }}" style="height: 200px; object-fit: cover;">
-                    <div class="card-body text-center">
+                    <div class="card-img-container">
+                        <img src="{{ asset('storage/uploads/'. $item->image_url) }}" class="card-img-top"
+                            alt="{{ $item->name }}">
+                        <div class="stock-status">
+                            <i
+                                class="fa-solid {{ $item->is_available ? 'fa-check-circle text-success' : 'fa-times-circle text-danger' }}"></i>
+                        </div>
+                    </div>
+                    <div class="card-body">
                         <h5 class="card-title">{{ $item->name }}</h5>
-                        <p class="card-text text-danger fw-bold">{{ number_format($item->price, 0, ',', '.') }} đ</p>
-                        <p class="fw-bold {{ $item->is_available ? 'text-success' : 'text-danger' }}">
-                            {{ $item->is_available ? 'Còn hàng' : 'Hết hàng' }}
-                        </p>
-                        <div class="d-flex justify-content-center">
-                            <button class="btn btn-info btn-sm me-2 view-details" data-id="{{ $item->item_id }}"><i
-                                    class="fa-solid fa-circle-info"></i></button>
+                        <p class="card-text">{{ number_format($item->price, 0, ',', '.') }} đ</p>
+                        <div class="action-buttons">
+                            <button class="btn btn-link text-info view-details" data-id="{{ $item->item_id }}">
+                                <i class="fa-solid fa-circle-info"></i>
+                            </button>
                             <a href="{{ route('admin.menuitem.edit', ['item_id' => $item->item_id]) }}"
-                                class="btn btn-warning btn-sm me-2"><i class="fa-solid fa-pen-to-square"></i></a>
-                            <form name="frmDelete" method="POST" action="{{ route('admin.menuitem.delete') }}"
+                                class="btn btn-link text-warning">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </a>
+                            <form method="POST" action="{{ route('admin.menuitem.delete') }}"
                                 class="d-inline delete-form">
                                 @csrf
                                 <input type="hidden" name="item_id" value="{{ $item->item_id }}">
-                                <button type="button" class="btn btn-danger btn-sm delete-item-btn"><i
-                                        class="fa-solid fa-trash"></i></button>
+                                <button type="button" class="btn btn-link text-danger delete-item-btn">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
                             </form>
                         </div>
                     </div>
@@ -166,13 +269,20 @@ Quản lý thực đơn
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="menuItemModalLabel">Chi tiết sản phẩm</h5>
+
+                <h5 class="modal-title d-flex align-items-center">
+                    Chi tiết sản phẩm
+                    <span id="modalStatus" class="badge ms-2"></span>
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+
                 <img id="modalImage" src="" class="img-fluid mb-3">
                 <h5 id="modalName"></h5>
                 <p class="text-danger fw-bold" id="modalPrice"></p>
+                <!-- <p id="modalAvailable" class="fw-bold"></p> -->
+
                 <p id="modalDescription"></p>
                 <h6>Nguyên liệu:</h6>
                 <ul id="modalIngredients"></ul>
@@ -215,6 +325,15 @@ $(document).ready(function() {
             url: '/admin/menuitem/' + itemId,
             type: 'GET',
             success: function(data) {
+                // Xử lý trạng thái Còn hàng / Hết hàng
+                let availableText = data.is_available ? 'Còn hàng' : 'Hết hàng';
+                let availableClass = data.is_available ? 'bg-success' : 'bg-danger';
+
+                $('#modalStatus')
+                    .text(availableText)
+                    .removeClass('bg-success bg-danger')
+                    .addClass(availableClass);
+
                 $('#modalImage').attr('src', data.image_url);
                 $('#modalName').text(data.name);
                 $('#modalPrice').text(new Intl.NumberFormat().format(data.price) + ' đ');
@@ -250,6 +369,11 @@ $(document).ready(function() {
     $('#confirm-delete').on('click', function() {
         formToSubmit.submit();
     });
+
+    // Tự động đóng thông báo sau 5 giây
+    setTimeout(function() {
+        $('.flash-message .alert').fadeOut('slow');
+    }, 5000);
 });
 </script>
 @endsection

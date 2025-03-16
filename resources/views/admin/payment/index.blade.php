@@ -33,20 +33,29 @@ Quản lý hóa đơn
 <div class="flash-message">
     @foreach (['danger', 'warning', 'success', 'info'] as $msg)
     @if(Session::has('alert-' . $msg))
-    <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }} <button type="button" class="btn-close"
-            data-bs-dismiss="alert" aria-label="Close"></p>
+    <p class="alert alert-{{ $msg }} position-relative">
+        {{ Session::get('alert-' . $msg) }}
+        <button type="button" class="btn-close position-absolute end-0 me-2" data-bs-dismiss="alert"
+            aria-label="Close"></button>
+    </p>
     @endif
     @endforeach
 </div>
 
-
-<form method="GET" action="{{ route('admin.payment.index') }}"
-    class="row g-2 mb-3 align-items-center justify-content-center">
-    <div class="col-md-12 col-lg-3">
-        <!-- Nhóm dropdown và nút reload -->
-        <div class="d-flex">
-            <div class="dropdown w-100">
-                <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" id="dateDropdown"
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <div class="d-flex gap-2">
+        <a href="{{ route('admin.payment.exportExcel') }}" class="btn btn-outline-success">
+            <i class="fas fa-file-excel"></i> Xuất Excel
+        </a>
+        <a href="{{ route('admin.payment.index') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-sync-alt"></i> Làm mới
+        </a>
+    </div>
+    <form method="GET" action="{{ route('admin.payment.index') }}" class="d-flex" style="max-width: 50%;">
+        <div class="input-group">
+            <!-- Lọc theo ngày -->
+            <div class="dropdown me-2">
+                <button class="btn btn-outline-info dropdown-toggle" type="button" id="dateDropdown"
                     data-bs-toggle="dropdown" aria-expanded="false">
                     Lọc theo ngày
                 </button>
@@ -64,32 +73,18 @@ Quản lý hóa đơn
                     <button type="submit" class="btn btn-primary w-100">Áp dụng</button>
                 </div>
             </div>
-
-            <a href="{{ route('admin.payment.index') }}" class="btn btn-outline-secondary ms-2" title="Xóa bộ lọc">
-                <i class="fa-solid fa-rotate-right"></i>
-            </a>
+            <!-- Thanh tìm kiếm -->
+            <input type="text" name="search" class="form-control rounded-start" placeholder="Tìm kiếm hóa đơn..."
+                value="{{ request('search') }}">
+            <button class="btn btn-bg" type="submit">
+                <i class="fas fa-search"></i>
+            </button>
         </div>
-    </div>
-    <!-- Khung tìm kiếm -->
-    <div class="col-md-12 col-lg-4">
-        <input type="text" name="search" class="form-control" placeholder="Tìm kiếm hóa đơn..."
-            value="{{ request('search') }}">
-    </div>
-    <div class="col-md-12 col-lg-2">
-        <button class="btn btn-bg rounded " type="submit">Tìm kiếm</button>
-    </div>
-</form>
-
-
-
-
-
-<div class="d-flex justify-content-end mb-3">
-    <a href="{{ route('admin.payment.exportExcel') }}" class="btn btn-success">Xuất Excel</a>
+    </form>
 </div>
 
 <div class="table-responsive ">
-    <table class="table table-striped table-sm">
+    <table class="table table-striped table-hover">
         <thead>
             <tr>
                 <th class="text-center">
@@ -168,7 +163,7 @@ Quản lý hóa đơn
                 <th class="text-center">Chi tiết</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody class="table-group-divider">
             @foreach ($payments as $payment)
             <tr>
                 <td class="text-center">{{ $payment->payment_id }}</td>
@@ -188,7 +183,7 @@ Quản lý hóa đơn
                 </td>
                 <td class="text-center">{{ $payment->payment_time->format('H:i:s d/m/Y') }}</td>
                 <td class="text-center">
-                    <button class="btn btn-info btn-sm view-payment-detail" data-id="{{ $payment->payment_id }}">
+                    <button class="btn btn-link text-info view-payment-detail" data-id="{{ $payment->payment_id }}">
                         <i class="fa-solid fa-circle-info"></i>
                     </button>
                 </td>
@@ -328,6 +323,11 @@ $(document).ready(function() {
             }
         });
     });
+
+    // Tự động đóng thông báo sau 5 giây
+    setTimeout(function() {
+        $('.flash-message .alert').fadeOut('slow');
+    }, 5000);
 });
 </script>
 @endsection

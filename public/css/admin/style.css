@@ -44,7 +44,7 @@ body {
 /*sidebar*/
 .sidebar {
     height: 100vh;
-    background-color: #f1f1f1;
+    background-color: #0049ab;
     position: fixed;
     top: 0;
     left: 0;
@@ -104,19 +104,19 @@ body {
 .sidebar .nav-link {
     padding: 10px 10px;
     border-bottom: 1px solid #0049ab;
-    color: black; 
+    color: #fff; 
     font-weight: 400;
     transition: background-color 0.3s, color 0.3s; /* Hiệu ứng chuyển màu */
 }
 
 /* Màu chữ khi hover */
 .sidebar .nav-link:hover {
-    background-color: #e0f7fae7; 
+    background-color: #0432b0; 
 }
 
 /* Màu chữ và nền khi được chọn (active) */
 .sidebar .nav-link.active {
-    background-color: #0049ab; 
+    background-color: #042b98; 
     color: #fff; 
 }
 
@@ -127,7 +127,7 @@ body {
 
 /* Màu nền và biểu tượng khi hover trên mục đang active */
 .sidebar .nav-link.active:hover {
-    background-color: #053370; 
+    background-color: #03288b; 
     
 }
 
