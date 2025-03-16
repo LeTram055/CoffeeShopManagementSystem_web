@@ -1,0 +1,90 @@
+body {
+    display: flex;
+    min-height: 100vh;
+    margin: 0;
+    
+}
+
+.feature-title {
+    font-family: 'Prata', cursive;
+    font-weight: bold;
+}
+
+#main-content {
+    padding-top: 60px;
+    transition: margin-left 0.3s ease;
+}
+
+/*navbar*/
+.navbar-bg {
+    background-color: #0049ab;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 100;
+    color: white;
+    font-weight: 600;
+    /* height: 50px; */
+
+}
+
+.navbar .dropdown-menu {
+    position: absolute;
+    top: 50px;
+}
+
+.dropdown-menu.dropdown-menu-end {
+    right: 0;
+    left: auto;
+}
+
+/* Khi màn hình nhỏ Dropdown mở về bên trái */
+@media (max-width: 768px) {
+    .dropdown-menu.dropdown-menu-end {
+        right: auto !important;
+        left: 0 !important;
+        height: auto;
+    }
+}
+
+
+.navbar-brand {
+    font-family: 'Prata', cursive;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+
+/*  */
+.navbar-nav {
+    position: relative;
+}
+
+.custom-shadow {
+    box-shadow: 0 4px 10px #0049ab; 
+    transition: all 0.3s ease-in-out;
+}
+
+.custom-shadow:hover {
+    box-shadow: 0 6px 15px #053370; 
+}
+
+/*Tiêu đề*/
+.title2 {
+    font-weight: 600;
+    color: #0049ab;
+}
+
+/*Nút Tìm kiếm*/
+.btn-bg {
+    background-color: #0049ab;
+    color: white;
+    
+}
+
+.btn-bg:hover {
+    border: 1px solid #0049ab;
+    background-color: #fff;
+    color: black;
+    
+}

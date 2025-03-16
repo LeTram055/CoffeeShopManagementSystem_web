@@ -301,3 +301,7 @@ require base_path('routes/auth_app.php');
 //-----------------------------------------------------------------------------//
 //Staff Serve
 require base_path('routes/staff_serve.php');
+
+//-----------------------------------------------------------------------------//
+//Staff Baristas
+require base_path('routes/staff_baristas.php');
