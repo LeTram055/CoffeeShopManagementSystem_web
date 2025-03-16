@@ -10,7 +10,7 @@ class Tables extends Model
     use HasFactory;
     protected $table = 'tables';
     
-    protected $fillable = ['name', 'status_id'];
+    protected $fillable = ['table_number', 'status_id'];
     protected $guarded = ['table_id'];
     protected $primaryKey = 'table_id';
     public $timestamps = false;
