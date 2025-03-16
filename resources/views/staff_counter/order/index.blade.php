@@ -41,12 +41,6 @@
     }
 }
 
-/* Tab sản phẩm */
-.nav-tabs .nav-link {
-    cursor: pointer;
-    color: #000;
-}
-
 /* Card sản phẩm */
 .item-card {
     cursor: pointer;
@@ -72,6 +66,28 @@
     padding-left: 6px;
     padding-right: 6px;
 }
+
+.custom-tabs .nav-link {
+    color: #555;
+    font-weight: 500;
+    border-radius: 8px 8px 0 0;
+    transition: all 0.3s ease-in-out;
+    padding: 6px 15px;
+}
+
+.custom-tabs .nav-link:hover {
+    color: #000;
+    background: #f8f9fa;
+    border-color: #dee2e6 #dee2e6 transparent;
+}
+
+.custom-tabs .nav-link.active {
+    color: #fff;
+    background: #0049ab;
+    border-color: #0049ab #0049ab transparent;
+    font-weight: bold;
+    box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
+}
 </style>
 @endsection
 
@@ -86,7 +102,7 @@
             </div>
 
             <!-- Các tab danh mục -->
-            <ul class="nav nav-tabs mb-3" id="itemTabs" role="tablist">
+            <ul class="nav nav-tabs custom-tabs mb-3" id="itemTabs" role="tablist">
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all"
                         type="button" role="tab">

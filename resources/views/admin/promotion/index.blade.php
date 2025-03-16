@@ -7,7 +7,7 @@
     font-weight: 500;
     border-radius: 8px 8px 0 0;
     transition: all 0.3s ease-in-out;
-    padding: 10px 15px;
+    padding: 6px 15px;
 }
 
 .custom-tabs .nav-link:hover {

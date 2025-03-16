@@ -63,6 +63,28 @@
 .order-edit-table input[type=text] {
     width: 80px;
 }
+
+.custom-tabs .nav-link {
+    color: #555;
+    font-weight: 500;
+    border-radius: 8px 8px 0 0;
+    transition: all 0.3s ease-in-out;
+    padding: 6px 15px;
+}
+
+.custom-tabs .nav-link:hover {
+    color: #000;
+    background: #f8f9fa;
+    border-color: #dee2e6 #dee2e6 transparent;
+}
+
+.custom-tabs .nav-link.active {
+    color: #fff;
+    background: #0049ab;
+    border-color: #0049ab #0049ab transparent;
+    font-weight: bold;
+    box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
+}
 </style>
 @endsection
 
@@ -72,15 +94,15 @@
     <div class="order-container">
         <!-- Đơn hàng tại chỗ -->
         <div class="dinein-column">
-            <h4 class="title2">Đơn hàng tại chỗ</h4>
-            <ul class="nav nav-tabs">
+            <h4 class="title2 mb-3">Đơn hàng tại chỗ</h4>
+            <ul class="nav nav-tabs custom-tabs">
                 <li class="nav-item">
-                    <a class="nav-link text-black {{ request('dine_in_status', 'pending_payment') == 'pending_payment' ? 'active' : '' }}"
+                    <a class="nav-link {{ request('dine_in_status', 'pending_payment') == 'pending_payment' ? 'active' : '' }}"
                         href="{{ route('staff_counter.confirmorder.index', ['dine_in_status' => 'pending_payment', 'takeaway_status' => request('takeaway_status', 'pending_payment')]) }}">Chờ
                         thanh toán</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-black {{ request('dine_in_status') == 'all' ? 'active' : '' }}"
+                    <a class="nav-link {{ request('dine_in_status') == 'all' ? 'active' : '' }}"
                         href="{{ route('staff_counter.confirmorder.index', ['dine_in_status' => 'all', 'takeaway_status' => request('takeaway_status', 'pending_payment')]) }}">Tất
                         cả</a>
                 </li>
@@ -114,26 +136,26 @@
         </div>
         <!-- Đơn hàng mang đi -->
         <div class="takeaway-column">
-            <h4 class="title2">Đơn hàng mang đi</h4>
-            <ul class="nav nav-tabs">
+            <h4 class="title2 mb-3">Đơn hàng mang đi</h4>
+            <ul class="nav nav-tabs custom-tabs">
                 @php
                 $currentTakeawayStatus = request('takeaway_status', 'pending_payment');
                 @endphp
 
                 <li class="nav-item">
-                    <a class="nav-link text-black {{ $currentTakeawayStatus == 'pending_payment' ? 'active' : '' }}"
+                    <a class="nav-link {{ $currentTakeawayStatus == 'pending_payment' ? 'active' : '' }}"
                         href="{{ route('staff_counter.confirmorder.index', ['takeaway_status' => 'pending_payment', 'dine_in_status' => request('dine_in_status', 'pending_payment')]) }}">
                         Chờ thanh toán
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-black {{ $currentTakeawayStatus == 'confirmed' ? 'active' : '' }}"
+                    <a class="nav-link {{ $currentTakeawayStatus == 'confirmed' ? 'active' : '' }}"
                         href="{{ route('staff_counter.confirmorder.index', ['takeaway_status' => 'confirmed', 'dine_in_status' => request('dine_in_status', 'pending_payment')]) }}">
                         Chờ nhận món
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-black {{ $currentTakeawayStatus == 'all' ? 'active' : '' }}"
+                    <a class="nav-link  {{ $currentTakeawayStatus == 'all' ? 'active' : '' }}"
                         href="{{ route('staff_counter.confirmorder.index', ['takeaway_status' => 'all', 'dine_in_status' => request('dine_in_status', 'confirmed')]) }}">
                         Tất cả
                     </a>
