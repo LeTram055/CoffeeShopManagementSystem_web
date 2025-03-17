@@ -5,17 +5,18 @@ body {
     
 }
 
-.feature-title {
-    font-family: 'Prata', cursive;
-    font-weight: bold;
-}
-
 #main-content {
-    padding-top: 60px;
+    padding-top: 65px;
     transition: margin-left 0.3s ease;
 }
 
-/*navbar*/
+/* Tiêu đề trang */
+.feature-title {
+    font-family: 'Prata', serif;
+    font-weight: bold;
+
+}
+
 .navbar-bg {
     background-color: #0049ab;
     position: fixed;
@@ -24,21 +25,38 @@ body {
     z-index: 100;
     color: white;
     font-weight: 600;
-    /* height: 50px; */
+    padding: 5px 15px;
+}
 
+.navbar-nav .nav-item .nav-link {
+    font-size: 18px;
+    padding: 5px 15px;
+    transition: color 0.3s ease-in-out;
+}
+
+.navbar-nav .nav-item .nav-link:hover {
+    
+    color: #fff;
+    transform: scale(1.05);
 }
 
 .navbar .dropdown-menu {
     position: absolute;
     top: 50px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
 }
 
-.dropdown-menu.dropdown-menu-end {
-    right: 0;
-    left: auto;
+.navbar-brand img {
+    height: 40px;
+    transition: transform 0.3s ease-in-out;
 }
 
-/* Khi màn hình nhỏ Dropdown mở về bên trái */
+.navbar-brand img:hover {
+    transform: scale(1.1);
+}
+
 @media (max-width: 768px) {
     .dropdown-menu.dropdown-menu-end {
         right: auto !important;
@@ -46,7 +64,6 @@ body {
         height: auto;
     }
 }
-
 
 .navbar-brand {
     font-family: 'Prata', cursive;
