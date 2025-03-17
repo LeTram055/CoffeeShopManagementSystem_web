@@ -1,26 +1,8 @@
 <?php
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StaffBaristas\MenuController;
-use App\Http\Controllers\StaffBaristas\IngredientController;
 use App\Http\Controllers\StaffBaristas\OrderController;
-
-// Route::get('staff-barista/menu-items', 
-// [MenuController::class, 'index']);
-
-// Route::get('staff-barista/categories',
-// [MenuController::class, 'getCategory']);
-
-// Route::put('staff-barista/menu-items/{id}/toggle', 
-// [MenuController::class, 'toggleAvailability']);
-
-// Route::get('staff-barista/menu-items/{id}/ingredients', 
-// [MenuController::class, 'getIngredients']);
-
-// Route::get('staff-barista/ingredients', 
-// [IngredientController::class, 'index']);
-
-// Route::put('staff-barista/ingredients/{id}/update-quantity',
-//  [IngredientController::class, 'updateQuantity']);
+use App\Http\Controllers\StaffBaristas\IngredientController;
 
 Route::get('staff_baristas/order/index',
 [OrderController::class, 'index'])
@@ -35,3 +17,20 @@ Route::post('staff_baristas/order/complete/{id}',
 [OrderController::class, 'completeOrder'])
 ->whereNumber('id')
 ->name('staff_baristas.order.complete');
+
+Route::get('/staff_baristas/menu/index', 
+[MenuController::class, 'index'])
+->name('staff_baristas.menu.index');
+
+Route::post('/staff_baristas/menu/toggle-availability/{id}', 
+[MenuController::class, 'toggleAvailability'])
+->whereNumber('id')
+->name('staff_baristas.menu.toggle-availability');
+
+Route::get('/staff_baristas/ingredient/index', 
+[IngredientController::class, 'index'])
+->name('staff_baristas.ingredient.index');
+
+Route::post('/staff_baristas/ingredient/update/{id}', 
+[IngredientController::class, 'update'])
+->name('staff_baristas.ingredient.update');
