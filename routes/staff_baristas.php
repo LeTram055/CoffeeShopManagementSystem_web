@@ -4,6 +4,7 @@ use App\Http\Controllers\StaffBaristas\MenuController;
 use App\Http\Controllers\StaffBaristas\OrderController;
 use App\Http\Controllers\StaffBaristas\IngredientController;
 
+Route::middleware(['auth', 'role:staff_barista'])->group(function () {
 Route::get('staff_baristas/order/index',
 [OrderController::class, 'index'])
 ->name('staff_baristas.order.index');
@@ -34,3 +35,5 @@ Route::get('/staff_baristas/ingredient/index',
 Route::post('/staff_baristas/ingredient/update/{id}', 
 [IngredientController::class, 'update'])
 ->name('staff_baristas.ingredient.update');
+
+});
