@@ -2,6 +2,7 @@ body {
     display: flex;
     min-height: 100vh;
     margin: 0;
+    font-family: Arial, sans-serif;
     
 }
 
@@ -14,7 +15,6 @@ body {
 .navbar-bg {
     background-color: #0049ab;
     position: fixed;
-    
     width: 100%;
     top: 0;
     z-index: 100;
@@ -39,8 +39,6 @@ body {
     position: relative;
 }
 
-
-
 /*sidebar*/
 .sidebar {
     height: 100vh;
@@ -48,7 +46,7 @@ body {
     position: fixed;
     top: 0;
     left: 0;
-    width: 230px;
+    width: 250px;
     z-index: 99;
     overflow-y: auto;
     padding-top: 50px;
@@ -59,14 +57,14 @@ body {
 
 #main-content {
     padding-top: 60px;
-    margin-left: 230px;
-    width: calc(100% - 230px);
+    margin-left: 250px;
+    width: calc(100% - 250px);
     transition: margin-left 0.3s ease;
 }
 
 @media (max-width: 768px) {
     .sidebar {
-        left: -230px; /* Ẩn sidebar ngoài màn hình */
+        left: -250px; /* Ẩn sidebar ngoài màn hình */
     }
 
     .sidebar.active {
@@ -102,28 +100,34 @@ body {
 
 /* Màu chữ mặc định của sidebar */
 .sidebar .nav-link {
-    padding: 10px 10px;
-    border-bottom: 1px solid #0049ab;
+    padding: 12px 12px;
     color: #fff; 
-    font-weight: 400;
-    transition: background-color 0.3s, color 0.3s; /* Hiệu ứng chuyển màu */
+    font-weight: 500;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebar .nav-link i {
+    margin-right: 3px;
+    min-width: 24px;
+    text-align: center;
 }
 
 /* Màu chữ khi hover */
 .sidebar .nav-link:hover {
     background-color: #0432b0; 
+    color: #fff;
 }
 
 /* Màu chữ và nền khi được chọn (active) */
 .sidebar .nav-link.active {
     background-color: #042b98; 
-    color: #fff; 
+    font-weight: bold;
 }
 
 /* Màu biểu tượng khi active */
-.sidebar .nav-link.active i {
+/* .sidebar .nav-link.active i {
     color: #fff; 
-}
+} */
 
 /* Màu nền và biểu tượng khi hover trên mục đang active */
 .sidebar .nav-link.active:hover {
@@ -131,15 +135,26 @@ body {
     
 }
 
-.nav-link i {
-    margin-right: 10px; /* Điều chỉnh khoảng cách giữa icon và chữ */
-    min-width: 20px; /* Đảm bảo icon có kích thước đồng nhất */
-    text-align: center;
+/* Dropdown trong sidebar */
+/* .sidebar .collapse {
+    background-color: #003a8c;
+    padding-left: 20px;
 }
+.sidebar .collapse .nav-link {
+    padding: 12px 20px;
+    
+}
+.sidebar .collapse .nav-link:hover {
+    background-color: #002b6e;
+} */
 
 /* Biểu tượng mở rộng */
 a.nav-link[aria-expanded="true"] .fa-caret-down {
     transform: rotate(180deg);
+    transition: transform 0.3s ease;
+}
+.nav-link[aria-expanded="false"] .fa-caret-down {
+    transform: rotate(0);
     transition: transform 0.3s ease;
 }
 
