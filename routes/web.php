@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\MenuItemController;
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\TableController;
+use App\Http\Controllers\Admin\ReportController;
 
 use App\Http\Controllers\AuthController;
 
@@ -285,7 +286,53 @@ Route::get('admin/table/edit',
 Route::post('admin/table/update',
 [TableController::class, 'update'])
 ->name('admin.table.update');
+
+//Report
+
+Route::get('admin/reports/revenue-summary-page', 
+[ReportController::class, 'revenueSummaryPage'])
+->name('admin.reports.revenueSummaryPage');
+
+Route::get('admin/reports/revenue-summary', 
+[ReportController::class, 'revenueSummary'])
+->name('admin.reports.revenueSummary');
+
+Route::get('admin/reports/revenue-by-product-page', 
+[ReportController::class, 'revenueByProductPage'])
+->name('admin.reports.revenueByProductPage');
+
+Route::get('admin/reports/revenue-by-product', 
+[ReportController::class, 'revenueByProduct'])
+->name('admin.reports.revenueByProduct');
+
+Route::get('admin/reports/revenue-by-hour-page', 
+[ReportController::class, 'revenueByHourPage'])
+->name('admin.reports.revenueByHourPage');
+
+Route::get('admin/reports/revenue-by-hour', 
+[ReportController::class, 'revenueByHour'])
+->name('admin.reports.revenueByHour');
+
+Route::get('admin/reports/net-profit-page', 
+[ReportController::class, 'netProfitPage'])
+->name('admin.reports.netProfitPage');
+
+Route::get('admin/reports/net-profit', 
+[ReportController::class, 'netProfit'])
+->name('admin.reports.netProfit');
+
+Route::get('/admin/reports/best-selling-page', 
+[ReportController::class, 'bestSellingProductsPage'])
+->name('admin.reports.bestSellingPage');
+
+Route::get('/admin/reports/best-selling', 
+[ReportController::class, 'bestSellingProducts'])
+->name('admin.reports.bestSelling');
+
+
 });
+
+
 //-----------------------------------------------------------------------------//
 //Staff Counter
 require base_path('routes/staff_counter.php');
