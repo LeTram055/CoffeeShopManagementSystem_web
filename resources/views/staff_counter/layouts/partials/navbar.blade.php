@@ -19,6 +19,9 @@
             <li class="nav-item">
                 <a class="nav-link text-white" href="{{ route('staff_counter.order.index') }}">Đặt hàng</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="{{ route('staff_counter.reports.index') }}">Thống kê</a>
+            </li>
         </ul>
         <!-- Thông tin người dùng -->
         <ul class="navbar-nav pr-3 ms-auto">

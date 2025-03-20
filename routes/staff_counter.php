@@ -3,6 +3,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StaffCounter\HomeController;
 use App\Http\Controllers\StaffCounter\OrderController;
 use App\Http\Controllers\StaffCounter\ConfirmOrderController;
+use App\Http\Controllers\StaffCounter\ReportController;
 
 //Home
 Route::middleware(['auth', 'role:staff_counter'])->group(function () {
@@ -62,5 +63,11 @@ Route::get('/staff_counter/confirmorder/print-invoice/{order_id}',
 Route::post('/staff_counter/confirmorder/mark-paid/{order_id}', [\App\Http\Controllers\StaffCounter\ConfirmOrderController::class, 'markPaid'])
     ->name('staff_counter.confirmorder.markPaid');
 
+Route::get('/staff_counter/reports/index', 
+[ReportController::class, 'index'])->name('staff_counter.reports.index');
+
+Route::get('/staff_counter/reports/get-total',
+[ReportController::class, 'getTotal'])
+->name('staff_counter.reports.getTotal');
 
 });
