@@ -62,7 +62,7 @@
             <li class="nav-item">
                 <a class="nav-link {{ request()->is('admin/promotion*') ? 'active' : '' }}"
                     href="{{ route('admin.promotion.index') }}">
-                    <i class="fa-solid fa-percent"></i> Quản lý quảng cáo
+                    <i class="fa-solid fa-percent"></i> Quản lý khuyến mãi
                 </a>
             </li>
 

@@ -13,7 +13,7 @@
     </div>
     <div class="collapse navbar-collapse m-1" id="navbarToggler">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <ul class="navbar-nav w-100 flex-column"></ul>
+
 
             <li class="nav-item">
                 <a class="nav-link text-white" href="{{ route('staff_baristas.order.index') }}">Đơn hàng</a>
