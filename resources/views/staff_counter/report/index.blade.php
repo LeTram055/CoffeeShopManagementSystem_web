@@ -11,7 +11,7 @@
             <input type="date" id="reportDate" class="form-control shadow-sm" value="{{ now()->toDateString() }}">
         </div>
         <div class="col-md-3 d-flex align-items-end">
-            <button class="btn btn-primary w-100 shadow" onclick="fetchCashierReport()">
+            <button class="btn btn-bg w-100 shadow" onclick="fetchCashierReport()">
                 Xem thống kê
             </button>
         </div>
