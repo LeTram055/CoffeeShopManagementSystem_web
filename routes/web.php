@@ -46,6 +46,7 @@ Route::get('admin/home',
 [HomeController::class, 'index'])
 ->name('admin.home.index');
 
+
 //Category
 Route::get('admin/category',
 [CategoryController::class, 'index'])
