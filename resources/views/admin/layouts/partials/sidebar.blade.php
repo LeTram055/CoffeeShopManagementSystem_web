@@ -8,7 +8,7 @@
             <li class="nav-item">
                 <a class="nav-link {{ request()->is('admin/home*') ? 'active' : '' }}"
                     href="{{ route('admin.home.index') }}">
-                    <i class="fas fa-fw fa-tachometer-alt"></i> Trang chủ
+                    <i class="fas fa-fw fa-tachometer-alt"></i> Tổng quan
                 </a>
             </li>
 
@@ -120,8 +120,7 @@
                         <li class="nav-item">
                             <a class="nav-link {{ request()->is('admin/reports/best-selling-page') ? 'active' : '' }}"
                                 href="{{ route('admin.reports.bestSellingPage') }}"><i
-                                    class="fa-solid fa-ranking-star"></i> Sản phẩm bán
-                                chạy</a>
+                                    class="fa-solid fa-ranking-star"></i> Lượt bán sản phẩm</a>
                         </li>
                     </ul>
                 </div>

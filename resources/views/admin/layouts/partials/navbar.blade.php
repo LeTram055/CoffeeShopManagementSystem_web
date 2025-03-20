@@ -1,5 +1,5 @@
 <nav class="navbar navbar-dark fixed-top flex-md-nowrap p-1 shadow navbar-bg">
-    <div>
+    <div class="ms-1">
         <!-- Nút toggle sidebar -->
         <button class="navbar-toggler d-md-none" type="button" id="sidebarToggle">
             <span class="navbar-toggler-icon"></span>

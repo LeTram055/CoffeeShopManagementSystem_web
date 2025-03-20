@@ -1,11 +1,11 @@
 @extends('admin.layouts.master')
 
 @section('title')
-Thống kê sản phẩm bán chạy
+Thống kê lượt bán sản phẩm
 @endsection
 
 @section('feature-title')
-Thống kê sản phẩm bán chạy
+Thống kê lượt bán sản phẩm
 @endsection
 
 @section('content')
@@ -82,7 +82,7 @@ async function fetchBestSellingProducts() {
             tableBody += `
                 <tr>
                     <td class="text-center">${index + 1}</td>
-                    <td>${product.item.name}</td>
+                    <td class="text-center">${product.item.name}</td>
                     <td class="text-center">${product.total_sold}</td>
                     <td class="text-center">${formatter.format(product.item.price)}</td>
                     <td class="text-center">${formatter.format(revenue)}</td>
