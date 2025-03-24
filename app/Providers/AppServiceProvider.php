@@ -23,4 +23,11 @@ class AppServiceProvider extends ServiceProvider
         date_default_timezone_set('Asia/Ho_Chi_Minh');
         Carbon::setLocale(config('app.locale'));
     }
+
+    protected $listen = [
+    'App\Events\NewMessageEvent' => [
+        'App\Listeners\NewMessageListener',
+    ],
+];
+
 }

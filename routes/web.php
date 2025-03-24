@@ -12,6 +12,8 @@ use App\Http\Controllers\Admin\MenuItemController;
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\TableController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\ChatController;
+use Illuminate\Support\Facades\Redis;
 
 use App\Http\Controllers\AuthController;
 
@@ -353,3 +355,15 @@ require base_path('routes/staff_serve.php');
 //-----------------------------------------------------------------------------//
 //Staff Baristas
 require base_path('routes/staff_baristas.php');
+
+//-----------------------------------------------------------------------------//
+//Message
+Route::get('/send-message', 
+[ChatController::class, 'sendMessage']);
+
+Route::get('/test-redis', function () {
+    Redis::publish('chat', json_encode(['message' => 'Hello từ Laravel!']));
+    return 'Message sent to Redis!';
+});
+
+require base_path('routes/channels.php');
