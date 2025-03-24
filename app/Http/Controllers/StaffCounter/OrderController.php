@@ -14,6 +14,7 @@ use App\Models\OrderItems;
 use App\Models\Tables;
 use App\Models\Customers;
 use App\Models\TableStatuses;
+use App\Events\NewOrderEvent;
 
 class OrderController extends Controller
 {
@@ -116,6 +117,8 @@ class OrderController extends Controller
                 'note'     => $itemData['note'] ?? null,
             ]);
         }
+
+        broadcast(new NewOrderEvent($order))->toOthers();
 
         return response()->json([
             'success' => true,

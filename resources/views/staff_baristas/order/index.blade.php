@@ -79,6 +79,19 @@
     @endforeach
 </div>
 
+<div class="toast-container position-fixed top-0 end-0 p-3">
+    <div id="orderToast" class="toast align-items-center text-white bg-success border-0" role="alert"
+        aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                <strong id="toastOrderId"></strong> vừa được tạo!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
 <div class="order-container">
     <!-- Danh sách đơn hàng -->
     <div class="order-list">
@@ -106,6 +119,7 @@
 
 @section('custom-scripts')
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
 <script>
 $(document).ready(function() {
     $('.order-item').click(function() {
@@ -115,6 +129,39 @@ $(document).ready(function() {
         });
     });
 
+    const socket = io("http://localhost:3000");
+
+    socket.on("connect", () => {
+        console.log("Connected to WebSocket server");
+    });
+
+    socket.on("order.created", (order) => {
+        console.log("Đơn hàng mới nhận được:", order);
+
+        let orderId = order.data.order.order_id;
+
+        let toastHtml = `
+        <div class="toast align-items-center text-white bg-success border-0" role="alert"
+            aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <strong>Đơn hàng #${orderId}</strong> vừa được tạo!
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>`;
+
+        // Thêm vào danh sách thông báo
+        $('.toast-container').append(toastHtml);
+
+        // Hiển thị Toast
+        let newToast = $('.toast-container .toast').last();
+        let toast = new bootstrap.Toast(newToast[0], {
+            autohide: false
+        });
+        toast.show();
+    });
 
 });
 </script>
