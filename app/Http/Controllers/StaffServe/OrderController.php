@@ -185,7 +185,7 @@ class OrderController extends Controller
         $payment = Payments::create([
             'order_id' => $request->order_id,
             'employee_id' => $request->employee_id,
-            'promotion_id' => $request->promotion_id,
+            'promotion_id' => $request->promotion_id == 0 ? null : $request->promotion_id,
             'discount_amount' => $request->discount_amount,
             'final_price' => $request->final_price,
             'payment_method' => $request->payment_method,
@@ -194,10 +194,12 @@ class OrderController extends Controller
         ]);
 
         $order = Orders::findOrFail($request->order_id);
+        
         $order->status = 'pending_payment';
         $order->save();
 
         $table = Tables::findOrFail($order->table_id);
+        
         $table->status_id = 1; 
         $table->save();
 
