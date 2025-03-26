@@ -292,7 +292,9 @@
                     <div class="mb-3">
                         <label for="amountReceived" class="form-label">Tiền khách đưa</label>
                         <input type="number" id="amountReceived" name="amount_received" class="form-control" required>
+                        <p id="amountError" class="text-danger" style="display: none;"></p>
                     </div>
+
                     <div class="mb-3">
                         <p>Tiền phải trả: <span id="finalAmount">0</span> VND</p>
                     </div>
@@ -752,7 +754,16 @@ $(document).ready(function() {
         let amountReceived = parseFloat($(this).val()) || 0;
         let total = parseFloat($('#paymentTotal').val()) || 0;
         let change = amountReceived - total;
-        $('#changeAmountPayment').text(new Intl.NumberFormat('vi-VN').format(change > 0 ? change : 0));
+        // Hiển thị tiền thối (nếu hợp lệ)
+        $('#changeAmountPayment').text(new Intl.NumberFormat('vi-VN').format(change >= 0 ? change : 0));
+
+        // Kiểm tra nếu số tiền khách đưa nhỏ hơn tổng tiền phải trả
+        if (amountReceived < total) {
+            $('#amountError').text('Số tiền khách đưa không đủ.').show();
+        } else {
+            $('#amountError').hide();
+        }
+
     });
 
     // Xử lý thanh toán qua form

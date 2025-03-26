@@ -12,6 +12,7 @@ use App\Models\MenuItems;
 use App\Models\OrderItems;
 use App\Models\Promotions;
 use App\Models\Payments;
+use App\Events\NewOrderEvent;
 
 class OrderController extends Controller
 {
@@ -78,6 +79,9 @@ class OrderController extends Controller
         $table->status_id = 2; 
         $table->save();
 
+        broadcast(new NewOrderEvent($order, 'created'))->toOthers();
+
+
         return response()->json(['message' => 'Cập nhật thành công']);
     }
 
@@ -125,7 +129,7 @@ class OrderController extends Controller
                     'note' => $item['note'],
                 ]);
             }
-
+            broadcast(new NewOrderEvent($order, 'updated'))->toOthers();
             return response()->json(['message' => 'Cập nhật thành công']);
             } catch (\Exception $e) {
                 return response()->json(['success' => false, 'message' => 'Lỗi khi cập nhật đơn hàng', 'error' => $e->getMessage()], 500);
@@ -143,6 +147,7 @@ class OrderController extends Controller
             $table->status_id = 1; 
             $table->save();
 
+            broadcast(new NewOrderEvent($order, 'cancelled'))->toOthers();
             return response()->json(['message' => 'Hủy đơn hàng thành công']);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Lỗi khi hủy đơn hàng', 'error' => $e->getMessage()], 500);
@@ -203,6 +208,7 @@ class OrderController extends Controller
         $table->status_id = 1; 
         $table->save();
 
+        broadcast(new NewOrderEvent($order, 'payment'))->toOthers();
         return response()->json(['message' => 'Cập nhật thành công']);
     }
 }

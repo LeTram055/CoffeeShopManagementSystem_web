@@ -6,6 +6,14 @@ Broadcast::channel('chat', function () {
     return true;
 });
 
-Broadcast::channel('orders', function () {
+Broadcast::channel('orderevent', function () {
+    return true;
+});
+
+Broadcast::channel('ordercompleted', function () {
+    return true;
+});
+
+Broadcast::channel('lowstock', function () {
     return true;
 });

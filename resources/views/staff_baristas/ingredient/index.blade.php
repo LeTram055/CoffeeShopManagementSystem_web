@@ -26,6 +26,28 @@
     text-decoration: none;
     font-weight: inherit;
 }
+
+.custom-tabs .nav-link {
+    color: #555;
+    font-weight: 500;
+    border-radius: 8px 8px 0 0;
+    transition: all 0.3s ease-in-out;
+    padding: 6px 15px;
+}
+
+.custom-tabs .nav-link:hover {
+    color: #000;
+    background: #f8f9fa;
+    border-color: #dee2e6 #dee2e6 transparent;
+}
+
+.custom-tabs .nav-link.active {
+    color: #fff;
+    background: #0049ab;
+    border-color: #0049ab #0049ab transparent;
+    font-weight: bold;
+    box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
+}
 </style>
 @endsection
 
@@ -54,93 +76,106 @@ Nguyên liệu
     <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm nguyên liệu...">
 </div>
 
-<div class="table-responsive m-3">
-    <table class="table table-striped table-hover" id="ingredientTable">
-        <thead>
-            <tr>
-                <th class="text-center">
-                    <a
-                        href="{{ route('staff_baristas.ingredient.index', ['sort_field' => 'ingredient_id', 'sort_direction' => $sortField == 'ingredient_id' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
-                        Mã nguyên liệu
-                        @if($sortField == 'ingredient_id')
-                        <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
-                        @endif
-                    </a>
-                </th>
-                <th class="text-center">
-                    <a
-                        href="{{ route('staff_baristas.ingredient.index', ['sort_field' => 'name', 'sort_direction' => $sortField == 'name' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
-                        Tên nguyên liệu
-                        @if($sortField == 'name')
-                        <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
-                        @endif
-                    </a>
-                </th>
-                <th class="text-center">
-                    <a
-                        href="{{ route('staff_baristas.ingredient.index', ['sort_field' => 'quantity', 'sort_direction' => $sortField == 'quantity' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
-                        Số lượng
-                        @if($sortField == 'quantity')
-                        <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
-                        @endif
-                    </a>
-                </th>
-                <th class="text-center">
-                    <a
-                        href="{{ route('staff_baristas.ingredient.index', ['sort_field' => 'unit', 'sort_direction' => $sortField == 'unit' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
-                        Đơn vị
-                        @if($sortField == 'unit')
-                        <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
-                        @endif
-                    </a>
-                </th>
-                <th class="text-center">
-                    <a
-                        href="{{ route('staff_baristas.ingredient.index', ['sort_field' => 'min_quantity', 'sort_direction' => $sortField == 'min_quantity' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
-                        Số lượng tối thiểu
-                        @if($sortField == 'min_quantity')
-                        <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
-                        @endif
-                    </a>
-                </th>
-                <th class="text-center">
-                    <a
-                        href="{{ route('staff_baristas.ingredient.index', ['sort_field' => 'last_updated', 'sort_direction' => $sortField == 'last_updated' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
-                        Cập nhật lần cuối
-                        @if($sortField == 'last_updated')
-                        <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
-                        @endif
-                    </a>
-                </th>
-                <th class="text-center">Hành động</th>
-            </tr>
-        </thead>
-        <tbody class="table-group-divider">
-            @foreach ($ingredients as $ingredient)
-            <tr>
-                <td class="text-center">{{ $ingredient->ingredient_id }}</td>
-                <td class="ingredient-name">{{ $ingredient->name }}</td>
-                <td class="text-center">{{ $ingredient->quantity }}</td>
-                <td class="text-center">{{ $ingredient->unit }}</td>
-                <td class="text-center">{{ $ingredient->min_quantity }}</td>
-                <td class="text-center">
-                    {{ $ingredient->last_updated ? $ingredient->last_updated->format('H:i:s d/m/Y') : 'N/A' }}</td>
+<ul class="nav nav-tabs custom-tabs m-3" id="ingredientTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button"
+            role="tab">Tất cả</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="low-stock-tab" data-bs-toggle="tab" data-bs-target="#low-stock" type="button"
+            role="tab">Trong kho thấp</button>
+    </li>
+</ul>
 
-                <td class="text-center">
-                    <button type="button" class="btn btn-link text-warning mx-2 btn-update" data-bs-toggle="modal"
-                        data-bs-target="#updateModal" data-id="{{ $ingredient->ingredient_id }}"
-                        data-name="{{ $ingredient->name }}" data-unit="{{ $ingredient->unit }}"
-                        data-min-quantity="{{ $ingredient->min_quantity }}" data-quantity="{{ $ingredient->quantity }}">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                </td>
+<div class="tab-content m-3">
+    <!-- Tab Tất cả -->
+    <div class="tab-pane fade show active" id="all" role="tabpanel">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th class="text-center">Mã nguyên liệu</th>
+                        <th class="text-center">Tên nguyên liệu</th>
+                        <th class="text-center">Số lượng</th>
+                        <th class="text-center">Đơn vị</th>
+                        <th class="text-center">Số lượng tối thiểu</th>
+                        <th class="text-center">Cập nhật lần cuối</th>
+                        <th class="text-center">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($ingredients as $ingredient)
+                    <tr>
+                        <td class="text-center">{{ $ingredient->ingredient_id }}</td>
+                        <td class="ingredient-name">{{ $ingredient->name }}</td>
+                        <td class="text-center">{{ $ingredient->quantity }}</td>
+                        <td class="text-center">{{ $ingredient->unit }}</td>
+                        <td class="text-center">{{ $ingredient->min_quantity }}</td>
+                        <td class="text-center">
+                            {{ $ingredient->last_updated ? $ingredient->last_updated->format('H:i:s d/m/Y') : 'N/A' }}
+                        </td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-link text-warning mx-2 btn-update"
+                                data-bs-toggle="modal" data-bs-target="#updateModal"
+                                data-id="{{ $ingredient->ingredient_id }}" data-name="{{ $ingredient->name }}"
+                                data-unit="{{ $ingredient->unit }}" data-min-quantity="{{ $ingredient->min_quantity }}"
+                                data-quantity="{{ $ingredient->quantity }}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div> <!-- Đóng tab Tất cả -->
 
-            </tr>
-            @endforeach
-
-        </tbody>
-    </table>
+    <!-- Tab Trong kho thấp -->
+    <div class="tab-pane fade" id="low-stock" role="tabpanel">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th class="text-center">Mã nguyên liệu</th>
+                        <th class="text-center">Tên nguyên liệu</th>
+                        <th class="text-center">Số lượng</th>
+                        <th class="text-center">Đơn vị</th>
+                        <th class="text-center">Số lượng tối thiểu</th>
+                        <th class="text-center">Cập nhật lần cuối</th>
+                        <th class="text-center">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($ingredients as $ingredient)
+                    @if ($ingredient->quantity <= $ingredient->min_quantity)
+                        <tr>
+                            <td class="text-center">{{ $ingredient->ingredient_id }}</td>
+                            <td class="ingredient-name">{{ $ingredient->name }}</td>
+                            <td class="text-center text-danger fw-bold">{{ $ingredient->quantity }}</td>
+                            <td class="text-center">{{ $ingredient->unit }}</td>
+                            <td class="text-center">{{ $ingredient->min_quantity }}</td>
+                            <td class="text-center">
+                                {{ $ingredient->last_updated ? $ingredient->last_updated->format('H:i:s d/m/Y') : 'N/A' }}
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-link text-warning mx-2 btn-update"
+                                    data-bs-toggle="modal" data-bs-target="#updateModal"
+                                    data-id="{{ $ingredient->ingredient_id }}" data-name="{{ $ingredient->name }}"
+                                    data-unit="{{ $ingredient->unit }}"
+                                    data-min-quantity="{{ $ingredient->min_quantity }}"
+                                    data-quantity="{{ $ingredient->quantity }}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        @endif
+                        @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div> <!-- Đóng tab Trong kho thấp -->
 </div>
+
 
 <!-- Modal Cập Nhật Nguyên Liệu -->
 <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">

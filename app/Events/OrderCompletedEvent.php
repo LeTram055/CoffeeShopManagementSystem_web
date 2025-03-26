@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Events;
 
 use Illuminate\Broadcasting\Channel;
@@ -9,35 +8,34 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use App\Models\Orders;
+use Illuminate\Support\Facades\Log;
 
-class NewOrderEvent implements ShouldBroadcast
+class OrderCompletedEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $order;
-    public $event_type; // Loại sự kiện (created, updated, cancelled)
 
-    public function __construct($order, $event_type)
+    public function __construct(Orders $order)
     {
         $this->order = $order;
-        $this->event_type = $event_type;
     }
 
     public function broadcastOn()
     {
-        return new Channel('orderevent');
-    }
-
-    public function broadcastWith()
-    {
-        return [
-            'order' => $this->order,
-            'event_type' => $this->event_type,
-        ];
+        return new Channel('ordercompleted');
     }
 
     public function broadcastAs()
     {
-        return 'order.event';
+        return 'order.completed';
     }
+
+    public function broadcastWith()
+    {
+        
+        return ['order' => $this->order];
+    }
+
 }

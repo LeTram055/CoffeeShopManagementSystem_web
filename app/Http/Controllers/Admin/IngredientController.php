@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
+use App\Events\LowStockEvent;
 
 use App\Models\Ingredients;
 use App\Models\IngredientLogs;
@@ -192,6 +193,10 @@ class IngredientController extends Controller
             $ingredientLog->changed_at = now();
              $ingredientLog->save();
         
+        }
+
+        if ($ingredient->quantity <= $ingredient->min_quantity) {
+            broadcast(new LowStockEvent($ingredient))->toOthers();
         }
 
         Session::flash('alert-success', 'Cập nhật nguyên liệu thành công');

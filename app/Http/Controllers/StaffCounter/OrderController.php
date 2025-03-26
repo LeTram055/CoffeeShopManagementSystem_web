@@ -118,7 +118,7 @@ class OrderController extends Controller
             ]);
         }
 
-        broadcast(new NewOrderEvent($order))->toOthers();
+        broadcast(new NewOrderEvent($order, 'created'))->toOthers();
 
         return response()->json([
             'success' => true,

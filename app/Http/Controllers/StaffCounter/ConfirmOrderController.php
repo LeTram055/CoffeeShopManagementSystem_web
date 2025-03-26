@@ -14,6 +14,7 @@ use App\Models\TableStatuses;
 use App\Models\Payments;
 use App\Models\Promotions;
 use App\Models\MenuItems;
+use App\Events\NewOrderEvent;
 
 class ConfirmOrderController extends Controller
 {
@@ -92,6 +93,8 @@ class ConfirmOrderController extends Controller
         $order->total_price = $total;
         $order->save();
 
+        broadcast(new NewOrderEvent($order, 'updated'))->toOthers();
+
         return response()->json(['message' => 'Đơn hàng đã được cập nhật']);
     }
     public function showMenuItem()
@@ -111,6 +114,8 @@ class ConfirmOrderController extends Controller
         
         $order->status = 'cancelled';
         $order->save();
+
+        broadcast(new NewOrderEvent($order, 'cancelled'))->toOthers();
 
         return response()->json(['message' => 'Đơn hàng đã được hủy']);
     }
@@ -151,9 +156,9 @@ class ConfirmOrderController extends Controller
         $order = Orders::findOrFail($request->order_id);
         
         // Kiểm tra số tiền khách đưa
-        if ($request->amount_received < $order->total_price) {
-            return response()->json(['message' => 'Số tiền khách đưa không đủ'], 400);
-        }
+        // if ($request->amount_received < $order->total_price) {
+        //     return response()->json(['message' => 'Số tiền khách đưa không đủ'], 400);
+        // }
 
         // Tính toán số tiền khuyến mãi nếu có
         $discountAmount = 0;

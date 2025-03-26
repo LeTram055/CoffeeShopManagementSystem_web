@@ -9,6 +9,10 @@ use App\Models\Ingredients;
 use App\Models\IngredientLogs;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use App\Events\OrderCompletedEvent;
+use Illuminate\Support\Facades\Log; 
+use App\Events\NewOrderEvent;
+use App\Events\LowStockEvent;
 class OrderController extends Controller
 {
     public function index() {
@@ -61,9 +65,19 @@ class OrderController extends Controller
                         'changed_at' => now(),
                     ]);
                 }
+                if ($stock->quantity <= $stock->min_quantity) {
+                    broadcast(new LowStockEvent($stock))->toOthers();
+                    
+                }
             }
         }
 
+        if($order->order_type == 'dine_in') {
+            broadcast(new OrderCompletedEvent($order))->toOthers();
+        } else {
+            broadcast(new NewOrderEvent($order, 'completed'))->toOthers();
+        }
+        
         return response()->json(['message' => 'Đơn hàng đã hoàn thành!'], 200);
     }
 }

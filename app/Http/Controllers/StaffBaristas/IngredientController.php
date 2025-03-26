@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Ingredients;
 use App\Models\IngredientLogs;
 use Illuminate\Support\Facades\Auth;
+use App\Events\LowStockEvent;
+use Illuminate\Support\Facades\Log;
 
 
 class IngredientController extends Controller
@@ -79,6 +81,13 @@ class IngredientController extends Controller
             'changed_at' => now()
         ]);
 
+        // Kiểm tra số lượng nguyên liệu
+        if ($ingredient->quantity <= $ingredient->min_quantity) {
+            // Gửi thông báo
+            
+            broadcast(new LowStockEvent($ingredient))->toOthers();
+            Log::info("LowStockEvent đã được phát cho: " . $ingredient->name);
+        }
         return redirect()->route('staff_baristas.ingredient.index')->with('alert-success', 'Cập nhật nguyên liệu thành công.');
 
     }
