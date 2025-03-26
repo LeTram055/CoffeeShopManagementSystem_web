@@ -33,6 +33,15 @@
                     <span id="totalRevenue" class="text-success fw-bold">0 VND</span>
                 </div>
                 <div class="list-group-item d-flex justify-content-between">
+                    <span class="fw-bold">Số đơn hàng bị hủy</span>
+                    <span id="totalCanceledOrders" class="fw-bold">0</span>
+                </div>
+                <div class="list-group-item d-flex justify-content-between">
+                    <span class="fw-bold">Tổng tiền đơn hàng bị hủy</span>
+                    <span id="totalCanceledRevenue" class="fw-bold">0 VND</span>
+                </div>
+
+                <div class="list-group-item d-flex justify-content-between">
                     <span class="fw-bold">Tổng giảm giá</span>
                     <span id="totalDiscount" class="text-danger fw-bold">0 VND</span>
                 </div>
@@ -44,7 +53,7 @@
                     <span class="fw-bold">Chuyển khoản nhận</span>
                     <span id="totalBankReceived" class="text-primary fw-bold">0 VND</span>
                 </div>
-                <div class="list-group-item d-flex justify-content-between bg-warning-subtle">
+                <div class="list-group-item d-flex justify-content-between bg-primary-subtle">
                     <span class="fw-bold text-danger">Tổng thực nhận (đã trừ tiền thối)</span>
                     <span id="totalActualReceived" class="text-danger fw-bold">0 VND</span>
                 </div>
@@ -76,6 +85,8 @@ async function fetchCashierReport() {
         document.getElementById("totalCashReceived").innerText = formatCurrency(data.totalCashReceived);
         document.getElementById("totalBankReceived").innerText = formatCurrency(data.totalBankReceived);
         document.getElementById("totalActualReceived").innerText = formatCurrency(data.totalActualReceived);
+        document.getElementById("totalCanceledOrders").innerText = data.totalCanceledOrders;
+        document.getElementById("totalCanceledRevenue").innerText = formatCurrency(data.totalCanceledRevenue);
     } catch (error) {
         console.error("Lỗi khi tải dữ liệu thống kê:", error);
         alert("Không thể tải dữ liệu. Vui lòng thử lại!");

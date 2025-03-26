@@ -28,6 +28,14 @@ class ReportController extends Controller
         // Tổng số tiền giảm giá từ khuyến mãi
         $totalDiscount = Payments::whereDate('payment_time', $date)->sum('discount_amount');
 
+        // Đơn hàng bị hủy
+        $totalCanceledOrders = Orders::whereDate('created_at', $date)
+            ->where('status', 'cancelled')
+            ->count();
+        $totalCanceledRevenue = Orders::whereDate('created_at', $date)
+            ->where('status', 'cancelled')
+            ->sum('total_price');
+        
         // Thực nhận tiền mặt
         $totalCashReceived = Payments::whereDate('payment_time', $date)
             ->where('payment_method', 'cash')
@@ -58,6 +66,8 @@ class ReportController extends Controller
             'totalCashReceived' => $totalCashReceived,
             'totalBankReceived' => $totalBankReceived,
             'totalActualReceived' => $totalActualReceived,
+            'totalCanceledOrders' => $totalCanceledOrders,
+            'totalCanceledRevenue' => $totalCanceledRevenue,
         ]);
     }
 }
