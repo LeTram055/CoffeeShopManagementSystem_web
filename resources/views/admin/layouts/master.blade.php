@@ -47,18 +47,7 @@
                 <div
                     class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
                     <h1 class="h2 feature-title">@yield('feature-title')</h1>
-                    <div class="toast-container position-fixed top-0 end-0 p-3">
-                        <div id="orderToast" class="toast align-items-center text-white bg-success border-0"
-                            role="alert" aria-live="assertive" aria-atomic="true">
-                            <div class="d-flex">
-                                <div class="toast-body">
-                                    <strong id="toastOrderId"></strong> vừa được tạo!
-                                </div>
-                                <button type="button" class="btn-close btn-close-white me-2 m-auto"
-                                    data-bs-dismiss="toast" aria-label="Close"></button>
-                            </div>
-                        </div>
-                    </div>
+
 
                 </div>
                 @yield('content')
@@ -76,7 +65,7 @@
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
     </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+
     <script src="{{ asset('js/admin/script.js') }}"></script>
 
     <!-- Các custom script dành riêng cho từng view -->

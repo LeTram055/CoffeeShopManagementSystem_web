@@ -47,6 +47,19 @@ Quản lý nguyên liệu
     @endforeach
 </div>
 
+<div class="toast-container position-fixed top-0 end-0 p-3">
+    <div id="orderToast" class="toast align-items-center text-white bg-success border-0" role="alert"
+        aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                <strong id="toastOrderId"></strong> vừa được tạo!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
 <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
     <div class="d-flex gap-2">
         <a href="{{ route('admin.ingredient.create') }}" class="btn btn-outline-primary">
@@ -70,7 +83,7 @@ Quản lý nguyên liệu
     </form>
 </div>
 
-<ul class="nav nav-tabs custom-tabs m-3" id="ingredientTabs" role="tablist">
+<ul class="nav nav-tabs custom-tabs my-3" id="ingredientTabs" role="tablist">
     <li class="nav-item" role="presentation">
         <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button"
             role="tab">Tất cả</button>
@@ -80,7 +93,7 @@ Quản lý nguyên liệu
             role="tab">Trong kho thấp</button>
     </li>
 </ul>
-<div class="tab-content m-3">
+<div class="tab-content">
     <!-- Tab Tất cả -->
     <div class="tab-pane fade show active" id="all" role="tabpanel">
         <div class="table-responsive">
@@ -279,52 +292,90 @@ Quản lý nguyên liệu
             </table>
         </div>
     </div>
+</div>
 
-
-    <!-- Modal -->
-    <div class="modal fade" id="delete-confirm" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteConfirmLabel">Xác nhận xóa</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body"></div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="button" class="btn btn-danger" id="confirm-delete">Xóa</button>
-                </div>
+<!-- Modal -->
+<div class="modal fade" id="delete-confirm" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmLabel">Xác nhận xóa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-danger" id="confirm-delete">Xóa</button>
             </div>
         </div>
     </div>
-    @endsection
+</div>
+@endsection
 
-    @section('custom-scripts')
-    <script>
-    $(document).ready(function() {
-        let formToSubmit;
+@section('custom-scripts')
+<script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+<script>
+$(document).ready(function() {
+    let formToSubmit;
 
-        $('.delete-ingredient-btn').on('click', function(e) {
-            e.preventDefault();
-            formToSubmit = $(this).closest('form');
-            const ingredientName = $(this).closest('tr').find('td').eq(1).text();
+    $('.delete-ingredient-btn').on('click', function(e) {
+        e.preventDefault();
+        formToSubmit = $(this).closest('form');
+        const ingredientName = $(this).closest('tr').find('td').eq(1).text();
 
-            if (ingredientName.length > 0) {
-                $('.modal-body').html(`Bạn có muốn xóa nguyên liệu "${ingredientName}" không?`);
-            }
+        if (ingredientName.length > 0) {
+            $('.modal-body').html(`Bạn có muốn xóa nguyên liệu "${ingredientName}" không?`);
+        }
 
-            $('#delete-confirm').modal('show');
-        });
-
-        $('#confirm-delete').on('click', function() {
-            formToSubmit.submit();
-        });
-
-        // Tự động đóng thông báo sau 5 giây
-        setTimeout(function() {
-            $('.flash-message .alert').fadeOut('slow');
-        }, 5000);
+        $('#delete-confirm').modal('show');
     });
-    </script>
-    @endsection
+
+    $('#confirm-delete').on('click', function() {
+        formToSubmit.submit();
+    });
+
+    // Tự động đóng thông báo sau 5 giây
+    setTimeout(function() {
+        $('.flash-message .alert').fadeOut('slow');
+    }, 5000);
+});
+
+
+$(document).ready(function() {
+    const socket = io("http://localhost:3000");
+
+    socket.on("connect", () => {
+        console.log("Connected to WebSocket server");
+    });
+
+    socket.on("lowstock.event", (ingredient) => {
+
+        showToast(
+            `Nguyên liệu "${ingredient.data.name}" chỉ còn ${ingredient.data.quantity}, dưới mức tối thiểu (${ingredient.data.min_quantity})!`,
+            "bg-danger"
+        );
+    });
+
+    // Hàm hiển thị Toast
+    function showToast(message, bgClass) {
+        let toastHtml = `
+            <div class="toast align-items-center text-white ${bgClass} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">${message}</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>`;
+
+        $('.toast-container').append(toastHtml);
+        let newToast = $('.toast-container .toast').last();
+        let toast = new bootstrap.Toast(newToast[0], {
+            autohide: false
+        });
+        toast.show();
+    }
+
+
+});
+</script>
+@endsection
