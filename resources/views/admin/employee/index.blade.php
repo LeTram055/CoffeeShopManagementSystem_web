@@ -123,6 +123,15 @@ Quản lý nhân viên
                 </th>
                 <th class="text-center">
                     <a
+                        href="{{ route('admin.employee.index', ['sort_field' => 'hourly_rate', 'sort_direction' => $sortField == 'hourly_rate' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                        Lương theo giờ
+                        @if($sortField == 'hourly_rate')
+                        <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
+                        @endif
+                    </a>
+                </th>
+                <th class="text-center">
+                    <a
                         href="{{ route('admin.employee.index', ['sort_field' => 'status', 'sort_direction' => $sortField == 'status' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
                         Trạng thái
                         @if($sortField == 'status')
@@ -156,6 +165,7 @@ Quản lý nhân viên
                 <td>{{ $employee->email }}</td>
                 <td>{{ $employee->address }}</td>
                 <td class="text-center">{{ $employee->start_date->format('d/m/Y') }}</td>
+                <td class="text-center">{{ $employee->hourly_rate }}</td>
                 <td class="text-center">
                     @php
                     $statuses = [

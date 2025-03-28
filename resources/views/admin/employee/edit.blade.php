@@ -91,6 +91,15 @@ Chỉnh sửa nhân viên
             </div>
 
             <div class="form-group mb-3">
+                <label for="hourly_rate" class="form-label fw-semibold">Lương theo giờ:</label>
+                <input type="number" class="form-control rounded-2" id="hourly_rate" name="hourly_rate"
+                    placeholder="Nhập lương theo giờ" value="{{ old('hourly_rate', $employee->hourly_rate) }}">
+                @error('hourly_rate')
+                <small class="form-text text-danger">{{ $message }}</small>
+                @enderror
+            </div>
+
+            <div class="form-group mb-3">
                 <label for="status" class="form-label fw-semibold">Trạng thái:</label>
                 <select class="form-control rounded-2" id="status" name="status">
                     <option value="active" {{ old('status', $employee->status) == 'active' ? 'selected' : '' }}>Hoạt
