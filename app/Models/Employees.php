@@ -20,6 +20,7 @@ class Employees extends Authenticatable
         'email',
         'address',
         'start_date',
+        'hourly_rate'
     ];
     protected $guarded = ['employee_id'];
     protected $primaryKey = 'employee_id';
@@ -38,5 +39,20 @@ class Employees extends Authenticatable
     public function payments()
     {
         return $this->hasMany(Payments::class, 'employee_id', 'employee_id');
+    }
+
+    public function workSchedules()
+    {
+        return $this->hasMany(WorkSchedules::class, 'employee_id');
+    }
+
+    public function salaries()
+    {
+        return $this->hasMany(Salaries::class, 'employee_id');
+    }
+
+    public function bonusesPenalties()
+    {
+        return $this->hasMany(BonusesPenalties::class, 'employee_id');
     }
 }
