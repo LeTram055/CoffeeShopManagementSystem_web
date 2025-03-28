@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\MenuItemController;
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\TableController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\ShiftController;
 use App\Http\Controllers\ChatController;
 use Illuminate\Support\Facades\Redis;
 
@@ -332,6 +333,35 @@ Route::get('/admin/reports/best-selling',
 [ReportController::class, 'bestSellingProducts'])
 ->name('admin.reports.bestSelling');
 
+
+//Shift
+Route::get('admin/shift',
+[ShiftController::class, 'index'])
+->name('admin.shift.index');
+
+Route::get('admin/shift/export-excel',
+[ShiftController::class, 'exportExcel'])
+->name('admin.shift.exportExcel');
+
+Route::post('admin/shift/delete',
+[ShiftController::class, 'destroy'])
+->name('admin.shift.delete');
+
+Route::get('admin/shift/create',
+[ShiftController::class, 'create'])
+->name('admin.shift.create');
+
+Route::post('admin/shift/save',
+[ShiftController::class, 'save'])
+->name('admin.shift.save');
+
+Route::get('admin/shift/edit',
+[ShiftController::class, 'edit'])
+->name('admin.shift.edit');
+
+Route::post('admin/shift/update',
+[ShiftController::class, 'update'])
+->name('admin.shift.update');
 
 });
 

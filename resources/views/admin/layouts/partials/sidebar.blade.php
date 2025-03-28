@@ -88,6 +88,13 @@
             </li>
 
             <li class="nav-item">
+                <a class="nav-link {{ request()->is('admin/shift*') ? 'active' : '' }}"
+                    href="{{ route('admin.shift.index') }}">
+                    <i class="fa-solid fa-users"></i> Quản lý ca làm việc
+                </a>
+            </li>
+
+            <li class="nav-item">
                 <a class="nav-link {{ request()->is('admin/reports*') ? 'active' : '' }}" data-bs-toggle="collapse"
                     href="#reportMenu" role="button" aria-expanded="false">
                     <i class="fas fa-fw fa-chart-line"></i> Thống kê
