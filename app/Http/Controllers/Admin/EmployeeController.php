@@ -27,7 +27,8 @@ class EmployeeController extends Controller
                   ->orWhere('address', 'like', '%' . $searchTerm . '%')
                   ->orWhere('username', 'like', '%' . $searchTerm . '%')
                   ->orWhere('role', 'like', '%' . $searchTerm . '%')
-                  ->orWhere('status', 'like', '%' . $searchTerm . '%');
+                  ->orWhere('status', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('hourly_rate', 'like', '%' . $searchTerm . '%');
 
                   if (preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $searchTerm)) { 
                     // Nếu nhập ngày theo định dạng DD/MM/YYYY
@@ -64,6 +65,8 @@ class EmployeeController extends Controller
         elseif ($sortField == 'employee_id') {
             $query->orderByRaw("CAST($sortField AS DECIMAL) $sortDirection");
         } elseif ($sortField == 'phone_number') {
+            $query->orderByRaw("CAST($sortField AS DECIMAL) $sortDirection");
+        } elseif ($sortField == 'hourly_rate') {
             $query->orderByRaw("CAST($sortField AS DECIMAL) $sortDirection");
         } elseif ($sortField == 'start_date') {
             $query->orderByRaw("CAST($sortField AS DATE) $sortDirection");
@@ -113,6 +116,7 @@ class EmployeeController extends Controller
             'phone_number' => 'required|numeric|digits_between:10,11|unique:employees,phone_number',
             'address' => 'nullable|string',
             'start_date' => 'required|date',
+            'hourly_rate' => 'required|min:0'
         ], [
             'name.required' => 'Vui lòng nhập tên nhân viên',
             'username.required' => 'Vui lòng nhập tên đăng nhập',
@@ -128,6 +132,8 @@ class EmployeeController extends Controller
             'phone_number.unique' => 'Số điện thoại đã tồn tại',
             'start_date.required' => 'Vui lòng nhập ngày bắt đầu',
             'start_date.date' => 'Ngày bắt đầu không hợp lệ',
+            'hourly_rate' => 'Vui lòng nhập lương theo giờ',
+            'hourly_rate.min' => 'Lương phải lớn hơn 0'
         ]);
 
         
@@ -142,6 +148,7 @@ class EmployeeController extends Controller
         $employee->phone_number = $request->phone_number;
         $employee->address = $request->address;
         $employee->start_date = $request->start_date;
+        $employee->hourly_rate = $request->hourly_rate;
         $employee->save();
 
         Session::flash('alert-success', 'Thêm nhân viên thành công');
@@ -168,6 +175,7 @@ class EmployeeController extends Controller
             'phone_number' => 'required|numeric|digits_between:10,11|unique:employees,phone_number,' . $employee->employee_id . ',employee_id',
             'address' => 'nullable|string',
             'start_date' => 'required|date',
+            'hourly_rate' => 'required|min:0'
         ],
         [
             'name.required' => 'Vui lòng nhập tên nhân viên',
@@ -183,6 +191,8 @@ class EmployeeController extends Controller
             'phone_number.unique' => 'Số điện thoại đã tồn tại',
             'start_date.required' => 'Vui lòng nhập ngày bắt đầu',
             'start_date.date' => 'Ngày bắt đầu không hợp lệ',
+            'hourly_rate' => 'Vui lòng nhập lương theo giờ',
+            'hourly_rate.min' => 'Lương phải lớn hơn 0'
         ]
     );
 
@@ -194,6 +204,7 @@ class EmployeeController extends Controller
         $employee->phone_number = $request->phone_number;
         $employee->address = $request->address;
         $employee->start_date = $request->start_date;
+        $employee->hourly_rate = $request->hourly_rate;
         $employee->save();
 
         Session::flash('alert-success', 'Cập nhật nhân viên thành công');
