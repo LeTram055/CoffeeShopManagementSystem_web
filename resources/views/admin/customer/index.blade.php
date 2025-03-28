@@ -33,7 +33,7 @@ Quản lý khách hàng
     </div>
     <form method="GET" action="{{ route('admin.customer.index') }}" class="d-flex" style="max-width: 50%;">
         <div class="input-group">
-            <input type="text" name="search" class="form-control" placeholder="Tìm kiếm danh mục..."
+            <input type="text" name="search" class="form-control" placeholder="Tìm kiếm khách hàng..."
                 value="{{ request('search') }}">
             <button class="btn btn-bg" type="submit">
                 <i class="fas fa-search"></i>

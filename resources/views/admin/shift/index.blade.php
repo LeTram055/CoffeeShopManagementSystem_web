@@ -35,7 +35,7 @@ Quản lý ca làm việc
     </div>
     <form method="GET" action="{{ route('admin.shift.index') }}" class="d-flex" style="max-width: 50%;">
         <div class="input-group">
-            <input type="text" name="search" class="form-control" placeholder="Tìm kiếm danh mục..."
+            <input type="text" name="search" class="form-control" placeholder="Tìm kiếm ca làm việc..."
                 value="{{ request('search') }}">
             <button class="btn btn-bg" type="submit">
                 <i class="fas fa-search"></i>
