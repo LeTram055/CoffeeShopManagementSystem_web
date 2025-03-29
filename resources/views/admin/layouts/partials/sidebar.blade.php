@@ -95,6 +95,20 @@
             </li>
 
             <li class="nav-item">
+                <a class="nav-link {{ request()->is('admin/workschedule*') ? 'active' : '' }}"
+                    href="{{ route('admin.workschedule.index') }}">
+                    <i class="fa-solid fa-users"></i> Quản lý lịch làm việc
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link {{ request()->is('admin/bonuspenalty*') ? 'active' : '' }}"
+                    href="{{ route('admin.bonuspenalty.index') }}">
+                    <i class="fa-solid fa-users"></i> Quản lý thưởng - phạt
+                </a>
+            </li>
+
+            <li class="nav-item">
                 <a class="nav-link {{ request()->is('admin/reports*') ? 'active' : '' }}" data-bs-toggle="collapse"
                     href="#reportMenu" role="button" aria-expanded="false">
                     <i class="fas fa-fw fa-chart-line"></i> Thống kê
