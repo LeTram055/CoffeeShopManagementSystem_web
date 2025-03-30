@@ -29,19 +29,29 @@ Route::get('/staff_counter', [AuthController::class, 'showLoginForm']);
 Route::get('login', 
 [AuthController::class, 'showLoginForm'])
 ->name('login');
+
 Route::post('login', 
 [AuthController::class, 'login'])
 ->name('login.post');
+
 Route::post('logout',
  [AuthController::class, 'logout'])
-->name('logout');
+->name('logout')
+->middleware('auth');
+
 Route::get('/password/change',
  [AuthController::class, 'showChangePasswordForm'])
 ->name('password.change')
 ->middleware('auth');
+
 Route::post('/password/change', 
 [AuthController::class, 'updatePassword'])
 ->name('password.update')
+->middleware('auth');
+
+Route::get('profile', 
+[AuthController::class, 'profile'])
+->name('profile')
 ->middleware('auth');
 
 

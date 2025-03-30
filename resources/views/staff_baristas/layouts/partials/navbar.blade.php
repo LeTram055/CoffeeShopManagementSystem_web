@@ -36,6 +36,7 @@
                     Xin chào, {{ Auth::user()->name }}
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="{{ route('profile') }}">Thông tin</a></li>
                     <li><a class="dropdown-item" href="{{ route('password.change') }}">Đổi mật khẩu</a></li>
                     <li>
                         <form method="POST" action="{{ route('logout') }}">

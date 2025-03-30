@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Employees;
 use Illuminate\Support\Facades\Session;
+use App\Models\WorkSchedules;
+use App\Models\BonusesPenalties;
+use App\Models\Salaries;
 
 class AuthController extends Controller
 {
@@ -105,4 +108,38 @@ class AuthController extends Controller
 
         return redirect()->route('login')->with('alert-info', 'Mật khẩu đã được thay đổi thành công. Vui lòng đăng nhập lại.');
     }
+
+    public function profile(Request $request)
+    {
+        // Lấy thông tin nhân viên đang đăng nhập
+        $employee = $request->user(); 
+
+        // Lấy tháng và năm từ request
+        $month = $request->input('month', date('n')); // Mặc định là tháng hiện tại
+        $year = $request->input('year', date('Y')); // Mặc định là năm hiện tại
+
+        // Lấy các ca làm việc của nhân viên cho tháng và năm đã chọn
+        $workSchedules = WorkSchedules::with('shift')
+            ->where('employee_id', $employee->employee_id)
+            ->whereMonth('work_date', $month)
+            ->whereYear('work_date', $year)
+            ->get();
+
+        // Lấy các thưởng/ phạt của nhân viên cho tháng và năm đã chọn
+        $bonusesPenalties = BonusesPenalties::where('employee_id', $employee->employee_id)
+            ->whereMonth('date', $month)
+            ->whereYear('date', $year)
+            ->get();
+
+        // Lấy lương của nhân viên cho tháng và năm đã chọn
+        $salaries = Salaries::where('employee_id', $employee->employee_id)
+            ->where('month', $month)
+            ->where('year', $year)
+            ->orderBy('year', 'desc')
+            ->orderBy('month', 'desc')
+            ->get();
+
+        return view('auth.profile', compact('employee', 'workSchedules', 'bonusesPenalties', 'salaries', 'month', 'year'));
+    }
+    
 }
