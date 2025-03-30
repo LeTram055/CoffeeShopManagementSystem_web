@@ -1,5 +1,16 @@
 @php
-$layout = Auth::user()->role === 'admin' ? 'admin.layouts.master' : 'staff_counter.layouts.master';
+$role = Auth::user()->role;
+switch ($role) {
+case 'admin':
+$layout = 'admin.layouts.master';
+break;
+case 'staff_counter':
+$layout = 'staff_counter.layouts.master';
+break;
+default:
+$layout = 'staff_baristas.layouts.master';
+break;
+}
 @endphp
 
 @extends($layout)
