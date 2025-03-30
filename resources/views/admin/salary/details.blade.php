@@ -23,25 +23,27 @@
     </div>
 </div>
 
-<h5 class="mb-4">Chi tiết ca làm việc</h5>
+<h5 class="mb-4">Chi tiết lịch làm việc</h5>
 <div class="table-responsive mb-4">
     <table class="table table-striped">
         <thead class="table-light">
             <tr>
-                <th>Ngày</th>
-                <th>Ca làm</th>
+                <th class="text-center">Ngày</th>
+                <th class="text-center">Ca làm</th>
 
-                <th>Số giờ làm</th>
+                <th class="text-center">Số giờ làm</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($salary->employee->workSchedules as $schedule)
             <tr>
-                <td>{{ $schedule->work_date->format('d/m/Y') }}</td>
-                <td>{{ $schedule->shift->name ($schedule->shift->start_time->format('H:i') - $schedule->shift->end_time->format('H:i')) }}
-                </td>
+                <td class="text-center">{{ $schedule->work_date->format('d/m/Y') }}</td>
+                <td class="text-center">
+                    {{ $schedule->shift->name }} ({{ $schedule->shift->start_time->format('H:i') }} -
+                    {{ $schedule->shift->end_time->format('H:i') }})
+                </td class="text-center">
 
-                <td>{{ $schedule->work_hours }}</td>
+                <td class="text-center">{{ $schedule->work_hours }}</td>
             </tr>
             @endforeach
         </tbody>
@@ -53,17 +55,17 @@
     <table class="table table-striped">
         <thead class="table-light">
             <tr>
-                <th>Lý do</th>
-                <th>Số tiền</th>
-                <th>Ngày</th>
+                <th class="text-center">Lý do</th>
+                <th class="text-center">Số tiền</th>
+                <th class="text-center">Ngày</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($salary->employee->bonusesPenalties as $bonusPenalty)
             <tr>
-                <td>{{ $bonusPenalty->reason }}</td>
-                <td>{{ number_format($bonusPenalty->amount, 0, ',', '.') }} VNĐ</td>
-                <td>{{ $bonusPenalty->date->format('d/m/Y') }}</td>
+                <td class="text-center">{{ $bonusPenalty->reason }}</td>
+                <td class="text-center">{{ number_format($bonusPenalty->amount, 0, ',', '.') }} VNĐ</td>
+                <td class="text-center">{{ $bonusPenalty->date->format('d/m/Y') }}</td>
             </tr>
             @endforeach
         </tbody>
