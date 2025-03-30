@@ -105,7 +105,9 @@ return 'Không xác định';
                 @foreach ($workSchedules as $schedule)
                 <tr>
                     <td class="text-center">{{ $schedule->work_date->format('d/m/Y') }}</td>
-                    <td class="text-center">{{ $schedule->shift->name }}</td>
+                    <td class="text-center">{{ $schedule->shift->name }}
+                        ({{ $schedule->shift->start_time->format('H:i') }} -
+                        {{ $schedule->shift->end_time->format('H:i') }})</td>
                     <td class="text-center">{{ getStatusInVietnamese($schedule->status) }}</td>
                 </tr>
                 @endforeach
