@@ -13,6 +13,9 @@ use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\TableController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\ShiftController;
+use App\Http\Controllers\Admin\BonusPenaltyController;
+use App\Http\Controllers\Admin\SalaryController;
+use App\Http\Controllers\Admin\WorkScheduleController;
 use App\Http\Controllers\ChatController;
 use Illuminate\Support\Facades\Redis;
 
@@ -363,8 +366,99 @@ Route::post('admin/shift/update',
 [ShiftController::class, 'update'])
 ->name('admin.shift.update');
 
+//Work Schedules
+Route::get('admin/workschedule',
+[WorkScheduleController::class, 'index'])
+->name('admin.workschedule.index');
+
+Route::get('admin/workschedule/export-excel',
+[WorkScheduleController::class, 'exportExcel'])
+->name('admin.workschedule.exportExcel');
+
+Route::post('admin/workschedule/delete',
+[WorkScheduleController::class, 'destroy'])
+->name('admin.workschedule.delete');
+
+Route::get('admin/workschedule/create',
+[WorkScheduleController::class, 'create'])
+->name('admin.workschedule.create');
+
+Route::post('admin/workschedule/save',
+[WorkScheduleController::class, 'save'])
+->name('admin.workschedule.save');
+
+Route::get('admin/workschedule/edit',
+[WorkScheduleController::class, 'edit'])
+->name('admin.workschedule.edit');
+
+Route::post('admin/workschedule/update',
+[WorkScheduleController::class, 'update'])
+->name('admin.workschedule.update');
 });
 
+
+
+//Bonus Penalty
+Route::get('admin/bonuspenalty',
+[BonusPenaltyController::class, 'index'])
+->name('admin.bonuspenalty.index');
+
+Route::get('admin/bonuspenalty/export-excel',
+[BonusPenaltyController::class, 'exportExcel'])
+->name('admin.bonuspenalty.exportExcel');
+
+Route::post('admin/bonuspenalty/delete',
+[BonusPenaltyController::class, 'destroy'])
+->name('admin.bonuspenalty.delete');
+
+Route::get('admin/bonuspenalty/create',
+[BonusPenaltyController::class, 'create'])
+->name('admin.bonuspenalty.create');
+
+Route::post('admin/bonuspenalty/save',
+[BonusPenaltyController::class, 'save'])
+->name('admin.bonuspenalty.save');
+
+Route::get('admin/bonuspenalty/edit',
+[BonusPenaltyController::class, 'edit'])
+->name('admin.bonuspenalty.edit');
+
+Route::post('admin/bonuspenalty/update',
+[BonusPenaltyController::class, 'update'])
+->name('admin.bonuspenalty.update');
+
+//Salary
+Route::get('admin/salary',
+[SalaryController::class, 'index'])
+->name('admin.salary.index');
+
+Route::get('admin/salary/export-excel',
+[SalaryController::class, 'exportExcel'])
+->name('admin.salary.exportExcel');
+
+Route::post('admin/salary/delete',
+[SalaryController::class, 'destroy'])
+->name('admin.salary.delete');
+
+Route::get('admin/salary/create',
+[SalaryController::class, 'create'])
+->name('admin.salary.create');
+
+Route::post('admin/salary/save',
+[SalaryController::class, 'save'])
+->name('admin.salary.save');
+
+Route::get('admin/salary/edit',
+[SalaryController::class, 'edit'])
+->name('admin.salary.edit');
+
+Route::post('admin/salary/update',
+[SalaryController::class, 'update'])
+->name('admin.salary.update');
+
+Route::get('/admin/salary/{salary_id}',
+ [SalaryController::class, 'showDetails'])
+->name('admin.salary.details');
 
 //-----------------------------------------------------------------------------//
 //Staff Counter

@@ -90,21 +90,28 @@
             <li class="nav-item">
                 <a class="nav-link {{ request()->is('admin/shift*') ? 'active' : '' }}"
                     href="{{ route('admin.shift.index') }}">
-                    <i class="fa-solid fa-users"></i> Quản lý ca làm việc
+                    <i class="fa-solid fa-clock"></i> Quản lý ca làm việc
                 </a>
             </li>
 
             <li class="nav-item">
                 <a class="nav-link {{ request()->is('admin/workschedule*') ? 'active' : '' }}"
                     href="{{ route('admin.workschedule.index') }}">
-                    <i class="fa-solid fa-users"></i> Quản lý lịch làm việc
+                    <i class="fa-solid fa-calendar-alt"></i> Quản lý lịch làm việc
                 </a>
             </li>
 
             <li class="nav-item">
                 <a class="nav-link {{ request()->is('admin/bonuspenalty*') ? 'active' : '' }}"
                     href="{{ route('admin.bonuspenalty.index') }}">
-                    <i class="fa-solid fa-users"></i> Quản lý thưởng - phạt
+                    <i class="fa-solid fa-coins"></i> Quản lý thưởng - phạt
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link {{ request()->is('admin/salary*') ? 'active' : '' }}"
+                    href="{{ route('admin.salary.index') }}">
+                    <i class="fa-solid fa-sack-dollar"></i> Quản lý lương
                 </a>
             </li>
 

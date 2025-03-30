@@ -55,4 +55,36 @@ class Employees extends Authenticatable
     {
         return $this->hasMany(BonusesPenalties::class, 'employee_id');
     }
+
+    public function calculateSalary($month, $year)
+{
+    // Tính tổng số giờ làm trong tháng từ bảng work_schedules
+    $totalHours = $this->workSchedules()
+        ->whereYear('work_date', $year)
+        ->whereMonth('work_date', $month)
+        ->where('status', 'completed')
+        ->sum('work_hours');
+
+    // Lương theo giờ
+    $hourlyRate = $this->hourly_rate;
+
+    // Tổng tiền lương cơ bản
+    $baseSalary = $totalHours * $hourlyRate;
+
+    // Lấy tổng thưởng/phạt trong tháng từ bảng bonuses_penalties
+    $bonusPenalty = $this->bonusesPenalties()
+        ->whereYear('date', $year)
+        ->whereMonth('date', $month)
+        ->sum('amount');
+
+    // Tổng lương cuối cùng
+    return [
+        'total_hours' => $totalHours,
+        'salary_per_hour' => $hourlyRate,
+        'total_salary' => $baseSalary,
+        'total_bonus_penalty' => $bonusPenalty,
+        'final_salary' => $baseSalary + $bonusPenalty
+    ];
+}
+
 }
