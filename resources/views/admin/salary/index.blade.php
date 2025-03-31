@@ -51,7 +51,7 @@ $yearLimit = $currentYear;
     </div>
     <form method="GET" action="{{ route('admin.salary.index') }}" class="d-flex" style="max-width: 50%;">
 
-        <select name="month" class="form-select ms-2">
+        <select name="month" class="form-select">
             <option value="">Tất cả tháng</option>
             @for ($m = 1; $m <= 12; $m++) <option value="{{ $m }}" {{ $m == request('month') ? 'selected' : '' }}>Tháng
                 {{ $m }}</option>
@@ -63,7 +63,7 @@ $yearLimit = $currentYear;
                 {{ $y == request('year') ? 'selected' : '' }}>{{ $y }}</option>
                 @endfor
         </select>
-        <div class="input-group">
+        <div class="input-group ms-2">
             <input type="text" name="search" class="form-control" placeholder="Tìm kiếm nhân viên, mã lương..."
                 value="{{ request('search') }}">
             <button class="btn btn-bg" type="submit">
@@ -231,11 +231,11 @@ $yearLimit = $currentYear;
 
                     <div class="mb-3">
                         <label class="form-label">Năm</label>
-                        <select name="year" class="form-select">
+                        < name="year" class="form-select">
                             @for ($y = $yearLimit - 5; $y <= $yearLimit; $y++) <option value="{{ $y }}"
                                 {{ $y == $yearLimit ? 'selected' : '' }}>{{ $y }}</option>
                                 @endfor
-                        </select>
+                                </select>
                     </div>
 
                     <div class="mb-3">
@@ -288,16 +288,18 @@ $yearLimit = $currentYear;
                     <div class="mb-3">
                         <label class="form-label">Tháng</label>
                         <select name="month" class="form-select">
-                            <option value="">Chọn tháng</option>
-                            @for ($m = 1; $m <= 12; $m++) <option value="{{ $m }}">{{ $m }}</option>
+                            <!-- <option value="">Chọn tháng</option> -->
+                            @for ($m = 1; $m <= 12; $m++) <option value="{{ $m }}"
+                                {{ $m == $currentMonth ? 'selected' : '' }}>Tháng {{ $m }}</option>
                                 @endfor
                         </select>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Năm</label>
                         <select name="year" class="form-select">
-                            <option value="">Chọn năm</option>
-                            @for ($y = date('Y') - 5; $y <= date('Y'); $y++) <option value="{{ $y }}">{{ $y }}</option>
+                            <!-- <option value="">Chọn năm</option> -->
+                            @for ($y = $currentYear - 5; $y <= $currentYear; $y++) <option value="{{ $y }}"
+                                {{ $y == $currentYear ? 'selected' : '' }}>{{ $y }}</option>
                                 @endfor
                         </select>
                     </div>
