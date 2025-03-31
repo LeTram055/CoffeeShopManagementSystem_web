@@ -9,9 +9,20 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 
 class BonusesPenaltiesExport implements FromCollection, WithHeadings, WithMapping
 {
+    protected $month;
+    protected $year;
+
+    public function __construct($month, $year)
+    {
+        $this->month = $month;
+        $this->year = $year;
+    }
     public function collection()
     {
-        return BonusesPenalties::with('employee')->get();
+        return BonusesPenalties::with('employee')
+        ->whereMonth('date', $this->month)
+        ->whereYear('date', $this->year)
+        ->get();
     }
 
     public function headings(): array

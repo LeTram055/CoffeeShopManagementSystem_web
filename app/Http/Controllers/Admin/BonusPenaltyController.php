@@ -9,6 +9,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Models\BonusesPenalties;
 use App\Models\Employees;
 use App\Exports\BonusesPenaltiesExport;
+use Carbon\Carbon;
 
 class BonusPenaltyController extends Controller
 {
@@ -47,6 +48,25 @@ class BonusPenaltyController extends Controller
             }
         }
 
+        // if ($request->filled('month')) {
+        //     $query->whereMonth('date', $request->input('month'));
+        // }
+
+        // if ($request->filled('year')) {
+        //     $query->whereYear('date', $request->input('year'));
+        // }
+
+        // Lọc theo khoảng ngày nếu có
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            try {
+                $start = Carbon::createFromFormat('Y-m-d', $request->input('start_date'))->startOfDay();
+                $end = Carbon::createFromFormat('Y-m-d', $request->input('end_date'))->endOfDay();
+                $query->whereBetween('date', [$start, $end]);
+            } catch (\Exception $e) {
+                
+            }
+        }
+
         // Sắp xếp theo các cột
         if (in_array($sortField, ['bonus_penalty_id', 'amount', 'date'])) {
             $query->orderBy($sortField, $sortDirection);
@@ -76,9 +96,11 @@ class BonusPenaltyController extends Controller
         }
     }
 
-    public function exportExcel()
+    public function exportExcel(Request $request)
     {
-        return Excel::download(new BonusesPenaltiesExport, 'bonuses_penalties.xlsx');
+        $month = $request->input('month');
+        $year = $request->input('year');
+        return Excel::download(new BonusesPenaltiesExport($month, $year), 'bonuses_penalties.xlsx');
     }
 
     public function create()

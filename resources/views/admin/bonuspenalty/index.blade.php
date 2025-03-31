@@ -1,3 +1,8 @@
+@php
+$currentMonth = date('n'); // Lấy tháng hiện tại (1-12)
+$currentYear = date('Y'); // Lấy năm hiện tại
+@endphp
+
 @extends('admin.layouts.master')
 
 @section('title', 'Quản lý thưởng phạt')
@@ -21,14 +26,37 @@
         <a href="{{ route('admin.bonuspenalty.create') }}" class="btn btn-outline-primary">
             <i class="fas fa-plus"></i> Thêm mới
         </a>
-        <a href="{{ route('admin.bonuspenalty.exportExcel') }}" class="btn btn-outline-success">
+        <!-- <a href="{{ route('admin.bonuspenalty.exportExcel') }}" class="btn btn-outline-success">
             <i class="fas fa-file-excel"></i> Xuất Excel
-        </a>
+        </a> -->
+        <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#exportExcelModal">
+            <i class="fas fa-file-excel"></i> Xuất Excel
+        </button>
         <a href="{{ route('admin.bonuspenalty.index') }}" class="btn btn-outline-secondary">
             <i class="fas fa-sync-alt"></i> Làm mới
         </a>
     </div>
+    
     <form method="GET" action="{{ route('admin.bonuspenalty.index') }}" class="d-flex" style="max-width: 50%;">
+        <div class="dropdown me-2">
+            <button class="btn btn-outline-info dropdown-toggle" type="button" id="dateDropdown"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                Lọc theo ngày
+            </button>
+            <div class="dropdown-menu p-3" aria-labelledby="dateDropdown">
+                <div class="mb-2">
+                    <label for="start_date" class="form-label">Từ ngày:</label>
+                    <input type="date" class="form-control" id="start_date" name="start_date"
+                        value="{{ request('start_date') }}">
+                </div>
+                <div class="mb-2">
+                    <label for="end_date" class="form-label">Đến ngày:</label>
+                    <input type="date" class="form-control" id="end_date" name="end_date"
+                        value="{{ request('end_date') }}">
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Áp dụng</button>
+            </div>
+        </div>
         <div class="input-group">
             <input type="text" name="search" class="form-control" placeholder="Tìm kiếm ca làm việc..."
                 value="{{ request('search') }}">
@@ -114,7 +142,7 @@
         </tbody>
     </table>
 </div>
-<!-- Modal -->
+<!-- Modal Xóa-->
 <div class="modal fade" id="delete-confirm" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -128,6 +156,45 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
                 <button type="button" class="btn btn-danger" id="confirm-delete">Xóa</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Xuất Excel -->
+<div class="modal fade" id="exportExcelModal" tabindex="-1" aria-labelledby="exportExcelModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exportExcelModalLabel">Xuất Excel</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="exportForm" method="GET" action="{{ route('admin.bonuspenalty.exportExcel') }}">
+                    @csrf
+                    <div class="mb-3">
+                        <label class="form-label">Tháng</label>
+                        <select name="month" class="form-select">
+                            <!-- <option value="">Chọn tháng</option> -->
+                            @for ($m = 1; $m <= 12; $m++) <option value="{{ $m }}"
+                                {{ $m == $currentMonth ? 'selected' : '' }}>Tháng {{ $m }}</option>
+                                @endfor
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Năm</label>
+                        <select name="year" class="form-select">
+                            <!-- <option value="">Chọn năm</option> -->
+                            @for ($y = $currentYear - 5; $y <= $currentYear; $y++) <option value="{{ $y }}"
+                                {{ $y == $currentYear ? 'selected' : '' }}>{{ $y }}</option>
+                                @endfor
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-primary">Xuất Excel</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -160,6 +227,13 @@ $(document).ready(function() {
     setTimeout(function() {
         $('.flash-message .alert').fadeOut('slow');
     }, 5000);
+});
+
+$(document).ready(function() {
+    $('#exportForm').on('submit', function() {
+        // Đóng modal khi form được gửi
+        $('#exportExcelModal').modal('hide');
+    });
 });
 </script>
 @endsection
