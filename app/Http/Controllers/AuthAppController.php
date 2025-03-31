@@ -54,4 +54,54 @@ class AuthAppController extends Controller
 
         return response()->json(['message' => 'Đổi mật khẩu thành công']);
     }
+
+    // public function getProfile(Request $request)
+    // {
+    // $employee = Employees::where('username', $request->username)->first(); // Lấy thông tin nhân viên đang đăng nhập
+    //     return response()->json($employee);
+    // }
+
+    public function getWorkSchedules(Request $request) 
+    {
+        $employee = Employees::where('username', $request->query('username'))->firstOrFail();
+        $query = $employee->workSchedules()->with('shift');
+
+        if ($request->has('month')) {
+            $query->whereMonth('work_date', $request->query('month'));
+        }
+        if ($request->has('year')) {
+            $query->whereYear('work_date', $request->query('year'));
+        }
+
+        return response()->json($query->get());
+    }
+
+    public function getBonusesPenalties(Request $request) {
+        $employee = Employees::where('username', $request->query('username'))->firstOrFail();
+        $query = $employee->bonusesPenalties();
+
+        if ($request->has('month')) {
+            $query->whereMonth('date', $request->query('month'));
+        }
+        if ($request->has('year')) {
+            $query->whereYear('date', $request->query('year'));
+        }
+
+        return response()->json($query->get());
+    }
+
+    public function getSalaries(Request $request) {
+        $employee = Employees::where('username', $request->query('username'))->firstOrFail();
+        $query = $employee->salaries();
+
+        if ($request->has('month')) {
+            $query->where('month', $request->query('month'));
+        }
+        if ($request->has('year')) {
+            $query->where('year', $request->query('year'));
+        }
+
+        return response()->json($query->get());
+    }
+
 }
