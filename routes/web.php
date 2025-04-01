@@ -406,7 +406,9 @@ Route::post('admin/workschedule/update',
 ->name('admin.workschedule.update');
 });
 
-
+Route::get('/admin/workschedule/schedule-view', 
+[WorkScheduleController::class, 'scheduleView'])
+->name('admin.workschedule.scheduleView');
 
 //Bonus Penalty
 Route::get('admin/bonuspenalty',

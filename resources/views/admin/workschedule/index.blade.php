@@ -32,17 +32,43 @@ Quản lý lịch làm việc
         <a href="{{ route('admin.workschedule.index') }}" class="btn btn-outline-secondary">
             <i class="fas fa-sync-alt"></i> Làm mới
         </a>
+        <a href="{{ route('admin.workschedule.scheduleView') }}" class="btn btn-outline-warning">
+            <i class="fas fa-calendar-alt"></i> Xem dạng lịch biểu
+        </a>
     </div>
+
+
     <form method="GET" action="{{ route('admin.workschedule.index') }}" class="d-flex" style="max-width: 50%;">
+        <div class="dropdown me-2">
+            <button class="btn btn-outline-info dropdown-toggle" type="button" id="dateDropdown"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                Lọc theo ngày
+            </button>
+            <div class="dropdown-menu p-3" aria-labelledby="dateDropdown">
+                <div class="mb-2">
+                    <label for="start_date" class="form-label">Từ ngày:</label>
+                    <input type="date" class="form-control" id="start_date" name="start_date"
+                        value="{{ request('start_date') }}">
+                </div>
+                <div class="mb-2">
+                    <label for="end_date" class="form-label">Đến ngày:</label>
+                    <input type="date" class="form-control" id="end_date" name="end_date"
+                        value="{{ request('end_date') }}">
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Áp dụng</button>
+            </div>
+        </div>
         <div class="input-group">
-            <input type="text" name="search" class="form-control" placeholder="Tìm kiếm danh mục..."
+            <input type="text" name="search" class="form-control" placeholder="Tìm kiếm ca làm việc..."
                 value="{{ request('search') }}">
             <button class="btn btn-bg" type="submit">
                 <i class="fas fa-search"></i>
             </button>
         </div>
     </form>
+
 </div>
+
 
 <div class="table-responsive">
     <table class="table table-striped table-hover">
@@ -131,6 +157,7 @@ Quản lý lịch làm việc
     </table>
 </div>
 
+
 <!-- Modal -->
 <div class="modal fade" id="delete-confirm" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmLabel"
     aria-hidden="true">
@@ -177,6 +204,7 @@ $(document).ready(function() {
     setTimeout(function() {
         $('.flash-message .alert').fadeOut('slow');
     }, 5000);
+
 });
 </script>
 @endsection

@@ -15,6 +15,7 @@ class WorkScheduleController extends Controller
 {
     public function index(Request $request)
     {
+        
         $sortField = $request->input('sort_field', 'schedule_id'); 
         $sortDirection = $request->input('sort_direction', 'asc'); 
 
@@ -68,6 +69,16 @@ class WorkScheduleController extends Controller
             });
         }
 
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            try {
+                $start = Carbon::createFromFormat('Y-m-d', $request->input('start_date'))->startOfDay();
+                $end = Carbon::createFromFormat('Y-m-d', $request->input('end_date'))->endOfDay();
+                $query->whereBetween('work_date', [$start, $end]);
+            } catch (\Exception $e) {
+                
+            }
+        }
+
 
         // Xử lý sắp xếp
         if ($sortField === 'work_date') {
@@ -94,6 +105,49 @@ class WorkScheduleController extends Controller
         return view('admin.workschedule.index', compact('schedules', 'sortField', 'sortDirection'));
     }
 
+    public function scheduleView(Request $request)
+    {
+        // Lấy khoảng thời gian của tuần hiện tại
+        // $startDate = now()->startOfWeek();
+        // $endDate = now()->endOfWeek();
+        // Lấy ngày bắt đầu và kết thúc từ yêu cầu
+        $startDate = $request->input('start_date') ? Carbon::parse($request->input('start_date')) : now()->startOfWeek();
+        $endDate = $request->input('end_date') ? Carbon::parse($request->input('end_date')) : now()->endOfWeek();
+
+
+        // Lấy danh sách ca làm việc, chỉ lấy giờ và phút
+        $shifts = Shifts::select('shift_id', 'name', 'start_time', 'end_time')->get();
+
+        // Lấy lịch làm việc từ database, kèm theo thông tin nhân viên và ca làm việc
+        $workSchedules = WorkSchedules::with(['employee' => function ($query) {
+                $query->select('employee_id', 'name', 'role'); // Lấy vai trò nhân viên
+            }, 'shift'])
+            ->whereBetween('work_date', [$startDate, $endDate])
+            ->get();
+
+        // Danh sách vai trò nhân viên bằng tiếng Việt
+        $rolesTranslation = [
+            'staff_counter' => 'Nhân viên quầy',
+            'staff_serve' => 'Nhân viên phục vụ',
+            'staff_barista' => 'Nhân viên pha chế',
+        ];
+
+        // Nhóm dữ liệu theo ngày và ca làm việc
+        $schedulesByDateAndShift = [];
+        foreach ($workSchedules as $schedule) {
+            $dateKey = $schedule->work_date->format('Y-m-d');
+            $shiftKey = $schedule->shift_id;
+
+            $roleVietnamese = $rolesTranslation[$schedule->employee->role] ?? $schedule->employee->role;
+
+            $schedulesByDateAndShift[$dateKey][$shiftKey][] = [
+                'name' => $schedule->employee->name,
+                'role' => $roleVietnamese
+            ];
+        }
+
+        return view('admin.workschedule.schedule_view', compact('shifts', 'schedulesByDateAndShift', 'startDate', 'endDate'));
+    }
 
     public function exportExcel()
     {
@@ -203,45 +257,6 @@ class WorkScheduleController extends Controller
         Session::flash('alert-success', 'Cập nhật lịch làm việc thành công.');
         return redirect()->route('admin.workschedule.index');
     }
-public function scheduleView(Request $request)
-{
-    // Lấy khoảng thời gian của tuần hiện tại
-    $startDate = now()->startOfWeek();
-    $endDate = now()->endOfWeek();
-
-    // Lấy danh sách ca làm việc, chỉ lấy giờ và phút
-    $shifts = Shifts::select('shift_id', 'name', 'start_time', 'end_time')->get();
-
-    // Lấy lịch làm việc từ database, kèm theo thông tin nhân viên và ca làm việc
-    $workSchedules = WorkSchedules::with(['employee' => function ($query) {
-            $query->select('employee_id', 'name', 'role'); // Lấy vai trò nhân viên
-        }, 'shift'])
-        ->whereBetween('work_date', [$startDate, $endDate])
-        ->get();
-
-    // Danh sách vai trò nhân viên bằng tiếng Việt
-    $rolesTranslation = [
-        'staff_counter' => 'Nhân viên quầy',
-        'staff_serve' => 'Nhân viên phục vụ',
-        'staff_barista' => 'Nhân viên pha chế',
-    ];
-
-    // Nhóm dữ liệu theo ngày và ca làm việc
-    $schedulesByDateAndShift = [];
-    foreach ($workSchedules as $schedule) {
-        $dateKey = $schedule->work_date->format('Y-m-d');
-        $shiftKey = $schedule->shift_id;
-
-        $roleVietnamese = $rolesTranslation[$schedule->employee->role] ?? $schedule->employee->role;
-
-        $schedulesByDateAndShift[$dateKey][$shiftKey][] = [
-            'name' => $schedule->employee->name,
-            'role' => $roleVietnamese
-        ];
-    }
-
-    return view('admin.workschedule.schedule_view', compact('shifts', 'schedulesByDateAndShift', 'startDate', 'endDate'));
-}
 
 
 }
