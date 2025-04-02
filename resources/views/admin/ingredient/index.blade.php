@@ -138,6 +138,15 @@ Quản lý nguyên liệu
                         </th>
                         <th class="text-center">
                             <a
+                                href="{{ route('admin.ingredient.index', ['sort_field' => 'cost_price', 'sort_direction' => $sortField == 'cost_price' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                                Giá
+                                @if($sortField == 'cost_price')
+                                <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
+                                @endif
+                            </a>
+                        </th>
+                        <th class="text-center">
+                            <a
                                 href="{{ route('admin.ingredient.index', ['sort_field' => 'min_quantity', 'sort_direction' => $sortField == 'min_quantity' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
                                 Số lượng tối thiểu
                                 @if($sortField == 'min_quantity')
@@ -163,9 +172,11 @@ Quản lý nguyên liệu
                     <tr>
                         <td class="text-center">{{ $ingredient->ingredient_id }}</td>
                         <td>{{ $ingredient->name }}</td>
-                        <td class="text-center">{{ $ingredient->quantity }}</td>
+                        <td class="text-center">
+                            {{ number_format($ingredient->quantity, 2, ',', '.') }}</td>
                         <td class="text-center">{{ $ingredient->unit }}</td>
-                        <td class="text-center">{{ $ingredient->min_quantity }}</td>
+                        <td class="text-center">{{ number_format($ingredient->cost_price, 0, ',', '.') }} VNĐ</td>
+                        <td class="text-center">{{ number_format($ingredient->min_quantity, 2, ',', '.') }}</td>
                         <td class="text-center">
                             {{ $ingredient->last_updated ? $ingredient->last_updated->format('H:i:s d/m/Y') : 'N/A' }}
                         </td>
@@ -236,6 +247,15 @@ Quản lý nguyên liệu
                         </th>
                         <th class="text-center">
                             <a
+                                href="{{ route('admin.ingredient.index', ['sort_field' => 'cost_price', 'sort_direction' => $sortField == 'cost_price' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                                Giá
+                                @if($sortField == 'cost_price')
+                                <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
+                                @endif
+                            </a>
+                        </th>
+                        <th class="text-center">
+                            <a
                                 href="{{ route('admin.ingredient.index', ['sort_field' => 'min_quantity', 'sort_direction' => $sortField == 'min_quantity' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
                                 Số lượng tối thiểu
                                 @if($sortField == 'min_quantity')
@@ -262,9 +282,11 @@ Quản lý nguyên liệu
                         <tr>
                             <td class="text-center">{{ $ingredient->ingredient_id }}</td>
                             <td>{{ $ingredient->name }}</td>
-                            <td class="text-center text-danger fw-bold">{{ $ingredient->quantity }}</td>
+                            <td class="text-center text-danger fw-bold">
+                                {{ number_format($ingredient->quantity, 2, ',', '.') }}</td>
                             <td class="text-center">{{ $ingredient->unit }}</td>
-                            <td class="text-center">{{ $ingredient->min_quantity }}</td>
+                            <td class="text-center">{{ number_format($ingredient->cost_price, 0, ',', '.') }} VNĐ</td>
+                            <td class="text-center">{{ number_format($ingredient->min_quantity, 2, ',', '.') }}</td>
                             <td class="text-center">
                                 {{ $ingredient->last_updated ? $ingredient->last_updated->format('H:i:s d/m/Y') : 'N/A' }}
                             </td>

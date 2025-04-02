@@ -23,4 +23,5 @@ yarn-error.log
 /.zed
 
 websocket-server/node_modules
+laravel-echo-server.lock
 

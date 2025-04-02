@@ -13,7 +13,8 @@ class Ingredients extends Model
     protected $fillable = [
         'name',
         'quantity',
-        'unit', 
+        'unit',
+        'cost_price', 
         'min_quantity',
         'last_updated'
     ];

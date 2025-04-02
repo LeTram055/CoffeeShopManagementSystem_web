@@ -13,7 +13,10 @@ class IngredientLogs extends Model
     protected $fillable = [
         'ingredient_id', 
         'quantity_change', 
-        'reason', 
+        'reason',
+        'price',
+        'new_cost_price',
+        'log_type',
         'employee_id',
         'changed_at'];
     protected $guarded = ['log_id'];

@@ -10,7 +10,7 @@ Quản lý nguyên liệu
 
 @section('content')
 <div class="row justify-content-center align-items-center">
-    <div class="col-6 border rounded-3 p-5 custom-shadow">
+    <div class="col-12 col-md-6 border rounded-3 p-5 custom-shadow">
         <h3 class="text-center title2 mb-4">Thêm mới nguyên liệu</h3>
         <form name="frmCreate" id="frmCreate" method="post" action="{{ route('admin.ingredient.save') }}">
             @csrf
@@ -43,7 +43,16 @@ Quản lý nguyên liệu
             </div>
 
             <div class="form-group mb-3">
-                <label for="min_quantity" class="form-label fw-semibold">Số lượng tối thiểu:</label>
+                <label for="cost_price" class="form-label fw-semibold">Số lượng tối thiểu:</label>
+                <input type="number" step="0.01" class="form-control rounded-2" id="cost_price" name="cost_price"
+                    value="{{ old('cost_price') }}" placeholder="Nhập số lượng tối thiểu">
+                @error('cost_price')
+                <small class="form-text text-danger">{{ $message }}</small>
+                @enderror
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="min_quantity" class="form-label fw-semibold">Giá/Đơn vị:</label>
                 <input type="number" step="0.01" class="form-control rounded-2" id="min_quantity" name="min_quantity"
                     value="{{ old('min_quantity') }}" placeholder="Nhập số lượng tối thiểu">
                 @error('min_quantity')
