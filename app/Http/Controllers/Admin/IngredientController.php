@@ -187,13 +187,19 @@ class IngredientController extends Controller
         $oldCostPrice = $ingredient->cost_price;
 
         if ($request->filled('change_value')) {
-            $changeValue = $request->change_value;
+            $changeValue = $request->change_value ?? 0;
             if ($request->log_type === 'import') {
                 $newQuantity = $oldQuantity + $changeValue;
             } else if ($request->log_type === 'export') {
                 $newQuantity = $oldQuantity - $changeValue;
             } else {
-                $newQuantity = $oldQuantity; // Nếu không có thay đổi
+                if ($request->change_type === 'increase') {
+                    $newQuantity = $oldQuantity + $changeValue;
+                } else if ($request->change_type === 'decrease') {
+                    $newQuantity = $oldQuantity - $changeValue;
+                } else {
+                    $newQuantity = $oldQuantity; // Nếu không có thay đổi
+                }
             }
         } else {
             $newQuantity = $oldQuantity; // Nếu không có thay đổi
@@ -201,7 +207,7 @@ class IngredientController extends Controller
 
 
         if ($newQuantity < 0) {
-            Session::flash('alert-danger', 'Số lượng nguyên liệu không thể nhỏ hơn 0');
+            Session::flash('alert-danger', 'Số lượng xuất kho vượt quá số lượng hiện có trong kho');
             return redirect()->route('admin.ingredient.edit', ['ingredient_id' => $request->ingredient_id]);
         }
 
@@ -212,7 +218,7 @@ class IngredientController extends Controller
         $ingredient->last_updated = now();
         
 
-        if ($oldQuantity != $newQuantity) {
+        if (($oldQuantity != $newQuantity) || ($oldCostPrice != $request->cost_price)) {
             $ingredientLog = new IngredientLogs();
             $ingredientLog->ingredient_id = $ingredient->ingredient_id;
             $ingredientLog->quantity_change = $newQuantity - $oldQuantity;
@@ -229,7 +235,7 @@ class IngredientController extends Controller
                 $ingredient->cost_price = $newCostPrice;
             } else {
                 
-                $ingredientLog->new_cost_price = $oldCostPrice;
+                $ingredientLog->new_cost_price = $request->cost_price;
             }
 
             $ingredientLog->save();

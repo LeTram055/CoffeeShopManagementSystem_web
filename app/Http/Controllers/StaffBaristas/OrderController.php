@@ -54,6 +54,7 @@ class OrderController extends Controller
                 if ($stock) {
                     $quantityUsed = $ingredient->quantity_per_unit * $orderItem->quantity;
                     $stock->quantity -= $quantityUsed;
+                    $ingredient->last_updated = now();
                     $stock->save();
 
                     // Lưu log thay đổi nguyên liệu với chi tiết món ăn và đơn hàng
@@ -61,6 +62,9 @@ class OrderController extends Controller
                         'ingredient_id' => $ingredient->ingredient_id,
                         'employee_id' => Auth::user()->employee_id,
                         'quantity_change' => -$quantityUsed,
+                        'price' => null,
+                        'new_cost_price' => $stock->cost_price,
+                        'log_type' => 'export',
                         'reason' => "Dùng cho món '{$menuItem->name}' trong đơn hàng #{$order->order_id}",
                         'changed_at' => now(),
                     ]);

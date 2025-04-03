@@ -42,32 +42,31 @@ class IngredientController extends Controller
 
     public function update(Request $request, $id)
     {
+        
         $ingredient = Ingredients::findOrFail($id);
 
         $validatedData = $request->validate([
-            'change_value' => 'required|numeric|min:1',
-            'change_type' => 'required|in:increase,decrease',
+            'change_value' => 'required|numeric|min:0',
+            
             'reason' => 'required'
         ], [
             'change_value.required' => 'Vui lòng nhập số lượng thay đổi.',
             'change_value.numeric' => 'Số lượng thay đổi phải là số.',
             'change_value.min' => 'Số lượng thay đổi phải lớn hơn 0.',
-            'change_type.required' => 'Vui lòng chọn loại thay đổi.',
-            'change_type.in' => 'Loại thay đổi không hợp lệ.',
+            
             'reason.required' => 'Vui lòng nhập lý do thay đổi.'
             
         ]);
 
-        $quantityChange = $validatedData['change_value'];
-
-        if ($validatedData['change_type'] === 'decrease' && $ingredient->quantity < $quantityChange) {
+        $quantityChange = $request->change_value;
+        
+        if ($ingredient->quantity < $quantityChange) {
             return back()->with('error', 'Số lượng giảm không được lớn hơn số lượng hiện có.');
         }
 
         // Cập nhật số lượng nguyên liệu
-        $ingredient->quantity = $validatedData['change_type'] === 'increase'
-            ? $ingredient->quantity + $quantityChange
-            : $ingredient->quantity - $quantityChange;
+        
+        $ingredient->quantity = $ingredient->quantity - $quantityChange;
         $ingredient->last_updated = now();
 
         $ingredient->save();
@@ -75,10 +74,15 @@ class IngredientController extends Controller
         // Lưu vào logs
         IngredientLogs::create([
             'ingredient_id' => $ingredient->ingredient_id,
-            'quantity_change' => $validatedData['change_type'] === 'increase' ? $quantityChange : -$quantityChange,
+            'quantity_change' => -$quantityChange,
             'reason' => $request->reason,
+            'price' => null,
+            'new_cost_price' => $ingredient->cost_price,
+            'log_type' => 'export',
             'employee_id' => Auth::user()->employee_id,
-            'changed_at' => now()
+            'changed_at' => now(),
+            
+            
         ]);
 
         // Kiểm tra số lượng nguyên liệu

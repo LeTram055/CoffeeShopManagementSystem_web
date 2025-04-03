@@ -211,7 +211,7 @@ Nguyên liệu
                             name="current_quantity" readonly>
                     </div>
 
-                    <div class="form-group mb-3">
+                    <!-- <div class="form-group mb-3">
                         <label for="change_type" class="form-label">Loại cập nhật:</label>
                         <select class="form-select" id="change_type" name="change_type">
                             <option value="increase" {{ old('change_type')=='increase' ? 'selected' : '' }}>Tăng
@@ -219,11 +219,12 @@ Nguyên liệu
                             <option value="decrease" {{ old('change_type')=='decrease' ? 'selected' : '' }}>Giảm
                             </option>
                         </select>
-                    </div>
+                    </div> -->
 
                     <div class="form-group mb-3">
                         <label for="change_value" class="form-label">Số lượng thay đổi:</label>
-                        <input type="number" step="0.01" class="form-control" id="change_value" name="change_value">
+                        <input type="number" step="0.01" class="form-control" id="change_value" name="change_value"
+                            placeholder="Nhập số lượng thay đổi">
                         @error('change_value')
                         <small class="form-text text-danger">{{ $message }}</small>
                         @enderror
@@ -231,7 +232,8 @@ Nguyên liệu
 
                     <div class="form-group mb-3">
                         <label for="reason" class="form-label">Lý do cập nhật:</label>
-                        <textarea class="form-control" id="reason" name="reason"></textarea>
+                        <textarea class="form-control" id="reason" name="reason"
+                            placeholder="Nhập lý do thay đổi"></textarea>
                         @error('reason')
                         <small class="form-text text-danger">{{ $message }}</small>
                         @enderror

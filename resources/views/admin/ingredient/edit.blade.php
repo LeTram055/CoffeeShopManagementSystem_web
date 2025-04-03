@@ -38,11 +38,21 @@ Quản lý nguyên liệu
                         name="current_quantity" value="{{ $ingredient->quantity }}" readonly>
                 </div>
 
-                <div class="col-md-6 col-12">
+                <!-- <div class="col-md-6 col-12">
                     <label for="cost_price" class="form-label fw-semibold">Giá vốn hiện tại:</label>
                     <input type="number" step="0.01" class="form-control rounded-2" id="cost_price" name="cost_price"
                         value="{{ number_format($ingredient->cost_price, 0, ',', '.') }}" readonly>
 
+                </div> -->
+
+                <div class="col-md-6 col-12">
+                    <label for="cost_price" class="form-label fw-semibold">Giá vốn hiện tại:</label>
+                    <input type="number" step="0.01" class="form-control rounded-2" id="cost_price" name="cost_price"
+                        value="{{ $ingredient->cost_price }}"
+                        {{ old('log_type', $ingredient->log_type ?? 'adjustment') !== 'adjustment' ? 'readonly' : '' }}>
+                    @error('cost_price')
+                    <small class="form-text text-danger">{{ $message }}</small>
+                    @enderror
                 </div>
             </div>
 
@@ -58,13 +68,7 @@ Quản lý nguyên liệu
 
 
             <div class="row g-2 mb-3">
-                <!-- <div class="col-md-6 col-12">
-                    <label for="change_type" class="form-label fw-semibold">Loại cập nhật:</label>
-                    <select class="form-select" id="change_type" name="change_type">
-                        <option value="increase" {{ old('change_type')=='increase' ? 'selected' : '' }}>Tăng</option>
-                        <option value="decrease" {{ old('change_type')=='decrease' ? 'selected' : '' }}>Giảm</option>
-                    </select>
-                </div> -->
+
                 <div class="col-md-6 col-12">
                     <label for="log_type" class="form-label fw-semibold">Loại cập nhật:</label>
                     <select name="log_type" id="log_type" class="form-control">
@@ -76,7 +80,7 @@ Quản lý nguyên liệu
                     <small class="form-text text-danger">{{ $message }}</small>
                     @enderror
                 </div>
-                <div class="col-md-6 col-12">
+                <div class="col-md-6 col-12" id="change_value_input">
                     <label for="change_value" class="form-label fw-semibold">Số lượng thay đổi:</label>
                     <input type="number" step="0.01" class="form-control" id="change_value" name="change_value"
                         placeholder="Nhập số lượng thay đổi" value="{{ old('change_value') }}">
@@ -84,6 +88,14 @@ Quản lý nguyên liệu
                     <small class="form-text text-danger">{{ $message }}</small>
                     @enderror
                 </div>
+            </div>
+
+            <div class="form-group mb-3" id="change_type" style="display: none;">
+                <label for="change_type" class="form-label fw-semibold">Loại điều chỉnh:</label>
+                <select class="form-select" id="change_type" name="change_type">
+                    <option value="increase" {{ old('change_type')=='increase' ? 'selected' : '' }}>Tăng</option>
+                    <option value="decrease" {{ old('change_type')=='decrease' ? 'selected' : '' }}>Giảm</option>
+                </select>
             </div>
 
             <div class="form-group mb-3" id="price_input" style="display: none;">
@@ -120,15 +132,43 @@ Quản lý nguyên liệu
 @section('custom-scripts')
 <script>
 $(document).ready(function() {
-
-    $('#log_type').change(function() {
+    function toggleFields() {
         var logType = $('#log_type').val();
+        var changeValue = $('#change_value').val();
+        console.log("chang_value = ", changeValue);
+
         if (logType === "import") {
             $('#price_input').show();
+            $('#change_type').hide();
+            $('#cost_price').prop('readonly', true);
+        } else if (logType === "adjustment") {
+            $('#price_input').hide();
+            $('#cost_price').prop('readonly', false);
+
+            if (changeValue !== "" && !isNaN(changeValue) && parseFloat(changeValue) !== 0) {
+                $('#change_type').show();
+            } else {
+                $('#change_type').hide();
+            }
         } else {
             $('#price_input').hide();
+            $('#change_type').hide();
+            $('#cost_price').prop('readonly', true);
         }
-    })
+    }
+
+    // Gọi khi trang load
+    toggleFields();
+
+    // Khi thay đổi loại cập nhật
+    $('#log_type').change(function() {
+        toggleFields();
+    });
+
+    // Khi thay đổi số lượng
+    $('#change_value').on('input', function() {
+        toggleFields();
+    });
 });
 </script>
 @endsection
