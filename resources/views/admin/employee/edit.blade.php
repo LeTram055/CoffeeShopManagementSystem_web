@@ -38,13 +38,12 @@ Chỉnh sửa nhân viên
             <div class="form-group mb-3">
                 <label for="role" class="form-label fw-semibold">Vai trò:</label>
                 <select class="form-control rounded-2" id="role" name="role">
-                    <option value="admin" {{ old('role', $employee->role) == 'admin' ? 'selected' : '' }}>Quản trị viên
-                    </option>
+
                     <option value="staff_serve" {{ old('role', $employee->role) == 'staff_serve' ? 'selected' : '' }}>
                         Nhân viên phục vụ</option>
                     <option value="staff_counter"
                         {{ old('role', $employee->role) == 'staff_counter' ? 'selected' : '' }}>
-                        Nhân viên quầy</option>
+                        Nhân viên thu ngân</option>
                     <option value="staff_barista"
                         {{ old('role', $employee->role) == 'staff_barista' ? 'selected' : '' }}>
                         Nhân viên pha chế</option>

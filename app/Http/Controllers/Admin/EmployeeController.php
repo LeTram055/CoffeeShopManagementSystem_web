@@ -17,6 +17,7 @@ class EmployeeController extends Controller
         $sortDirection = $request->input('sort_direction', 'asc'); 
 
         $query = Employees::query();
+        $query->where('role', '!=', 'admin');
 
         if ($request->filled('search')) {
             $searchTerm = $request->input('search');
@@ -54,8 +55,8 @@ class EmployeeController extends Controller
             
             $query->orderByRaw("
                 CASE 
-                    WHEN role = 'admin' THEN 'Quản trị viên'
-                    WHEN role = 'staff_counter' THEN 'Nhân viên quầy'
+                    
+                    WHEN role = 'staff_counter' THEN 'Nhân viên thu ngân'
                     WHEN role = 'staff_serve' THEN 'Nhân viên phục vụ'
                     WHEN role = 'staff_barista' THEN 'Nhân viên pha chế'
                     ELSE 5

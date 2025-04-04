@@ -8,6 +8,32 @@ Quản lý nhân viên
 Quản lý nhân viên
 @endsection
 
+@section('custom-css')
+<style>
+.custom-tabs .nav-link {
+    color: #555;
+    font-weight: 500;
+    border-radius: 8px 8px 0 0;
+    transition: all 0.3s ease-in-out;
+    padding: 6px 15px;
+}
+
+.custom-tabs .nav-link:hover {
+    color: #000;
+    background: #f8f9fa;
+    border-color: #dee2e6 #dee2e6 transparent;
+}
+
+.custom-tabs .nav-link.active {
+    color: #fff;
+    background: #0049ab;
+    border-color: #0049ab #0049ab transparent;
+    font-weight: bold;
+    box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
+}
+</style>
+@endsection
+
 @section('content')
 <div class="flash-message">
     @foreach (['danger', 'warning', 'success', 'info'] as $msg)
@@ -43,6 +69,25 @@ Quản lý nhân viên
         </div>
     </form>
 </div>
+
+<ul class="nav nav-tabs custom-tabs my-3" id="employeeTabs">
+    <li class="nav-item">
+        <a class="nav-link {{ request('type') == null ? 'active' : '' }}" href="{{ route('admin.employee.index') }}">Tất
+            cả</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {{ request('type') == 'import' ? 'active' : '' }}"
+            href="{{ route('admin.employee.index', ['type' => 'staff_counter']) }}">Nhân viên thu ngân</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {{ request('type') == 'export' ? 'active' : '' }}"
+            href="{{ route('admin.employee.index', ['type' => 'staff_serve']) }}">Nhân viên phục vụ</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {{ request('type') == 'adjustment' ? 'active' : '' }}"
+            href="{{ route('admin.employee.index', ['type' => 'staff_barista']) }}">Nhân viên pha chế</a>
+    </li>
+</ul>
 
 <div class="table-responsive">
     <table class="table table-striped table-hover">
@@ -145,6 +190,7 @@ Quản lý nhân viên
         </thead>
         <tbody class="table-group-divider">
             @foreach ($employees as $employee)
+            @if(request('type') == null || request('type') == $employee->role)
             <tr>
                 <td class="text-center">{{ $employee->employee_id }}</td>
                 <td>{{ $employee->name }}</td>
@@ -154,7 +200,7 @@ Quản lý nhân viên
                     $roles = [
                     'admin' => 'Quản trị viên',
                     'staff_serve' => 'Nhân viên phục vụ',
-                    'staff_counter' => 'Nhân viên quầy',
+                    'staff_counter' => 'Nhân viên thu ngân',
                     'staff_barista' => 'Nhân viên pha chế'
                     ];
                     @endphp
@@ -191,6 +237,7 @@ Quản lý nhân viên
                     </form>
                 </td>
             </tr>
+            @endif
             @endforeach
         </tbody>
     </table>

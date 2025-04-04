@@ -45,9 +45,9 @@ Quản lý nhân viên
             <div class="form-group mb-3">
                 <label for="role" class="form-label fw-semibold">Vai trò:</label>
                 <select class="form-control rounded-2" id="role" name="role">
-                    <option value="admin">Quản trị viên</option>
+
                     <option value="staff_serve">Nhân viên phục vụ</option>
-                    <option value="staff_counter">Nhân viên quầy</option>
+                    <option value="staff_counter">Nhân viên thu ngân</option>
                     <option value="staff_barista">Nhân viên pha chế</option>
                 </select>
                 @error('role')
