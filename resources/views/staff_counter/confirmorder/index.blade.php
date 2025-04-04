@@ -524,12 +524,24 @@ $(document).ready(function() {
             let itemId = $(this).data('item-id');
             let quantity = $(this).find('.quantity-input').val();
             let note = $(this).find('.note-input').val();
-            items.push({
-                id: itemId,
-                quantity: quantity,
-                note: note
-            });
+            // Nếu số lượng sản phẩm > 0 thì thêm vào danh sách items
+            if (parseInt(quantity) > 0) {
+                items.push({
+                    id: itemId,
+                    quantity: quantity,
+                    note: note
+                });
+            }
+
+
         });
+
+        if (items.length === 0) {
+            notify('Vui lòng chọn ít nhất một sản phẩm để chỉnh sửa đơn hàng.', 'danger');
+            $('#editOrderModal').modal('hide');
+            return;
+            // Dừng lại và không gửi yêu cầu lưu đơn hàng
+        }
         $.ajax({
             url: `/staff_counter/confirmorder/update-takeaway/${orderId}`,
             type: 'POST',
@@ -544,8 +556,27 @@ $(document).ready(function() {
                     location.reload();
                 }, 2000);
             },
-            error: function() {
-                notify('Lỗi khi cập nhật đơn hàng.', 'danger');
+            error: function(xhr) {
+                let errors = xhr.responseJSON.errors;
+
+                let errorHtml = '';
+                if (Array.isArray(errors)) {
+                    // Trường hợp lỗi là mảng thông báo đơn thuần
+                    errorHtml = errors.join('<br>');
+                } else if (typeof errors === 'object') {
+                    // Trường hợp lỗi validation theo field
+                    $.each(errors, function(key, messages) {
+                        errorHtml += messages.join('<br>') + '<br>';
+                    });
+                } else {
+                    // Một lỗi không xác định
+                    errorHtml = 'Đã xảy ra lỗi không xác định.';
+                }
+
+
+                notify(errorHtml, 'danger');
+                $('#editOrderModal').modal('hide');
+
             }
         });
     });

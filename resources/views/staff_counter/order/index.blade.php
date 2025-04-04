@@ -395,6 +395,23 @@ function number_format(number) {
     return new Intl.NumberFormat('vi-VN').format(number);
 }
 
+//nhập trực tiếp input số lượng
+$('#orderItemsContainer').on('input', '.quantity-input', function() {
+    const index = $(this).closest('.order-item').data('index');
+    let newQuantity = parseInt($(this).val(), 10);
+
+    // Kiểm tra giá trị nhập vào có hợp lệ không (chỉ là số nguyên dương)
+    if (isNaN(newQuantity) || newQuantity <= 0) {
+        $(this).val(orderItems[index].quantity); // Reset lại giá trị nếu không hợp lệ
+        return;
+    }
+
+    // Cập nhật số lượng vào mảng orderItems
+    orderItems[index].quantity = newQuantity;
+    renderOrderItems(); // Cập nhật lại giao diện
+});
+
+
 // Xử lý tăng, giảm số lượng và cập nhật ghi chú
 $('#orderItemsContainer').on('click', '.increase', function() {
     const index = $(this).closest('.order-item').data('index');
@@ -464,14 +481,29 @@ $('#submitOrder').on('click', function() {
         },
         error: function(xhr) {
             let errors = xhr.responseJSON.errors;
+
             let errorHtml = '';
-            $.each(errors, function(key, messages) {
-                errorHtml += messages.join('<br>') + '<br>';
-            });
+            if (Array.isArray(errors)) {
+                // Trường hợp lỗi là mảng thông báo đơn thuần
+                errorHtml = errors.join('<br>');
+            } else if (typeof errors === 'object') {
+                // Trường hợp lỗi validation theo field
+                $.each(errors, function(key, messages) {
+                    errorHtml += messages.join('<br>') + '<br>';
+                });
+            } else {
+                // Một lỗi không xác định
+                errorHtml = 'Đã xảy ra lỗi không xác định.';
+            }
             $('#orderError')
                 .removeClass('d-none alert-success')
                 .addClass('alert-danger')
                 .html(errorHtml);
+
+            // Sau 3 giây tự ẩn thông báo
+            setTimeout(function() {
+                $('#orderError').addClass('d-none').html('');
+            }, 3000);
         }
     });
 });

@@ -36,4 +36,25 @@ class MenuItems extends Model
     {
         return $this->hasMany(OrderItems::class, 'item_id', 'item_id');
     }
+
+    public function calculateMaxServings(): int
+    {
+        $maxServings = PHP_INT_MAX;
+
+        $this->load('ingredients.ingredient');
+
+        foreach ($this->ingredients as $menuIngredient) {
+            $ingredient = $menuIngredient->ingredient;
+
+            // Tính số lượng còn lại có thể dùng cho món này
+            $available = $ingredient->quantity - $ingredient->reserved_quantity;
+
+            // Nếu không đủ, có thể làm được ít hoặc 0
+            $canMake = floor($available / $menuIngredient->quantity_per_unit);
+
+            $maxServings = min($maxServings, $canMake);
+        }
+
+        return $maxServings;
+    }
 }

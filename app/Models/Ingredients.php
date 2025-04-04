@@ -16,6 +16,7 @@ class Ingredients extends Model
         'unit',
         'cost_price', 
         'min_quantity',
+        'reserved_quantity',
         'last_updated'
     ];
     protected $guarded = ['ingredient_id'];

@@ -91,6 +91,28 @@ class OrderController extends Controller
 
         $validated = $request->validate($rules, $messages);
 
+        $errors = [];
+
+        foreach ($validated['items'] as $itemData) {
+            $item = MenuItems::find($itemData['id']);
+
+            $maxServings = $item->calculateMaxServings();
+            if ($maxServings === 0) {
+                $errors[] = "Món '{$item->name}' không còn nguyên liệu để phục vụ.";
+            }
+            if ($itemData['quantity'] > $maxServings) {
+                $errors[] = "Món '{$item->name}' chỉ có thể phục vụ tối đa {$maxServings} phần.";
+            }
+        }
+
+        if (!empty($errors)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không thể tạo đơn hàng',
+                'errors'  => $errors,
+            ], 422);
+        }
+
         // Tính tổng tiền đơn hàng
         $totalPrice = 0;
         foreach ($validated['items'] as $itemData) {
@@ -116,6 +138,20 @@ class OrderController extends Controller
                 'quantity' => $itemData['quantity'],
                 'note'     => $itemData['note'] ?? null,
             ]);
+
+            $item = MenuItems::find($itemData['id']);
+            $quantityOrdered = $itemData['quantity'];
+
+            foreach ($item->ingredients as $menuIngredient) {
+                $ingredient = $menuIngredient->ingredient;
+
+                // Tổng lượng nguyên liệu cần dùng
+                $requiredAmount = $quantityOrdered * $menuIngredient->quantity_per_unit;
+
+                // Cập nhật reserved_quantity
+                $ingredient->reserved_quantity += $requiredAmount;
+                $ingredient->save();
+            }
         }
 
         broadcast(new NewOrderEvent($order, 'created'))->toOthers();

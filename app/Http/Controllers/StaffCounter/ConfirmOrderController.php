@@ -68,6 +68,44 @@ class ConfirmOrderController extends Controller
     public function updateTakeaway(Request $request, $order_id)
     {
         $order = Orders::findOrFail($order_id);
+
+        foreach ($order->orderItems as $oldItem) {
+            $menuItem = $oldItem->item;
+
+            foreach ($menuItem->ingredients as $menuIngredient) {
+                $ingredient = $menuIngredient->ingredient;
+                $usedAmount = $oldItem->quantity * $menuIngredient->quantity_per_unit;
+
+                $ingredient->reserved_quantity -= $usedAmount;
+                if ($ingredient->reserved_quantity < 0) {
+                    $ingredient->reserved_quantity = 0;
+                }
+                $ingredient->save();
+            }
+        }
+
+        $errors = [];
+
+        if ($request->has('items')) {
+            foreach ($request->items as $itemData) {
+                $menuItem = MenuItems::find($itemData['id']);
+
+                if ($menuItem) {
+                    $maxServings = $menuItem->calculateMaxServings(); // Hàm bạn đã định nghĩa
+                    if ($itemData['quantity'] > $maxServings) {
+                        $errors[] = "Món '{$menuItem->name}' chỉ có thể phục vụ tối đa {$maxServings} phần.";
+                    }
+                }
+            }
+        }
+
+        if (!empty($errors)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không thể tạo đơn hàng',
+                'errors'  => $errors,
+            ], 422);
+        }
         
         // Xóa tất cả các món ăn hiện tại
         $order->orderItems()->delete();
@@ -76,15 +114,26 @@ class ConfirmOrderController extends Controller
         // Thêm các món ăn mới
         if ($request->has('items')) {
             foreach ($request->items as $item) {
-                // Lấy thông tin sản phẩm từ DB dựa trên item id
-                $product = MenuItems::find($item['id']);
-                if ($product) {
+                
+                $menuItem = MenuItems::find($item['id']);
+
+                if ($menuItem) {
                     $order->orderItems()->create([
                         'item_id'  => $item['id'],
                         'quantity' => $item['quantity'],
                         'note'     => $item['note'] ?? '',
                     ]);
-                    $total += $item['quantity'] * $product->price;
+
+                    $total += $item['quantity'] * $menuItem->price;
+
+                    // Cập nhật reserved_quantity mới
+                    foreach ($menuItem->ingredients as $menuIngredient) {
+                        $ingredient = $menuIngredient->ingredient;
+                        $usedAmount = $item['quantity'] * $menuIngredient->quantity_per_unit;
+
+                        $ingredient->reserved_quantity += $usedAmount;
+                        $ingredient->save();
+                    }
                 }
             }
         }
@@ -110,6 +159,24 @@ class ConfirmOrderController extends Controller
         // Kiểm tra nếu đơn hàng đã được thanh toán hoặc đã hủy thì không cho hủy nữa
         if ($order->status === 'paid' || $order->status === 'cancelled') {
             return response()->json(['message' => 'Đơn hàng không thể hủy'], 400);
+        }
+
+        // Trừ lại nguyên liệu đã giữ (reserved_quantity)
+        foreach ($order->orderItems as $orderItem) {
+            $menuItem = $orderItem->item;
+
+            foreach ($menuItem->ingredients as $menuIngredient) {
+                $ingredient = $menuIngredient->ingredient;
+
+                $usedAmount = $orderItem->quantity * $menuIngredient->quantity_per_unit;
+                $ingredient->reserved_quantity -= $usedAmount;
+
+                if ($ingredient->reserved_quantity < 0) {
+                    $ingredient->reserved_quantity = 0;
+                }
+
+                $ingredient->save();
+            }
         }
         
         $order->status = 'cancelled';
