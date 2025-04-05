@@ -64,6 +64,7 @@ Quản lý khuyến mãi
         <div class="input-group">
             <input type="text" name="search" class="form-control" placeholder="Tìm kiếm khuyến mãi..."
                 value="{{ request('search') }}">
+            <input type="hidden" name="tab" value="{{ request('tab', 'all-promotions') }}">
             <button class="btn btn-bg" type="submit">
                 <i class="fas fa-search"></i>
             </button>
@@ -73,23 +74,28 @@ Quản lý khuyến mãi
 
 <ul class="nav nav-tabs custom-tabs" id="promotionTabs">
     <li class="nav-item">
-        <a class="nav-link active" id="all-promotions-tab" data-toggle="tab" href="#all-promotions">Tất cả</a>
+        <a class="nav-link {{ request('tab') == 'all-promotions' || request('tab') == null ? 'active' : '' }}"
+            href="{{ route('admin.promotion.index', ['tab' => 'all-promotions', 'search' => request('search'), 'sort_field' => $sortField, 'sort_direction' => $sortDirection]) }}">
+            Tất cả
+        </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" id="valid-promotions-tab" data-toggle="tab" href="#valid-promotions">Hợp
-            lệ</a>
+        <a class="nav-link {{ request('tab') == 'valid-promotions' ? 'active' : '' }}"
+            href="{{ route('admin.promotion.index', ['tab' => 'valid-promotions', 'search' => request('search'), 'sort_field' => $sortField, 'sort_direction' => $sortDirection]) }}">
+            Hợp lệ
+        </a>
     </li>
 </ul>
 
 <div class="tab-content mt-3">
-    <div class="tab-pane fade show active" id="all-promotions">
+    <div class="tab-pane fade {{ $activeTab == 'all-promotions' ? 'show active' : '' }}" id="all-promotions">
         <div class="table-responsive">
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
                         <th class="text-center">
                             <a
-                                href="{{ route('admin.promotion.index', ['sort_field' => 'promotion_id', 'sort_direction' => $sortField == 'promotion_id' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                                href="{{ route('admin.promotion.index', ['sort_field' => 'promotion_id', 'sort_direction' => $sortField == 'promotion_id' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'tab' => request('tab')]) }}">
                                 Mã khuyến mãi
                                 @if($sortField == 'promotion_id')
                                 <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -98,7 +104,7 @@ Quản lý khuyến mãi
                         </th>
                         <th class="text-center">
                             <a
-                                href="{{ route('admin.promotion.index', ['sort_field' => 'name', 'sort_direction' => $sortField == 'name' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                                href="{{ route('admin.promotion.index', ['sort_field' => 'name', 'sort_direction' => $sortField == 'name' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'tab' => request('tab')]) }}">
                                 Tên khuyến mãi
                                 @if($sortField == 'name')
                                 <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -107,7 +113,7 @@ Quản lý khuyến mãi
                         </th>
                         <th class="text-center">
                             <a
-                                href="{{ route('admin.promotion.index', ['sort_field' => 'discount_type', 'sort_direction' => $sortField == 'discount_type' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                                href="{{ route('admin.promotion.index', ['sort_field' => 'discount_type', 'sort_direction' => $sortField == 'discount_type' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'tab' => request('tab')]) }}">
                                 Loại giảm giá
                                 @if($sortField == 'discount_type')
                                 <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -116,7 +122,7 @@ Quản lý khuyến mãi
                         </th>
                         <th class="text-center">
                             <a
-                                href="{{ route('admin.promotion.index', ['sort_field' => 'discount_value', 'sort_direction' => $sortField == 'discount_value' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                                href="{{ route('admin.promotion.index', ['sort_field' => 'discount_value', 'sort_direction' => $sortField == 'discount_value' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'tab' => request('tab')]) }}">
                                 Giá trị giảm
                                 @if($sortField == 'discount_value')
                                 <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -125,7 +131,7 @@ Quản lý khuyến mãi
                         </th>
                         <th class="text-center">
                             <a
-                                href="{{ route('admin.promotion.index', ['sort_field' => 'min_order_value', 'sort_direction' => $sortField == 'min_order_value' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                                href="{{ route('admin.promotion.index', ['sort_field' => 'min_order_value', 'sort_direction' => $sortField == 'min_order_value' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'tab' => request('tab')]) }}">
                                 Giá trị tối thiểu áp dụng
                                 @if($sortField == 'min_order_value')
                                 <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -134,7 +140,7 @@ Quản lý khuyến mãi
                         </th>
                         <th class="text-center">
                             <a
-                                href="{{ route('admin.promotion.index', ['sort_field' => 'start_date', 'sort_direction' => $sortField == 'start_date' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                                href="{{ route('admin.promotion.index', ['sort_field' => 'start_date', 'sort_direction' => $sortField == 'start_date' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'tab' => request('tab')]) }}">
                                 Ngày bắt đầu
                                 @if($sortField == 'start_date')
                                 <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -143,7 +149,7 @@ Quản lý khuyến mãi
                         </th>
                         <th class="text-center">
                             <a
-                                href="{{ route('admin.promotion.index', ['sort_field' => 'end_date', 'sort_direction' => $sortField == 'end_date' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                                href="{{ route('admin.promotion.index', ['sort_field' => 'end_date', 'sort_direction' => $sortField == 'end_date' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'tab' => request('tab')]) }}">
                                 Ngày kết thúc
                                 @if($sortField == 'end_date')
                                 <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -152,7 +158,7 @@ Quản lý khuyến mãi
                         </th>
                         <th class="text-center">
                             <a
-                                href="{{ route('admin.promotion.index', ['sort_field' => 'is_active', 'sort_direction' => $sortField == 'is_active' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                                href="{{ route('admin.promotion.index', ['sort_field' => 'is_active', 'sort_direction' => $sortField == 'is_active' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'tab' => request('tab')]) }}">
                                 Trạng thái
                                 @if($sortField == 'is_active')
                                 <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -212,14 +218,15 @@ Quản lý khuyến mãi
             </table>
         </div>
     </div>
-    <div class="tab-pane fade" id="valid-promotions">
+    <!-- Tab hợp lệ -->
+    <div class="tab-pane fade {{ $activeTab == 'valid-promotions' ? 'show active' : '' }}" id="valid-promotions">
         <div class="table-responsive">
             <table class="table table-striped table-sm">
                 <thead>
                     <tr>
                         <th class="text-center">
                             <a
-                                href="{{ route('admin.promotion.index', ['sort_field' => 'promotion_id', 'sort_direction' => $sortField == 'promotion_id' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                                href="{{ route('admin.promotion.index', ['sort_field' => 'promotion_id', 'sort_direction' => $sortField == 'promotion_id' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'tab' => request('tab')]) }}">
                                 Mã khuyến mãi
                                 @if($sortField == 'promotion_id')
                                 <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -228,7 +235,7 @@ Quản lý khuyến mãi
                         </th>
                         <th class="text-center">
                             <a
-                                href="{{ route('admin.promotion.index', ['sort_field' => 'name', 'sort_direction' => $sortField == 'name' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                                href="{{ route('admin.promotion.index', ['sort_field' => 'name', 'sort_direction' => $sortField == 'name' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'tab' => request('tab')]) }}">
                                 Tên khuyến mãi
                                 @if($sortField == 'name')
                                 <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -237,7 +244,7 @@ Quản lý khuyến mãi
                         </th>
                         <th class="text-center">
                             <a
-                                href="{{ route('admin.promotion.index', ['sort_field' => 'discount_type', 'sort_direction' => $sortField == 'discount_type' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                                href="{{ route('admin.promotion.index', ['sort_field' => 'discount_type', 'sort_direction' => $sortField == 'discount_type' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'tab' => request('tab')]) }}">
                                 Loại giảm giá
                                 @if($sortField == 'discount_type')
                                 <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -246,7 +253,7 @@ Quản lý khuyến mãi
                         </th>
                         <th class="text-center">
                             <a
-                                href="{{ route('admin.promotion.index', ['sort_field' => 'discount_value', 'sort_direction' => $sortField == 'discount_value' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                                href="{{ route('admin.promotion.index', ['sort_field' => 'discount_value', 'sort_direction' => $sortField == 'discount_value' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'tab' => request('tab')]) }}">
                                 Giá trị giảm
                                 @if($sortField == 'discount_value')
                                 <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -255,7 +262,7 @@ Quản lý khuyến mãi
                         </th>
                         <th class="text-center">
                             <a
-                                href="{{ route('admin.promotion.index', ['sort_field' => 'min_order_value', 'sort_direction' => $sortField == 'min_order_value' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                                href="{{ route('admin.promotion.index', ['sort_field' => 'min_order_value', 'sort_direction' => $sortField == 'min_order_value' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'tab' => request('tab')]) }}">
                                 Giá trị tối thiểu áp dụng
                                 @if($sortField == 'min_order_value')
                                 <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -264,7 +271,7 @@ Quản lý khuyến mãi
                         </th>
                         <th class="text-center">
                             <a
-                                href="{{ route('admin.promotion.index', ['sort_field' => 'start_date', 'sort_direction' => $sortField == 'start_date' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                                href="{{ route('admin.promotion.index', ['sort_field' => 'start_date', 'sort_direction' => $sortField == 'start_date' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'tab' => request('tab')]) }}">
                                 Ngày bắt đầu
                                 @if($sortField == 'start_date')
                                 <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -273,7 +280,7 @@ Quản lý khuyến mãi
                         </th>
                         <th class="text-center">
                             <a
-                                href="{{ route('admin.promotion.index', ['sort_field' => 'end_date', 'sort_direction' => $sortField == 'end_date' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                                href="{{ route('admin.promotion.index', ['sort_field' => 'end_date', 'sort_direction' => $sortField == 'end_date' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'tab' => request('tab')]) }}">
                                 Ngày kết thúc
                                 @if($sortField == 'end_date')
                                 <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -282,7 +289,7 @@ Quản lý khuyến mãi
                         </th>
                         <th class="text-center">
                             <a
-                                href="{{ route('admin.promotion.index', ['sort_field' => 'is_active', 'sort_direction' => $sortField == 'is_active' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                                href="{{ route('admin.promotion.index', ['sort_field' => 'is_active', 'sort_direction' => $sortField == 'is_active' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'tab' => request('tab')]) }}">
                                 Trạng thái
                                 @if($sortField == 'is_active')
                                 <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -351,13 +358,6 @@ Quản lý khuyến mãi
 
 @section('custom-scripts')
 <script>
-$(document).ready(function() {
-    $('#promotionTabs a').click(function(e) {
-        e.preventDefault();
-        $(this).tab('show');
-    });
-});
-
 $(document).ready(function() {
     let formToSubmit;
 

@@ -19,6 +19,7 @@ class IngredientController extends Controller
     {
         $sortField = $request->input('sort_field', 'ingredient_id'); // Mặc định sắp xếp theo ID
         $sortDirection = $request->input('sort_direction', 'asc'); // Mặc định sắp xếp tăng dần
+        $activeTab = $request->input('tab', 'all-ingredients');
 
         $query = Ingredients::query();
 
@@ -68,7 +69,8 @@ class IngredientController extends Controller
         return view('admin.ingredient.index')
             ->with('ingredients', $ingredients)
             ->with('sortField', $sortField)
-            ->with('sortDirection', $sortDirection);
+            ->with('sortDirection', $sortDirection)
+            ->with('activeTab', $activeTab);
     }
 
     // Xuất Excel

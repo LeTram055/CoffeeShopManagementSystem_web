@@ -16,6 +16,7 @@ class PromotionController extends Controller
     {
         $sortField = $request->input('sort_field', 'promotion_id'); // Mặc định sắp xếp theo promotion_id
         $sortDirection = $request->input('sort_direction', 'asc'); // Mặc định tăng dần
+        $activeTab = $request->input('tab', 'all-promotions');
 
         $query = Promotions::query();
 
@@ -50,7 +51,8 @@ class PromotionController extends Controller
             ->with('promotions', $promotions)
             ->with('validPromotions', $validPromotions)
             ->with('sortField', $sortField)
-            ->with('sortDirection', $sortDirection);
+            ->with('sortDirection', $sortDirection)
+            ->with('activeTab', $activeTab);
     }
 
     // Xuất Excel

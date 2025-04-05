@@ -63,6 +63,7 @@ Quản lý nhân viên
         <div class="input-group">
             <input type="text" name="search" class="form-control" placeholder="Tìm kiếm nhân viên..."
                 value="{{ request('search') }}">
+            <input type="hidden" name="type" value="{{ request('type') }}">
             <button class="btn btn-bg" type="submit">
                 <i class="fas fa-search"></i>
             </button>
@@ -72,20 +73,24 @@ Quản lý nhân viên
 
 <ul class="nav nav-tabs custom-tabs my-3" id="employeeTabs">
     <li class="nav-item">
-        <a class="nav-link {{ request('type') == null ? 'active' : '' }}" href="{{ route('admin.employee.index') }}">Tất
+        <a class="nav-link {{ request('type') == null ? 'active' : '' }}"
+            href="{{ route('admin.employee.index', ['type' => null, 'search' => request('search'), 'sort_field' => $sortField, 'sort_direction' => $sortDirection]) }}">Tất
             cả</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link {{ request('type') == 'import' ? 'active' : '' }}"
-            href="{{ route('admin.employee.index', ['type' => 'staff_counter']) }}">Nhân viên thu ngân</a>
+        <a class="nav-link {{ request('type') == 'staff_counter' ? 'active' : '' }}"
+            href="{{ route('admin.employee.index', ['type' => 'staff_counter', 'search' => request('search'), 'sort_field' => $sortField, 'sort_direction' => $sortDirection]) }}">Nhân
+            viên thu ngân</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link {{ request('type') == 'export' ? 'active' : '' }}"
-            href="{{ route('admin.employee.index', ['type' => 'staff_serve']) }}">Nhân viên phục vụ</a>
+        <a class="nav-link {{ request('type') == 'staff_serve' ? 'active' : '' }}"
+            href="{{ route('admin.employee.index', ['type' => 'staff_serve', 'search' => request('search'), 'sort_field' => $sortField, 'sort_direction' => $sortDirection]) }}">Nhân
+            viên phục vụ</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link {{ request('type') == 'adjustment' ? 'active' : '' }}"
-            href="{{ route('admin.employee.index', ['type' => 'staff_barista']) }}">Nhân viên pha chế</a>
+        <a class="nav-link {{ request('type') == 'staff_barista' ? 'active' : '' }}"
+            href="{{ route('admin.employee.index', ['type' => 'staff_barista', 'search' => request('search'), 'sort_field' => $sortField, 'sort_direction' => $sortDirection]) }}">Nhân
+            viên pha chế</a>
     </li>
 </ul>
 
@@ -95,7 +100,7 @@ Quản lý nhân viên
             <tr>
                 <th class="text-center">
                     <a
-                        href="{{ route('admin.employee.index', ['sort_field' => 'employee_id', 'sort_direction' => $sortField == 'employee_id' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                        href="{{ route('admin.employee.index', ['sort_field' => 'employee_id', 'sort_direction' => $sortField == 'employee_id' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'type' => request('type')]) }}">
                         Mã nhân viên
                         @if($sortField == 'employee_id')
                         <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -104,7 +109,7 @@ Quản lý nhân viên
                 </th>
                 <th class="text-center">
                     <a
-                        href="{{ route('admin.employee.index', ['sort_field' => 'name', 'sort_direction' => $sortField == 'name' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                        href="{{ route('admin.employee.index', ['sort_field' => 'name', 'sort_direction' => $sortField == 'name' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'type' => request('type')]) }}">
                         Tên nhân viên
                         @if($sortField == 'name')
                         <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -113,7 +118,7 @@ Quản lý nhân viên
                 </th>
                 <th class="text-center">
                     <a
-                        href="{{ route('admin.employee.index', ['sort_field' => 'username', 'sort_direction' => $sortField == 'username' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                        href="{{ route('admin.employee.index', ['sort_field' => 'username', 'sort_direction' => $sortField == 'username' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'type' => request('type')]) }}">
                         Tên đăng nhập
                         @if($sortField == 'username')
                         <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -122,7 +127,7 @@ Quản lý nhân viên
                 </th>
                 <th class="text-center">
                     <a
-                        href="{{ route('admin.employee.index', ['sort_field' => 'role', 'sort_direction' => $sortField == 'role' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                        href="{{ route('admin.employee.index', ['sort_field' => 'role', 'sort_direction' => $sortField == 'role' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'type' => request('type')]) }}">
                         Vai trò
                         @if($sortField == 'role')
                         <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -132,7 +137,7 @@ Quản lý nhân viên
 
                 <th class="text-center">
                     <a
-                        href="{{ route('admin.employee.index', ['sort_field' => 'phone_number', 'sort_direction' => $sortField == 'phone_number' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                        href="{{ route('admin.employee.index', ['sort_field' => 'phone_number', 'sort_direction' => $sortField == 'phone_number' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'type' => request('type')]) }}">
                         Số điện thoại
                         @if($sortField == 'phone_number')
                         <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -141,7 +146,7 @@ Quản lý nhân viên
                 </th>
                 <th class="text-center">
                     <a
-                        href="{{ route('admin.employee.index', ['sort_field' => 'email', 'sort_direction' => $sortField == 'email' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                        href="{{ route('admin.employee.index', ['sort_field' => 'email', 'sort_direction' => $sortField == 'email' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'type' => request('type')]) }}">
                         Email
                         @if($sortField == 'email')
                         <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -150,7 +155,7 @@ Quản lý nhân viên
                 </th>
                 <th class="text-center">
                     <a
-                        href="{{ route('admin.employee.index', ['sort_field' => 'address', 'sort_direction' => $sortField == 'address' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                        href="{{ route('admin.employee.index', ['sort_field' => 'address', 'sort_direction' => $sortField == 'address' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'type' => request('type')]) }}">
                         Địa chỉ
                         @if($sortField == 'address')
                         <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -159,7 +164,7 @@ Quản lý nhân viên
                 </th>
                 <th class="text-center">
                     <a
-                        href="{{ route('admin.employee.index', ['sort_field' => 'start_date', 'sort_direction' => $sortField == 'start_date' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                        href="{{ route('admin.employee.index', ['sort_field' => 'start_date', 'sort_direction' => $sortField == 'start_date' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'type' => request('type')]) }}">
                         Ngày bắt đầu làm việc
                         @if($sortField == 'start_date')
                         <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -168,7 +173,7 @@ Quản lý nhân viên
                 </th>
                 <th class="text-center">
                     <a
-                        href="{{ route('admin.employee.index', ['sort_field' => 'hourly_rate', 'sort_direction' => $sortField == 'hourly_rate' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                        href="{{ route('admin.employee.index', ['sort_field' => 'hourly_rate', 'sort_direction' => $sortField == 'hourly_rate' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'type' => request('type')]) }}">
                         Lương theo giờ
                         @if($sortField == 'hourly_rate')
                         <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -177,7 +182,7 @@ Quản lý nhân viên
                 </th>
                 <th class="text-center">
                     <a
-                        href="{{ route('admin.employee.index', ['sort_field' => 'status', 'sort_direction' => $sortField == 'status' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                        href="{{ route('admin.employee.index', ['sort_field' => 'status', 'sort_direction' => $sortField == 'status' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'type' => request('type')]) }}">
                         Trạng thái
                         @if($sortField == 'status')
                         <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>

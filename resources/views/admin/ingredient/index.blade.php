@@ -54,6 +54,7 @@ Quản lý nguyên liệu
             <div class="toast-body">
                 <strong id="toastOrderId"></strong> vừa được tạo!
             </div>
+
             <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
                 aria-label="Close"></button>
         </div>
@@ -76,6 +77,7 @@ Quản lý nguyên liệu
         <div class="input-group">
             <input type="text" name="search" class="form-control" placeholder="Tìm kiếm danh mục..."
                 value="{{ request('search') }}">
+            <input type="hidden" name="tab" value="{{ request('tab', 'all-ingredients') }}">
             <button class="btn btn-bg" type="submit">
                 <i class="fas fa-search"></i>
             </button>
@@ -83,26 +85,30 @@ Quản lý nguyên liệu
     </form>
 </div>
 
-<ul class="nav nav-tabs custom-tabs my-3" id="ingredientTabs" role="tablist">
-    <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button"
-            role="tab">Tất cả</button>
+<ul class="nav nav-tabs custom-tabs" id="ingredientTabs">
+    <li class="nav-item">
+        <a class="nav-link {{ request('tab') == 'all-ingredients' || request('tab') == null ? 'active' : '' }}"
+            href="{{ route('admin.ingredient.index', ['tab' => 'all-ingredients', 'search' => request('search'), 'sort_field' => $sortField, 'sort_direction' => $sortDirection]) }}">
+            Tất cả
+        </a>
     </li>
-    <li class="nav-item" role="presentation">
-        <button class="nav-link" id="low-stock-tab" data-bs-toggle="tab" data-bs-target="#low-stock" type="button"
-            role="tab">Trong kho thấp</button>
+    <li class="nav-item">
+        <a class="nav-link {{ request('tab') == 'low-stock' ? 'active' : '' }}"
+            href="{{ route('admin.ingredient.index', ['tab' => 'low-stock', 'search' => request('search'), 'sort_field' => $sortField, 'sort_direction' => $sortDirection]) }}">
+            Hợp lệ
+        </a>
     </li>
 </ul>
 <div class="tab-content">
     <!-- Tab Tất cả -->
-    <div class="tab-pane fade show active" id="all" role="tabpanel">
+    <div class="tab-pane fade  {{ $activeTab == 'all-ingredients' ? 'show active' : '' }}" id="all" role="tabpanel">
         <div class="table-responsive">
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
                         <th class="text-center">
                             <a
-                                href="{{ route('admin.ingredient.index', ['sort_field' => 'ingredient_id', 'sort_direction' => $sortField == 'ingredient_id' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                                href="{{ route('admin.ingredient.index', ['sort_field' => 'ingredient_id', 'sort_direction' => $sortField == 'ingredient_id' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'tab' => request('tab')]) }}">
                                 Mã nguyên liệu
                                 @if($sortField == 'ingredient_id')
                                 <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -111,7 +117,7 @@ Quản lý nguyên liệu
                         </th>
                         <th class="text-center">
                             <a
-                                href="{{ route('admin.ingredient.index', ['sort_field' => 'name', 'sort_direction' => $sortField == 'name' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                                href="{{ route('admin.ingredient.index', ['sort_field' => 'name', 'sort_direction' => $sortField == 'name' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'tab' => request('tab')]) }}">
                                 Tên nguyên liệu
                                 @if($sortField == 'name')
                                 <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -120,7 +126,7 @@ Quản lý nguyên liệu
                         </th>
                         <th class="text-center">
                             <a
-                                href="{{ route('admin.ingredient.index', ['sort_field' => 'quantity', 'sort_direction' => $sortField == 'quantity' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                                href="{{ route('admin.ingredient.index', ['sort_field' => 'quantity', 'sort_direction' => $sortField == 'quantity' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'tab' => request('tab')]) }}">
                                 Số lượng
                                 @if($sortField == 'quantity')
                                 <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -129,7 +135,7 @@ Quản lý nguyên liệu
                         </th>
                         <th class="text-center">
                             <a
-                                href="{{ route('admin.ingredient.index', ['sort_field' => 'unit', 'sort_direction' => $sortField == 'unit' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                                href="{{ route('admin.ingredient.index', ['sort_field' => 'unit', 'sort_direction' => $sortField == 'unit' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'tab' => request('tab')]) }}">
                                 Đơn vị
                                 @if($sortField == 'unit')
                                 <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -138,7 +144,7 @@ Quản lý nguyên liệu
                         </th>
                         <th class="text-center">
                             <a
-                                href="{{ route('admin.ingredient.index', ['sort_field' => 'cost_price', 'sort_direction' => $sortField == 'cost_price' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                                href="{{ route('admin.ingredient.index', ['sort_field' => 'cost_price', 'sort_direction' => $sortField == 'cost_price' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'tab' => request('tab')]) }}">
                                 Giá
                                 @if($sortField == 'cost_price')
                                 <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -147,7 +153,7 @@ Quản lý nguyên liệu
                         </th>
                         <th class="text-center">
                             <a
-                                href="{{ route('admin.ingredient.index', ['sort_field' => 'min_quantity', 'sort_direction' => $sortField == 'min_quantity' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                                href="{{ route('admin.ingredient.index', ['sort_field' => 'min_quantity', 'sort_direction' => $sortField == 'min_quantity' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'tab' => request('tab')]) }}">
                                 Số lượng tối thiểu
                                 @if($sortField == 'min_quantity')
                                 <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -156,7 +162,7 @@ Quản lý nguyên liệu
                         </th>
                         <th class="text-center">
                             <a
-                                href="{{ route('admin.ingredient.index', ['sort_field' => 'last_updated', 'sort_direction' => $sortField == 'last_updated' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                                href="{{ route('admin.ingredient.index', ['sort_field' => 'last_updated', 'sort_direction' => $sortField == 'last_updated' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'tab' => request('tab')]) }}">
                                 Cập nhật lần cuối
                                 @if($sortField == 'last_updated')
                                 <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -203,7 +209,9 @@ Quản lý nguyên liệu
             </table>
         </div>
     </div>
-    <div class="tab-pane fade" id="low-stock" role="tabpanel">
+
+    <!-- Tab Nguyên liệu trong kho thấp -->
+    <div class="tab-pane fade  {{ $activeTab == 'low-stock' ? 'show active' : '' }}" id="low-stock" role="tabpanel">
 
         <div class="table-responsive">
             <table class="table table-striped table-hover">
@@ -211,7 +219,7 @@ Quản lý nguyên liệu
                     <tr>
                         <th class="text-center">
                             <a
-                                href="{{ route('admin.ingredient.index', ['sort_field' => 'ingredient_id', 'sort_direction' => $sortField == 'ingredient_id' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                                href="{{ route('admin.ingredient.index', ['sort_field' => 'ingredient_id', 'sort_direction' => $sortField == 'ingredient_id' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'tab' => request('tab')]) }}">
                                 Mã nguyên liệu
                                 @if($sortField == 'ingredient_id')
                                 <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -220,7 +228,7 @@ Quản lý nguyên liệu
                         </th>
                         <th class="text-center">
                             <a
-                                href="{{ route('admin.ingredient.index', ['sort_field' => 'name', 'sort_direction' => $sortField == 'name' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                                href="{{ route('admin.ingredient.index', ['sort_field' => 'name', 'sort_direction' => $sortField == 'name' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'tab' => request('tab')]) }}">
                                 Tên nguyên liệu
                                 @if($sortField == 'name')
                                 <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -229,7 +237,7 @@ Quản lý nguyên liệu
                         </th>
                         <th class="text-center">
                             <a
-                                href="{{ route('admin.ingredient.index', ['sort_field' => 'quantity', 'sort_direction' => $sortField == 'quantity' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                                href="{{ route('admin.ingredient.index', ['sort_field' => 'quantity', 'sort_direction' => $sortField == 'quantity' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'tab' => request('tab')]) }}">
                                 Số lượng
                                 @if($sortField == 'quantity')
                                 <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -238,7 +246,7 @@ Quản lý nguyên liệu
                         </th>
                         <th class="text-center">
                             <a
-                                href="{{ route('admin.ingredient.index', ['sort_field' => 'unit', 'sort_direction' => $sortField == 'unit' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                                href="{{ route('admin.ingredient.index', ['sort_field' => 'unit', 'sort_direction' => $sortField == 'unit' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'tab' => request('tab')]) }}">
                                 Đơn vị
                                 @if($sortField == 'unit')
                                 <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -247,7 +255,7 @@ Quản lý nguyên liệu
                         </th>
                         <th class="text-center">
                             <a
-                                href="{{ route('admin.ingredient.index', ['sort_field' => 'cost_price', 'sort_direction' => $sortField == 'cost_price' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                                href="{{ route('admin.ingredient.index', ['sort_field' => 'cost_price', 'sort_direction' => $sortField == 'cost_price' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'tab' => request('tab')]) }}">
                                 Giá
                                 @if($sortField == 'cost_price')
                                 <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -256,7 +264,7 @@ Quản lý nguyên liệu
                         </th>
                         <th class="text-center">
                             <a
-                                href="{{ route('admin.ingredient.index', ['sort_field' => 'min_quantity', 'sort_direction' => $sortField == 'min_quantity' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                                href="{{ route('admin.ingredient.index', ['sort_field' => 'min_quantity', 'sort_direction' => $sortField == 'min_quantity' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'tab' => request('tab')]) }}">
                                 Số lượng tối thiểu
                                 @if($sortField == 'min_quantity')
                                 <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -265,7 +273,7 @@ Quản lý nguyên liệu
                         </th>
                         <th class="text-center">
                             <a
-                                href="{{ route('admin.ingredient.index', ['sort_field' => 'last_updated', 'sort_direction' => $sortField == 'last_updated' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                                href="{{ route('admin.ingredient.index', ['sort_field' => 'last_updated', 'sort_direction' => $sortField == 'last_updated' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'tab' => request('tab')]) }}">
                                 Cập nhật lần cuối
                                 @if($sortField == 'last_updated')
                                 <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>

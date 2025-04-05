@@ -60,6 +60,7 @@ Quản lý log nguyên liệu
         <div class="input-group">
             <input type="text" name="search" class="form-control" placeholder="Tìm kiếm danh mục..."
                 value="{{ request('search') }}">
+            <input type="hidden" name="type" value="{{ request('type') }}">
             <button class="btn btn-bg" type="submit">
                 <i class="fas fa-search"></i>
             </button>
@@ -70,19 +71,21 @@ Quản lý log nguyên liệu
 <ul class="nav nav-tabs custom-tabs my-3" id="ingredientLogTabs">
     <li class="nav-item">
         <a class="nav-link {{ request('type') == null ? 'active' : '' }}"
-            href="{{ route('admin.ingredientlog.index') }}">Tất cả</a>
+            href="{{ route('admin.ingredientlog.index', ['type' => null, 'search' => request('search'), 'sort_field' => $sortField, 'sort_direction' => $sortDirection]) }}">Tất
+            cả</a>
     </li>
     <li class="nav-item">
         <a class="nav-link {{ request('type') == 'import' ? 'active' : '' }}"
-            href="{{ route('admin.ingredientlog.index', ['type' => 'import']) }}">Nhận</a>
+            href="{{ route('admin.ingredientlog.index', ['type' => 'import', 'search' => request('search'), 'sort_field' => $sortField, 'sort_direction' => $sortDirection]) }}">Nhận</a>
     </li>
     <li class="nav-item">
         <a class="nav-link {{ request('type') == 'export' ? 'active' : '' }}"
-            href="{{ route('admin.ingredientlog.index', ['type' => 'export']) }}">Xuất</a>
+            href="{{ route('admin.ingredientlog.index', ['type' => 'export', 'search' => request('search'), 'sort_field' => $sortField, 'sort_direction' => $sortDirection]) }}">Xuất</a>
     </li>
     <li class="nav-item">
         <a class="nav-link {{ request('type') == 'adjustment' ? 'active' : '' }}"
-            href="{{ route('admin.ingredientlog.index', ['type' => 'adjustment']) }}">Điều chỉnh</a>
+            href="{{ route('admin.ingredientlog.index', ['type' => 'adjustment', 'search' => request('search'), 'sort_field' => $sortField, 'sort_direction' => $sortDirection]) }}">Điều
+            chỉnh</a>
     </li>
 </ul>
 
@@ -92,7 +95,7 @@ Quản lý log nguyên liệu
             <tr>
                 <th class="text-center">
                     <a
-                        href="{{ route('admin.ingredientlog.index', ['sort_field' => 'log_id', 'sort_direction' => $sortField == 'log_id' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                        href="{{ route('admin.ingredientlog.index', ['sort_field' => 'log_id', 'sort_direction' => $sortField == 'log_id' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'type' => request('type')]) }}">
                         Mã log
                         @if($sortField == 'log_id')
                         <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -101,7 +104,7 @@ Quản lý log nguyên liệu
                 </th>
                 <th class="text-center">
                     <a
-                        href="{{ route('admin.ingredientlog.index', ['sort_field' => 'ingredient_name', 'sort_direction' => $sortField == 'ingredient_name' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                        href="{{ route('admin.ingredientlog.index', ['sort_field' => 'ingredient_name', 'sort_direction' => $sortField == 'ingredient_name' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'type' => request('type')]) }}">
                         Tên nguyên liệu
                         @if($sortField == 'ingredient_name')
                         <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -110,7 +113,7 @@ Quản lý log nguyên liệu
                 </th>
                 <th class="text-center">
                     <a
-                        href="{{ route('admin.ingredientlog.index', ['sort_field' => 'quantity_change', 'sort_direction' => $sortField == 'quantity_change' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                        href="{{ route('admin.ingredientlog.index', ['sort_field' => 'quantity_change', 'sort_direction' => $sortField == 'quantity_change' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'type' => request('type')]) }}">
                         Số lượng thay đổi
                         @if($sortField == 'quantity_change')
                         <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -120,7 +123,7 @@ Quản lý log nguyên liệu
 
                 <th class="text-center">
                     <a
-                        href="{{ route('admin.ingredientlog.index', ['sort_field' => 'reason', 'sort_direction' => $sortField == 'reason' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                        href="{{ route('admin.ingredientlog.index', ['sort_field' => 'reason', 'sort_direction' => $sortField == 'reason' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'type' => request('type')]) }}">
                         Lý do
                         @if($sortField == 'reason')
                         <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -129,7 +132,7 @@ Quản lý log nguyên liệu
                 </th>
                 <th class="text-center">
                     <a
-                        href="{{ route('admin.ingredientlog.index', ['sort_field' => 'price', 'sort_direction' => $sortField == 'price' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                        href="{{ route('admin.ingredientlog.index', ['sort_field' => 'price', 'sort_direction' => $sortField == 'price' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'type' => request('type')]) }}">
                         Giá nhập
                         @if($sortField == 'price')
                         <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -138,7 +141,7 @@ Quản lý log nguyên liệu
                 </th>
                 <th class="text-center">
                     <a
-                        href="{{ route('admin.ingredientlog.index', ['sort_field' => 'new_cost_price', 'sort_direction' => $sortField == 'new_cost_price' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                        href="{{ route('admin.ingredientlog.index', ['sort_field' => 'new_cost_price', 'sort_direction' => $sortField == 'new_cost_price' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'type' => request('type')]) }}">
                         Giá mới
                         @if($sortField == 'new_cost_price')
                         <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -147,7 +150,7 @@ Quản lý log nguyên liệu
                 </th>
                 <th class="text-center">
                     <a
-                        href="{{ route('admin.ingredientlog.index', ['sort_field' => 'log_type', 'sort_direction' => $sortField == 'log_type' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                        href="{{ route('admin.ingredientlog.index', ['sort_field' => 'log_type', 'sort_direction' => $sortField == 'log_type' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'type' => request('type')]) }}">
                         Loại cập nhật
                         @if($sortField == 'log_type')
                         <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -156,7 +159,7 @@ Quản lý log nguyên liệu
                 </th>
                 <th class="text-center">
                     <a
-                        href="{{ route('admin.ingredientlog.index', ['sort_field' => 'employee_name', 'sort_direction' => $sortField == 'employee_name' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                        href="{{ route('admin.ingredientlog.index', ['sort_field' => 'employee_name', 'sort_direction' => $sortField == 'employee_name' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'type' => request('type')]) }}">
                         Nhân viên thực hiện
                         @if($sortField == 'employee_name')
                         <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -165,7 +168,7 @@ Quản lý log nguyên liệu
                 </th>
                 <th class="text-center">
                     <a
-                        href="{{ route('admin.ingredientlog.index', ['sort_field' => 'changed_at', 'sort_direction' => $sortField == 'changed_at' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                        href="{{ route('admin.ingredientlog.index', ['sort_field' => 'changed_at', 'sort_direction' => $sortField == 'changed_at' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'type' => request('type')]) }}">
                         Thời gian thay đổi
                         @if($sortField == 'changed_at')
                         <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>

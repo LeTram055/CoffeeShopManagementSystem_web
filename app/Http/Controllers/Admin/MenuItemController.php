@@ -27,8 +27,8 @@ class MenuItemController extends Controller
         }
         
         if ($request->filled('available')) {
-    $q->where('is_available', $request->available);
-}
+            $q->where('is_available', $request->available);
+        }
 
     }]);
 
