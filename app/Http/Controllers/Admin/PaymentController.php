@@ -17,6 +17,7 @@ class PaymentController extends Controller
     {
         $sortField = $request->input('sort_field', 'payment_id');
         $sortDirection = $request->input('sort_direction', 'asc');
+        $perPage = $request->input('per_page', 10);
 
         $query = Payments::with(['employee', 'order.customer']);
 
@@ -81,7 +82,10 @@ class PaymentController extends Controller
             $query->orderByRaw("CAST(payment_id AS DECIMAL) $sortDirection");
         }
 
-        $payments = $query->get();
+        // $payments = $query->get();
+
+        $payments = $query->paginate($perPage)->appends(request()->except('page'));
+
 
         return view('admin.payment.index')
             ->with('payments', $payments)

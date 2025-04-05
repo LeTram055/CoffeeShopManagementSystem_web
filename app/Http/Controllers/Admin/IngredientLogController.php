@@ -16,7 +16,7 @@ class IngredientLogController extends Controller
     {
         $sortField = $request->input('sort_field', 'log_id'); // Sắp xếp theo ID mặc định
         $sortDirection = $request->input('sort_direction', 'asc'); // Mặc định tăng dần
-
+        $perPage = $request->input('per_page', 10);
         
         // Thêm join vào truy vấn chính để có thể tìm kiếm theo ingredient_name và employee_name
         $query = IngredientLogs::query()
@@ -75,7 +75,7 @@ class IngredientLogController extends Controller
             $query->orderBy('log_id', 'asc');
         }
 
-        $logs = $query->get();
+        $logs = $query->paginate($perPage)->appends(request()->except('page'));
 
         return view('admin.ingredientlog.index')
             ->with('ingredientLogs', $logs)

@@ -16,7 +16,8 @@ class SalaryController extends Controller
     {
         $sortField = $request->input('sort_field', 'salary_id'); 
         $sortDirection = $request->input('sort_direction', 'asc'); 
-
+        $perPage = $request->input('per_page', 10);
+        
         $query = Salaries::with('employee'); 
 
         // Tìm kiếm
@@ -52,7 +53,7 @@ class SalaryController extends Controller
             $query->orderBy('salary_id', 'asc'); // Default sorting
         }
 
-        $salaries = $query->get();
+        $salaries = $query->paginate($perPage)->appends(request()->except('page'));
 
         $employees = Employees::where('status', 'active')
                                 ->where('role', '!=', 'admin')

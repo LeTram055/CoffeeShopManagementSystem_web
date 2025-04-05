@@ -15,6 +15,7 @@ class EmployeeController extends Controller
     {
         $sortField = $request->input('sort_field', 'employee_id'); 
         $sortDirection = $request->input('sort_direction', 'asc'); 
+        $perPage = $request->input('per_page', 10);
 
         $query = Employees::query();
         $query->where('role', '!=', 'admin');
@@ -76,7 +77,7 @@ class EmployeeController extends Controller
             $query->orderByRaw("CONVERT(employee_id USING utf8) COLLATE utf8_unicode_ci asc");
         }
 
-        $employees = $query->get();
+        $employees = $query->paginate($perPage)->appends(request()->except('page'));
 
         return view('admin.employee.index')
             ->with('employees', $employees)

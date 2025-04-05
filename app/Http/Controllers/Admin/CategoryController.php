@@ -17,7 +17,8 @@ class CategoryController extends Controller
     {
         $sortField = $request->input('sort_field', 'category_id'); // Mặc định sắp xếp theo category_id
         $sortDirection = $request->input('sort_direction', 'asc'); // Mặc định sắp xếp tăng dần
-
+        $perPage = $request->input('per_page', 10);
+        
         $query = Categories::query();
 
         if ($request->filled('search')) {
@@ -38,7 +39,7 @@ class CategoryController extends Controller
         }
 
         // Lấy ra danh sách các category 10 phần tử mỗi trang
-        $categories = $query->get();
+        $categories = $query->paginate($perPage)->appends(request()->except('page'));
 
         return view('admin.category.index')
             ->with('categories', $categories)

@@ -17,7 +17,8 @@ class PromotionController extends Controller
         $sortField = $request->input('sort_field', 'promotion_id'); // Mặc định sắp xếp theo promotion_id
         $sortDirection = $request->input('sort_direction', 'asc'); // Mặc định tăng dần
         $activeTab = $request->input('tab', 'all-promotions');
-
+        $perPage = $request->input('per_page', 10);
+        
         $query = Promotions::query();
 
         if ($request->filled('search')) {
@@ -41,7 +42,7 @@ class PromotionController extends Controller
             $query->orderBy('promotion_id', $sortDirection);
         }
 
-        $promotions = $query->get();
+        $promotions = $query->paginate($perPage)->appends(request()->except('page'));
         $validPromotions = $query->where('is_active', 1)
         ->whereDate('start_date', '<=', now())
         ->whereDate('end_date', '>=', now())

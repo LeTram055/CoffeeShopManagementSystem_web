@@ -20,6 +20,7 @@ class IngredientController extends Controller
         $sortField = $request->input('sort_field', 'ingredient_id'); // Mặc định sắp xếp theo ID
         $sortDirection = $request->input('sort_direction', 'asc'); // Mặc định sắp xếp tăng dần
         $activeTab = $request->input('tab', 'all-ingredients');
+        $perPage = $request->input('per_page', 10);
 
         $query = Ingredients::query();
 
@@ -64,7 +65,7 @@ class IngredientController extends Controller
             $query->orderBy('ingredient_id', 'asc');
         }
 
-        $ingredients = $query->get();
+        $ingredients = $query->paginate($perPage)->appends(request()->except('page'));
 
         return view('admin.ingredient.index')
             ->with('ingredients', $ingredients)

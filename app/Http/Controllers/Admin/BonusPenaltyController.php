@@ -17,6 +17,7 @@ class BonusPenaltyController extends Controller
     {
         $sortField = $request->input('sort_field', 'bonus_penalty_id');
         $sortDirection = $request->input('sort_direction', 'asc');
+        $perPage = $request->input('per_page', 10);
 
         $query = BonusesPenalties::with('employee');
 
@@ -77,7 +78,7 @@ class BonusPenaltyController extends Controller
             $query->orderBy('bonus_penalty_id', 'asc');
         }
 
-        $bonusesPenalties = $query->get();
+        $bonusesPenalties = $query->paginate($perPage)->appends(request()->except('page'));
 
         return view('admin.bonuspenalty.index', compact('bonusesPenalties', 'sortField', 'sortDirection'));
     }

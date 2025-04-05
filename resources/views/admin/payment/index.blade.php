@@ -191,6 +191,29 @@ Quản lý hóa đơn
             @endforeach
         </tbody>
     </table>
+
+    <!-- Phân trang -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4 gap-3">
+        <form action="{{ route('admin.payment.index') }}" method="GET" class="d-flex align-items-center mt-1">
+            @foreach(request()->except(['per_page', 'page']) as $key => $value)
+            <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+            @endforeach
+            <label for="per_page" class="me-2 text-nowrap">Hiển thị:</label>
+            <select name="per_page" id="per_page" class="form-select form-select-sm w-auto"
+                onchange="this.form.submit()">
+
+                <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
+                <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
+                <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
+                <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
+            </select>
+        </form>
+
+        <div>
+            {{ $payments->onEachSide(1)->links('pagination::bootstrap-5') }}
+        </div>
+    </div>
+
 </div>
 
 <!-- Modal chi tiết hóa đơn -->
@@ -288,7 +311,8 @@ $(document).ready(function() {
                         'Không xác định');
                 $('#detailPaymentMethod').text(methodText);
                 $('#detailOrderType').text(typeText);
-                $('#detailTable').text(data.order.table ? data.order.table.table_number :
+                $('#detailTable').text(data.order.table ? data.order.table
+                    .table_number :
                     '');
                 $('#detailPromotion').text(data.promotion ? data.promotion
                     .name : 'Không có');

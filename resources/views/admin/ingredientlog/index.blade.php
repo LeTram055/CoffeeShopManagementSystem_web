@@ -213,6 +213,28 @@ Quản lý log nguyên liệu
 
         </tbody>
     </table>
+
+    <!-- Phân trang -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center my-4 gap-3">
+        <form action="{{ route('admin.ingredientlog.index') }}" method="GET" class="d-flex align-items-center mt-1">
+            @foreach(request()->except(['per_page', 'page']) as $key => $value)
+            <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+            @endforeach
+            <label for="per_page" class="me-2 text-nowrap">Hiển thị:</label>
+            <select name="per_page" id="per_page" class="form-select form-select-sm w-auto"
+                onchange="this.form.submit()">
+
+                <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
+                <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
+                <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
+                <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
+            </select>
+        </form>
+
+        <div>
+            {{ $ingredientLogs->onEachSide(1)->links('pagination::bootstrap-5') }}
+        </div>
+    </div>
 </div>
 
 <!-- Modal Xóa -->

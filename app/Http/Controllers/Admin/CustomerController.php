@@ -17,6 +17,7 @@ class CustomerController extends Controller
     {
         $sortField = $request->input('sort_field', 'customer_id');
         $sortDirection = $request->input('sort_direction', 'asc');
+        $perPage = $request->input('per_page', 10);
 
         $query = Customers::query();
 
@@ -34,7 +35,7 @@ class CustomerController extends Controller
             $query->orderByRaw("CONVERT(customer_id USING utf8) COLLATE utf8_unicode_ci asc");
         }
 
-        $customers = $query->get();
+        $customers = $query->paginate($perPage)->appends(request()->except('page'));
 
         return view('admin.customer.index')
         ->with('customers', $customers)

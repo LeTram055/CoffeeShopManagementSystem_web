@@ -18,6 +18,7 @@ class WorkScheduleController extends Controller
         
         $sortField = $request->input('sort_field', 'schedule_id'); 
         $sortDirection = $request->input('sort_direction', 'asc'); 
+        $perPage = $request->input('per_page', 10);
 
         // Giới hạn các trường hợp lệ để sắp xếp
         $validSortFields = ['schedule_id', 'employee_id', 'shift_id', 'work_date', 'status'];
@@ -100,7 +101,7 @@ class WorkScheduleController extends Controller
         }
 
 
-        $schedules = $query->get();
+        $schedules = $query->paginate($perPage)->appends(request()->except('page'));
 
         return view('admin.workschedule.index', compact('schedules', 'sortField', 'sortDirection'));
     }

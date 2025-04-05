@@ -14,7 +14,8 @@ class ShiftController extends Controller
 {
     $sortField = $request->input('sort_field', 'shift_id'); 
     $sortDirection = $request->input('sort_direction', 'asc'); 
-
+    $perPage = $request->input('per_page', 10);
+     
     $query = Shifts::query();
 
     // Tìm kiếm
@@ -42,7 +43,7 @@ class ShiftController extends Controller
         $query->orderByRaw("CONVERT(shift_id USING utf8) COLLATE utf8_unicode_ci asc");
     }
 
-    $shifts = $query->get();
+    $shifts = $query->paginate($perPage)->appends(request()->except('page'));
 
     return view('admin.shift.index')
         ->with('shifts', $shifts)
