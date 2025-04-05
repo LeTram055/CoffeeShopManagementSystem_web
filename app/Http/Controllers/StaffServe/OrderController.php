@@ -57,6 +57,28 @@ class OrderController extends Controller
 
     public function createOrder(Request $request)
     {
+        $errors = [];
+
+        foreach ($request->items as $itemData) {
+            $item = MenuItems::find($itemData['item_id']);
+
+            $maxServings = $item->calculateMaxServings();
+            if ($maxServings === 0) {
+                $errors[] = "Món '{$item->name}' không còn nguyên liệu để phục vụ.";
+            }
+            if ($itemData['quantity'] > $maxServings) {
+                $errors[] = "Món '{$item->name}' chỉ có thể phục vụ tối đa {$maxServings} phần.";
+            }
+        }
+
+        if (!empty($errors)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không thể tạo đơn hàng',
+                'errors'  => $errors,
+            ], 422);
+        }
+
         $order = Orders::create([
             'table_id' => $request->table_id,
             'customer_id' => $request->customer_id,
@@ -66,13 +88,27 @@ class OrderController extends Controller
             'created_at' => $request->created_at,
         ]);
 
-        foreach ($request->items as $item) {
+        foreach ($request->items as $itemData) {
             OrderItems::create([
                 'order_id' => $order->order_id,
-                'item_id' => $item['item_id'],
-                'quantity' => $item['quantity'],
-                'note' => $item['note'],
+                'item_id' => $itemData['item_id'],
+                'quantity' => $itemData['quantity'],
+                'note' => $itemData['note'],
             ]);
+
+            $item = MenuItems::find($itemData['item_id']);
+            $quantityOrdered = $itemData['quantity'];
+
+            foreach ($item->ingredients as $menuIngredient) {
+                $ingredient = $menuIngredient->ingredient;
+
+                // Tổng lượng nguyên liệu cần dùng
+                $requiredAmount = $quantityOrdered * $menuIngredient->quantity_per_unit;
+
+                // Cập nhật reserved_quantity
+                $ingredient->reserved_quantity += $requiredAmount;
+                $ingredient->save();
+            }
         }
 
         $table = Tables::findOrFail($request->table_id);
@@ -82,7 +118,7 @@ class OrderController extends Controller
         broadcast(new NewOrderEvent($order, 'created'))->toOthers();
 
 
-        return response()->json(['message' => 'Cập nhật thành công']);
+        return response()->json(['message' => 'Tạo đơn hàng thành công']);
     }
 
     public function getOrderByTableId(Request $request)
@@ -116,18 +152,70 @@ class OrderController extends Controller
         
         try{
             $order = Orders::findOrFail($request->order_id);
+
+            foreach ($order->orderItems as $oldItem) {
+                $menuItem = $oldItem->item;
+
+                foreach ($menuItem->ingredients as $menuIngredient) {
+                    $ingredient = $menuIngredient->ingredient;
+                    $usedAmount = $oldItem->quantity * $menuIngredient->quantity_per_unit;
+
+                    $ingredient->reserved_quantity -= $usedAmount;
+                    if ($ingredient->reserved_quantity < 0) {
+                        $ingredient->reserved_quantity = 0;
+                    }
+                    $ingredient->save();
+                }
+            }
+
+            $errors = [];
+
+            if ($request->has('items')) {
+                foreach ($request->items as $itemData) {
+                    $menuItem = MenuItems::find($itemData['item_id']);
+
+                    if ($menuItem) {
+                        $maxServings = $menuItem->calculateMaxServings(); // Hàm bạn đã định nghĩa
+                        if ($itemData['quantity'] > $maxServings) {
+                            $errors[] = "Món '{$menuItem->name}' chỉ có thể phục vụ tối đa {$maxServings} phần.";
+                        }
+                    }
+                }
+            }
+
+            if (!empty($errors)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không thể tạo đơn hàng',
+                    'errors'  => $errors,
+                ], 422);
+            }
+        
             $order->update([
                 'total_price' => $request->total_price,
             ]);
             $order->orderItems()->delete();
 
             foreach ($request->items as $item) {
-                OrderItems::create([
-                    'order_id' => $order->order_id,
-                    'item_id' => $item['item_id'],
-                    'quantity' => $item['quantity'],
-                    'note' => $item['note'],
-                ]);
+                $menuItem = MenuItems::find($item['item_id']);
+                if ($menuItem) {
+                    OrderItems::create([
+                        'order_id' => $order->order_id,
+                        'item_id' => $item['item_id'],
+                        'quantity' => $item['quantity'],
+                        'note' => $item['note'],
+                    ]);
+
+                    // Cập nhật reserved_quantity mới
+                    foreach ($menuItem->ingredients as $menuIngredient) {
+                        $ingredient = $menuIngredient->ingredient;
+                        $usedAmount = $item['quantity'] * $menuIngredient->quantity_per_unit;
+
+                        $ingredient->reserved_quantity += $usedAmount;
+                        $ingredient->save();
+                    }
+                }
+                
             }
             broadcast(new NewOrderEvent($order, 'updated'))->toOthers();
             return response()->json(['message' => 'Cập nhật thành công']);
@@ -146,6 +234,23 @@ class OrderController extends Controller
             $table = Tables::findOrFail($order->table_id);
             $table->status_id = 1; 
             $table->save();
+
+            foreach ($order->orderItems as $orderItem) {
+                $menuItem = $orderItem->item;
+
+                foreach ($menuItem->ingredients as $menuIngredient) {
+                    $ingredient = $menuIngredient->ingredient;
+
+                    $usedAmount = $orderItem->quantity * $menuIngredient->quantity_per_unit;
+                    $ingredient->reserved_quantity -= $usedAmount;
+
+                    if ($ingredient->reserved_quantity < 0) {
+                        $ingredient->reserved_quantity = 0;
+                    }
+
+                    $ingredient->save();
+                }
+            }
 
             broadcast(new NewOrderEvent($order, 'cancelled'))->toOthers();
             return response()->json(['message' => 'Hủy đơn hàng thành công']);
