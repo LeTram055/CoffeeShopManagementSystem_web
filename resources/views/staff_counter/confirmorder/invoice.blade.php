@@ -163,7 +163,7 @@
                     VND</td>
             </tr>
         </table>
-
+        <p style="font-style: italic; text-align: center; font-weight: bold;">Xin cảm ơn Quý Khách. Hẹn gặp lại !</p>
     </div>
 </body>
 
