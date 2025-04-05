@@ -54,6 +54,12 @@ class OrderController extends Controller
                 if ($stock) {
                     $quantityUsed = $ingredient->quantity_per_unit * $orderItem->quantity;
                     $stock->quantity -= $quantityUsed;
+                    $stock->reserved_quantity -= $quantityUsed;
+
+                    if ($ingredient->reserved_quantity < 0) {
+                        $ingredient->reserved_quantity = 0;
+                    }
+
                     $ingredient->last_updated = now();
                     $stock->save();
 
@@ -68,6 +74,8 @@ class OrderController extends Controller
                         'reason' => "Dùng cho món '{$menuItem->name}' trong đơn hàng #{$order->order_id}",
                         'changed_at' => now(),
                     ]);
+
+
                 }
                 if ($stock->quantity <= $stock->min_quantity) {
                     broadcast(new LowStockEvent($stock))->toOthers();
