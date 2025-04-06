@@ -42,15 +42,20 @@ class PromotionController extends Controller
             $query->orderBy('promotion_id', $sortDirection);
         }
 
+        if ($activeTab == 'valid-promotions') {
+            $query->where('is_active', 1)
+                ->whereDate('start_date', '<=', now())
+                ->whereDate('end_date', '>=', now());
+        }
+
         $promotions = $query->paginate($perPage)->appends(request()->except('page'));
-        $validPromotions = $query->where('is_active', 1)
-        ->whereDate('start_date', '<=', now())
-        ->whereDate('end_date', '>=', now())
-        ->get();
+        // $validPromotions = $query->where('is_active', 1)
+        // ->whereDate('start_date', '<=', now())
+        // ->whereDate('end_date', '>=', now())
+        // ->get();
         
         return view('admin.promotion.index')
             ->with('promotions', $promotions)
-            ->with('validPromotions', $validPromotions)
             ->with('sortField', $sortField)
             ->with('sortDirection', $sortDirection)
             ->with('activeTab', $activeTab);

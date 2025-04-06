@@ -94,7 +94,7 @@ Quản lý danh mục
     </table>
 
     <!-- Phân trang -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center my-4 gap-3">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
         <form action="{{ route('admin.category.index') }}" method="GET" class="d-flex align-items-center mt-1">
             @foreach(request()->except(['per_page', 'page']) as $key => $value)
             <input type="hidden" name="{{ $key }}" value="{{ $value }}">

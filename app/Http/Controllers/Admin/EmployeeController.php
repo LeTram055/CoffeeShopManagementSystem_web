@@ -48,7 +48,11 @@ class EmployeeController extends Controller
                     $q->orWhereYear('start_date', $searchTerm);
                 }
             });
-            }
+        }
+
+        if ($request->filled('type')) {
+            $query->where('employees.role', $request->input('type'));
+        }
 
         if ($sortField == 'name' || $sortField == 'email' || $sortField == 'address' || $sortField == 'username' || $sortField == 'status') {
             $query->orderByRaw("CONVERT($sortField USING utf8) COLLATE utf8_unicode_ci $sortDirection");

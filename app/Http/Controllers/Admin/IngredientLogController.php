@@ -62,6 +62,11 @@ class IngredientLogController extends Controller
             });
         }
 
+        
+        if ($request->filled('type')) {
+            $query->where('ingredient_logs.log_type', $request->input('type'));
+        }
+
         if ($sortField === 'ingredient_name') {
             $query->orderBy('ingredients.name', $sortDirection);
         } elseif ($sortField === 'employee_name') {

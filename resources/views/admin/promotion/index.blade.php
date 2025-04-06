@@ -75,13 +75,13 @@ Quản lý khuyến mãi
 <ul class="nav nav-tabs custom-tabs" id="promotionTabs">
     <li class="nav-item">
         <a class="nav-link {{ request('tab') == 'all-promotions' || request('tab') == null ? 'active' : '' }}"
-            href="{{ route('admin.promotion.index', ['tab' => 'all-promotions', 'search' => request('search'), 'sort_field' => $sortField, 'sort_direction' => $sortDirection]) }}">
+            href="{{ route('admin.promotion.index', ['tab' => 'all-promotions', 'search' => request('search'), 'sort_field' => $sortField, 'sort_direction' => $sortDirection, 'per_page' => request('per_page')]) }}">
             Tất cả
         </a>
     </li>
     <li class="nav-item">
         <a class="nav-link {{ request('tab') == 'valid-promotions' ? 'active' : '' }}"
-            href="{{ route('admin.promotion.index', ['tab' => 'valid-promotions', 'search' => request('search'), 'sort_field' => $sortField, 'sort_direction' => $sortDirection]) }}">
+            href="{{ route('admin.promotion.index', ['tab' => 'valid-promotions', 'search' => request('search'), 'sort_field' => $sortField, 'sort_direction' => $sortDirection, 'per_page' => request('per_page')]) }}">
             Hợp lệ
         </a>
     </li>
@@ -183,15 +183,15 @@ Quản lý khuyến mãi
                             @endphp
                             {{ $type[$promotion->discount_type] ?? '' }}
                         </td>
-                        <td class="text-end">
+                        <td class="text-center">
                             @if($promotion->discount_type === 'percentage')
                             {{ number_format($promotion->discount_value, 0, ',', '.') }}%
                             @else
-                            {{ number_format($promotion->discount_value, 0, ',', '.') }} đ
+                            {{ number_format($promotion->discount_value, 0, ',', '.') }} VNĐ
                             @endif
                         </td>
-                        <td class="text-end">
-                            {{ number_format($promotion->min_order_value, 0, ',', '.') }} đ
+                        <td class="text-center">
+                            {{ number_format($promotion->min_order_value, 0, ',', '.') }} VNĐ
                         </td>
 
                         <td class="text-end">{{ $promotion->start_date->format('H:i:s d/m/Y') }}</td>
@@ -300,40 +300,50 @@ Quản lý khuyến mãi
                     </tr>
                 </thead>
                 <tbody class="table-group-divider">
-                    @foreach ($validPromotions as $promotion)
-                    <tr>
-                        <td class="text-center">{{ $promotion->promotion_id }}</td>
-                        <td>{{ $promotion->name }}</td>
-                        <td>{{ $promotion->discount_type }}</td>
-                        <td class="text-end">{{ $promotion->discount_value }}</td>
-                        <td class="text-end">{{ $promotion->min_order_value }}</td>
-                        <td class="text-end">{{ $promotion->start_date->format('H:i:s d/m/Y') }}</td>
-                        <td class="text-end">{{ $promotion->end_date->format('H:i:s d/m/Y') }}</td>
-                        <td class="text-center">{{ $promotion->is_active ? 'Hoạt động' : 'Không hoạt động' }}</td>
-                        <td class="text-center">
-                            <a href="{{ route('admin.promotion.edit', ['promotion_id' => $promotion->promotion_id]) }}"
-                                class="text-warning mx-2">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <form class="d-inline delete-form" method="post"
-                                action="{{ route('admin.promotion.delete') }}">
-                                @csrf
-                                <input type="hidden" name="promotion_id" value="{{ $promotion->promotion_id }}">
-                                <button type="submit"
-                                    class="btn btn-link text-danger p-0 border-0 delete-promotion-btn">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                    @endforeach
+                    @foreach ($promotions as $promotion)
+                    @if($promotion->is_active && $promotion->start_date <= now() && $promotion->end_date >= now())
+                        <tr>
+                            <td class="text-center">{{ $promotion->promotion_id }}</td>
+                            <td>{{ $promotion->name }}</td>
+                            <td>{{ $promotion->discount_type }}</td>
+                            <td class="text-center">
+                                @if($promotion->discount_type === 'percentage')
+                                {{ number_format($promotion->discount_value, 0, ',', '.') }}%
+                                @else
+                                {{ number_format($promotion->discount_value, 0, ',', '.') }} VNĐ
+                                @endif
+                            </td>
+                            <td class="text-center">
+                                {{ number_format($promotion->min_order_value, 0, ',', '.') }} VNĐ
+                            </td>
+                            <td class="text-end">{{ $promotion->start_date->format('H:i:s d/m/Y') }}</td>
+                            <td class="text-end">{{ $promotion->end_date->format('H:i:s d/m/Y') }}</td>
+                            <td class="text-center">{{ $promotion->is_active ? 'Hoạt động' : 'Không hoạt động' }}</td>
+                            <td class="text-center">
+                                <a href="{{ route('admin.promotion.edit', ['promotion_id' => $promotion->promotion_id]) }}"
+                                    class="text-warning mx-2">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form class="d-inline delete-form" method="post"
+                                    action="{{ route('admin.promotion.delete') }}">
+                                    @csrf
+                                    <input type="hidden" name="promotion_id" value="{{ $promotion->promotion_id }}">
+                                    <button type="submit"
+                                        class="btn btn-link text-danger p-0 border-0 delete-promotion-btn">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        @endif
+                        @endforeach
                 </tbody>
             </table>
         </div>
     </div>
 
     <!-- Phân trang -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center my-4 gap-3">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
         <form action="{{ route('admin.promotion.index') }}" method="GET" class="d-flex align-items-center mt-1">
             @foreach(request()->except(['per_page', 'page']) as $key => $value)
             <input type="hidden" name="{{ $key }}" value="{{ $value }}">
@@ -350,7 +360,13 @@ Quản lý khuyến mãi
         </form>
 
         <div>
-            {{ $promotions->onEachSide(1)->links('pagination::bootstrap-5') }}
+            {{ $promotions->appends([
+        'tab' => request('tab', 'all-promotions'),
+        'search' => request('search'),
+        'sort_field' => $sortField,
+        'sort_direction' => $sortDirection,
+        'per_page' => request('per_page'),
+    ])->links('pagination::bootstrap-5') }}
         </div>
     </div>
 </div>

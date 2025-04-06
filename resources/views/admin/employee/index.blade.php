@@ -216,7 +216,7 @@ Quản lý nhân viên
                 <td>{{ $employee->email }}</td>
                 <td>{{ $employee->address }}</td>
                 <td class="text-center">{{ $employee->start_date->format('d/m/Y') }}</td>
-                <td class="text-center">{{ $employee->hourly_rate }}</td>
+                <td class="text-center">{{ number_format($employee->hourly_rate, 0, ',', '.') }} VNĐ</td>
                 <td class="text-center">
                     @php
                     $statuses = [
@@ -248,7 +248,7 @@ Quản lý nhân viên
     </table>
 
     <!-- Phân trang -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center my-4 gap-3">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
         <form action="{{ route('admin.employee.index') }}" method="GET" class="d-flex align-items-center mt-1">
             @foreach(request()->except(['per_page', 'page']) as $key => $value)
             <input type="hidden" name="{{ $key }}" value="{{ $value }}">
@@ -265,7 +265,13 @@ Quản lý nhân viên
         </form>
 
         <div>
-            {{ $employees->onEachSide(1)->links('pagination::bootstrap-5') }}
+            {{ $employees->appends([
+                'type' => request('type'),
+                'search' => request('search'),
+                'sort_field' => $sortField,
+                'sort_direction' => $sortDirection,
+                'per_page' => request('per_page'),
+            ])->links('pagination::bootstrap-5') }}
         </div>
     </div>
 </div>

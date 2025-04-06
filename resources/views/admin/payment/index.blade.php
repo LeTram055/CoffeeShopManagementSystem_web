@@ -169,9 +169,9 @@ Quản lý hóa đơn
                 <td class="text-center">{{ $payment->payment_id }}</td>
                 <td>{{ $payment->employee->name }}</td>
                 <td>{{ $payment->order->customer->name }}</td>
-                <td class="text-end">{{ number_format($payment->order->total_price, 0, ',', '.') }} đ</td>
-                <td class="text-end">{{ number_format($payment->discount_amount, 0, ',', '.') }} đ</td>
-                <td class="text-end">{{ number_format($payment->final_price, 0, ',', '.') }} đ</td>
+                <td class="text-end">{{ number_format($payment->order->total_price, 0, ',', '.') }} VNĐ</td>
+                <td class="text-end">{{ number_format($payment->discount_amount, 0, ',', '.') }} VNĐ</td>
+                <td class="text-end">{{ number_format($payment->final_price, 0, ',', '.') }} VNĐ</td>
                 <td class="text-center">
                     @php
                     $method = [
@@ -193,7 +193,7 @@ Quản lý hóa đơn
     </table>
 
     <!-- Phân trang -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4 gap-3">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
         <form action="{{ route('admin.payment.index') }}" method="GET" class="d-flex align-items-center mt-1">
             @foreach(request()->except(['per_page', 'page']) as $key => $value)
             <input type="hidden" name="{{ $key }}" value="{{ $value }}">

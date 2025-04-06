@@ -88,14 +88,14 @@ Quản lý nguyên liệu
 <ul class="nav nav-tabs custom-tabs" id="ingredientTabs">
     <li class="nav-item">
         <a class="nav-link {{ request('tab') == 'all-ingredients' || request('tab') == null ? 'active' : '' }}"
-            href="{{ route('admin.ingredient.index', ['tab' => 'all-ingredients', 'search' => request('search'), 'sort_field' => $sortField, 'sort_direction' => $sortDirection]) }}">
+            href="{{ route('admin.ingredient.index', ['tab' => 'all-ingredients', 'search' => request('search'), 'sort_field' => $sortField, 'sort_direction' => $sortDirection, 'per_page' => request('per_page')]) }}">
             Tất cả
         </a>
     </li>
     <li class="nav-item">
         <a class="nav-link {{ request('tab') == 'low-stock' ? 'active' : '' }}"
-            href="{{ route('admin.ingredient.index', ['tab' => 'low-stock', 'search' => request('search'), 'sort_field' => $sortField, 'sort_direction' => $sortDirection]) }}">
-            Hợp lệ
+            href="{{ route('admin.ingredient.index', ['tab' => 'low-stock', 'search' => request('search'), 'sort_field' => $sortField, 'sort_direction' => $sortDirection, 'per_page' => request('per_page')]) }}">
+            Trong kho thấp
         </a>
     </li>
 </ul>
@@ -324,7 +324,7 @@ Quản lý nguyên liệu
     </div>
 
     <!-- Phân trang -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center my-4 gap-3">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
         <form action="{{ route('admin.ingredient.index') }}" method="GET" class="d-flex align-items-center mt-1">
             @foreach(request()->except(['per_page', 'page']) as $key => $value)
             <input type="hidden" name="{{ $key }}" value="{{ $value }}">

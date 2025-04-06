@@ -25,32 +25,36 @@ class IngredientController extends Controller
         $query = Ingredients::query();
 
         if ($request->filled('search')) {
-        $searchTerm = $request->input('search');
+            $searchTerm = $request->input('search');
 
-        $query->where(function ($q) use ($searchTerm) {
-            $q->where('name', 'like', '%' . $searchTerm . '%')
-              ->orWhere('unit', 'like', '%' . $searchTerm . '%')
-              ->orWhere('quantity', 'like', '%' . $searchTerm . '%')
-              ->orWhere('min_quantity', 'like', '%' . $searchTerm . '%')
-              ->orWhere('cost_price', 'like', '%' . $searchTerm . '%');
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('name', 'like', '%' . $searchTerm . '%')
+                ->orWhere('unit', 'like', '%' . $searchTerm . '%')
+                ->orWhere('quantity', 'like', '%' . $searchTerm . '%')
+                ->orWhere('min_quantity', 'like', '%' . $searchTerm . '%')
+                ->orWhere('cost_price', 'like', '%' . $searchTerm . '%');
 
-            if (preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $searchTerm)) { 
-                // Nếu nhập ngày theo định dạng DD/MM/YYYY
-                $date = \Carbon\Carbon::createFromFormat('d/m/Y', $searchTerm)->format('Y-m-d');
-                $q->orWhereDate('last_updated', $date);
-            } elseif (preg_match('/^\d{2}\/\d{4}$/', $searchTerm)) { 
-                // Nếu nhập tháng/năm theo MM/YYYY
-                [$month, $year] = explode('/', $searchTerm);
-                $q->orWhere(function ($query) use ($month, $year) {
-                    $query->whereMonth('last_updated', $month)
-                          ->whereYear('last_updated', $year);
-                });
-            } elseif (preg_match('/^\d{4}$/', $searchTerm)) { 
-                // Nếu nhập chỉ năm YYYY
-                $q->orWhereYear('last_updated', $searchTerm);
-            }
-        });
-    }
+                if (preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $searchTerm)) { 
+                    // Nếu nhập ngày theo định dạng DD/MM/YYYY
+                    $date = \Carbon\Carbon::createFromFormat('d/m/Y', $searchTerm)->format('Y-m-d');
+                    $q->orWhereDate('last_updated', $date);
+                } elseif (preg_match('/^\d{2}\/\d{4}$/', $searchTerm)) { 
+                    // Nếu nhập tháng/năm theo MM/YYYY
+                    [$month, $year] = explode('/', $searchTerm);
+                    $q->orWhere(function ($query) use ($month, $year) {
+                        $query->whereMonth('last_updated', $month)
+                            ->whereYear('last_updated', $year);
+                    });
+                } elseif (preg_match('/^\d{4}$/', $searchTerm)) { 
+                    // Nếu nhập chỉ năm YYYY
+                    $q->orWhereYear('last_updated', $searchTerm);
+                }
+            });
+        }
+
+        if ($activeTab == 'low-stock') {
+            $query->whereColumn('quantity', '<=', 'min_quantity');
+        }
         // Xử lý sắp xếp
         if ($sortField == 'name') {
             $query->orderByRaw("CONVERT($sortField USING utf8mb4) COLLATE utf8mb4_unicode_ci $sortDirection");
@@ -66,7 +70,7 @@ class IngredientController extends Controller
         }
 
         $ingredients = $query->paginate($perPage)->appends(request()->except('page'));
-
+        
         return view('admin.ingredient.index')
             ->with('ingredients', $ingredients)
             ->with('sortField', $sortField)
