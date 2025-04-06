@@ -14,7 +14,7 @@ class BonusesPenalties extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'employee_id', 'amount', 'reason', 'date'
+        'employee_id', 'type', 'amount', 'reason', 'date'
     ];
 
     protected $casts = [

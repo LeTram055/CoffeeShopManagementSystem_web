@@ -49,14 +49,6 @@ class BonusPenaltyController extends Controller
             }
         }
 
-        // if ($request->filled('month')) {
-        //     $query->whereMonth('date', $request->input('month'));
-        // }
-
-        // if ($request->filled('year')) {
-        //     $query->whereYear('date', $request->input('year'));
-        // }
-
         // Lọc theo khoảng ngày nếu có
         if ($request->filled('start_date') && $request->filled('end_date')) {
             try {
@@ -66,6 +58,11 @@ class BonusPenaltyController extends Controller
             } catch (\Exception $e) {
                 
             }
+        }
+
+        // Lọc theo tab
+        if ($request->filled('type')) {
+            $query->where('bonuses_penalties.type', $request->input('type'));
         }
 
         // Sắp xếp theo các cột
@@ -138,6 +135,7 @@ class BonusPenaltyController extends Controller
         $amount = $request->type === 'penalty' ? -abs($request->amount) : abs($request->amount);
 
         BonusesPenalties::create([
+            'type' => $request->type,
             'employee_id' => $request->employee_id,
             'amount' => $amount,
             'reason' => $request->reason,
@@ -186,6 +184,7 @@ class BonusPenaltyController extends Controller
         $amount = $request->type === 'penalty' ? -abs($request->amount) : abs($request->amount);
 
         $bonusPenalty->update([
+            'type' => $request->type,
             'employee_id' => $request->employee_id,
             'amount' => $amount,
             'reason' => $request->reason,

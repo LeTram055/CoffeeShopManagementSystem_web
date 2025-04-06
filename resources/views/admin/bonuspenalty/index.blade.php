@@ -9,6 +9,32 @@ $currentYear = date('Y'); // Lấy năm hiện tại
 
 @section('feature-title', 'Quản lý thưởng phạt')
 
+@section('custom-css')
+<style>
+.custom-tabs .nav-link {
+    color: #555;
+    font-weight: 500;
+    border-radius: 8px 8px 0 0;
+    transition: all 0.3s ease-in-out;
+    padding: 6px 15px;
+}
+
+.custom-tabs .nav-link:hover {
+    color: #000;
+    background: #f8f9fa;
+    border-color: #dee2e6 #dee2e6 transparent;
+}
+
+.custom-tabs .nav-link.active {
+    color: #fff;
+    background: #0049ab;
+    border-color: #0049ab #0049ab transparent;
+    font-weight: bold;
+    box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
+}
+</style>
+@endsection
+
 @section('content')
 <div class="flash-message">
     @foreach (['danger', 'warning', 'success', 'info'] as $msg)
@@ -60,19 +86,57 @@ $currentYear = date('Y'); // Lấy năm hiện tại
         <div class="input-group">
             <input type="text" name="search" class="form-control" placeholder="Tìm kiếm ca làm việc..."
                 value="{{ request('search') }}">
+            <input type="hidden" name="type" value="{{ request('type') }}">
             <button class="btn btn-bg" type="submit">
                 <i class="fas fa-search"></i>
             </button>
         </div>
     </form>
 </div>
+
+<ul class="nav nav-tabs custom-tabs my-3" id="bonusPenaltyTabs">
+    <li class="nav-item">
+        <a class="nav-link {{ request('type') == null ? 'active' : '' }}" href="{{ route('admin.bonuspenalty.index', [
+                'type' => null,
+                'search' => request('search'),
+                'sort_field' => $sortField,
+                'sort_direction' => $sortDirection,
+                
+            ]) }}">
+            Tất cả
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {{ request('type') == 'bonus' ? 'active' : '' }}" href="{{ route('admin.bonuspenalty.index', [
+                'type' => 'bonus',
+                'search' => request('search'),
+                'sort_field' => $sortField,
+                'sort_direction' => $sortDirection,
+                
+            ]) }}">
+            Thưởng
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {{ request('type') == 'penalty' ? 'active' : '' }}" href="{{ route('admin.bonuspenalty.index', [
+                'type' => 'penalty',
+                'search' => request('search'),
+                'sort_field' => $sortField,
+                'sort_direction' => $sortDirection,
+                
+            ]) }}">
+            Phạt
+        </a>
+    </li>
+</ul>
+
 <div class="table-responsive">
     <table class="table table-striped table-hover">
         <thead>
             <tr>
                 <th class="text-center">
                     <a
-                        href="{{ route('admin.bonuspenalty.index', ['sort_field' => 'bonus_penalty_id', 'sort_direction' => $sortField == 'bonus_penalty_id' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                        href="{{ route('admin.bonuspenalty.index', ['sort_field' => 'bonus_penalty_id', 'sort_direction' => $sortField == 'bonus_penalty_id' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'type' => request('type')]) }}">
                         Mã
                         @if($sortField == 'bonus_penalty_id')
                         <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -81,7 +145,7 @@ $currentYear = date('Y'); // Lấy năm hiện tại
                 </th>
                 <th class="text-center">
                     <a
-                        href="{{ route('admin.bonuspenalty.index', ['sort_field' => 'employee_name', 'sort_direction' => $sortField == 'employee_name' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                        href="{{ route('admin.bonuspenalty.index', ['sort_field' => 'employee_name', 'sort_direction' => $sortField == 'employee_name' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'type' => request('type')]) }}">
                         Nhân viên
                         @if($sortField == 'employee_name')
                         <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -89,10 +153,12 @@ $currentYear = date('Y'); // Lấy năm hiện tại
                     </a>
                 </th>
 
-
+                <th class="text-center">
+                    Loại
+                </th>
                 <th class="text-center">
                     <a
-                        href="{{ route('admin.bonuspenalty.index', ['sort_field' => 'amount', 'sort_direction' => $sortField == 'amount' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                        href="{{ route('admin.bonuspenalty.index', ['sort_field' => 'amount', 'sort_direction' => $sortField == 'amount' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'type' => request('type')]) }}">
                         Số tiền
                         @if($sortField == 'amount')
                         <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -105,7 +171,7 @@ $currentYear = date('Y'); // Lấy năm hiện tại
 
                 <th class="text-center">
                     <a
-                        href="{{ route('admin.bonuspenalty.index', ['sort_field' => 'date', 'sort_direction' => $sortField == 'date' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                        href="{{ route('admin.bonuspenalty.index', ['sort_field' => 'date', 'sort_direction' => $sortField == 'date' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search'), 'type' => request('type')]) }}">
                         Ngày
                         @if($sortField == 'date')
                         <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -117,9 +183,18 @@ $currentYear = date('Y'); // Lấy năm hiện tại
         </thead>
         <tbody class="table-group-divider">
             @foreach ($bonusesPenalties as $bonuspenalty)
+            @if(request('type') == null || request('type') == $bonuspenalty->type)
             <tr>
                 <td class="text-center">{{ $bonuspenalty->bonus_penalty_id }}</td>
                 <td class="text-center">{{ $bonuspenalty->employee->name }}</td>
+                <td class="text-center">
+                    @if ($bonuspenalty->type == 'bonus')
+                    Thưởng
+                    @elseif ($bonuspenalty->type == 'penalty')
+                    Phạt
+                    @else
+                    Không xác định
+                    @endif
                 <td class="text-center">{{ number_format($bonuspenalty->amount, 0, ',', '.') }} VNĐ</td>
                 <td class="text-center">{{ $bonuspenalty->reason }}</td>
                 <td class="text-center">{{ \Carbon\Carbon::parse($bonuspenalty->date)->format('d/m/Y') }}</td>
@@ -138,6 +213,7 @@ $currentYear = date('Y'); // Lấy năm hiện tại
                 </td>
 
             </tr>
+            @endif
             @endforeach
         </tbody>
     </table>
@@ -159,7 +235,13 @@ $currentYear = date('Y'); // Lấy năm hiện tại
         </form>
 
         <div>
-            {{ $bonusesPenalties->onEachSide(1)->links('pagination::bootstrap-5') }}
+            {{ $bonusesPenalties->appends([
+                'type' => request('type'),
+                'search' => request('search'),
+                'sort_field' => $sortField,
+                'sort_direction' => $sortDirection,
+                'per_page' => request('per_page'),
+            ])->links('pagination::bootstrap-5') }}
         </div>
     </div>
 </div>
