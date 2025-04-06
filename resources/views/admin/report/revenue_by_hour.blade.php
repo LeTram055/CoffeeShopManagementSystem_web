@@ -12,15 +12,19 @@ Thống kê doanh thu theo giờ
 <div class="container">
 
     <div class="row mb-4 d-flex justify-content-center">
-        <div class="col-md-3">
+        <div class="col-md-2 d-flex align-items-end">
+            <a class="btn btn-outline-secondary w-100" href={{ route('admin.reports.revenueByHourPage') }}>Làm
+                mới</a>
+        </div>
+        <div class="col-md-2">
             <label for="startDate">Ngày bắt đầu:</label>
             <input type="date" id="startDate" class="form-control">
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
             <label for="endDate">Ngày kết thúc:</label>
             <input type="date" id="endDate" class="form-control">
         </div>
-        <div class="col-md-3 d-flex align-items-end">
+        <div class="col-md-2 d-flex align-items-end mt-1">
             <button class="btn btn-bg w-100" onclick="fetchRevenueByHour()">Lọc</button>
         </div>
     </div>
@@ -32,6 +36,33 @@ Thống kê doanh thu theo giờ
 @section('custom-scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+// Thiết lập ngày bắt đầu và kết thúc mặc định là tháng hiện tại
+window.addEventListener('DOMContentLoaded', () => {
+    const today = new Date();
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+    const startDateInput = document.getElementById('startDate');
+    const endDateInput = document.getElementById('endDate');
+
+    // Format YYYY-MM-DD
+    const formatDateToInput = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
+    if (!startDateInput.value) {
+        startDateInput.value = formatDateToInput(startOfMonth);
+    }
+
+    if (!endDateInput.value) {
+        endDateInput.value = formatDateToInput(endOfMonth);
+    }
+});
+
+
 async function fetchRevenueByHour() {
     const startDate = document.getElementById('startDate').value;
     const endDate = document.getElementById('endDate').value;

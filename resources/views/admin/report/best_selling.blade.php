@@ -11,15 +11,19 @@ Thống kê lượt bán sản phẩm
 @section('content')
 <div class="container">
     <div class="row mb-4 d-flex justify-content-center">
-        <div class="col-md-3">
-            <label for="fromDate">Từ ngày:</label>
+        <div class="col-md-2 d-flex align-items-end">
+            <a class="btn btn-outline-secondary w-100" href={{ route('admin.reports.bestSellingPage') }}>Làm
+                mới</a>
+        </div>
+        <div class="col-md-2">
+            <label for="fromDate">Ngày bắt đầu:</label>
             <input type="date" id="fromDate" class="form-control">
         </div>
-        <div class="col-md-3">
-            <label for="toDate">Đến ngày:</label>
+        <div class="col-md-2">
+            <label for="toDate">Ngày kết thúc:</label>
             <input type="date" id="toDate" class="form-control">
         </div>
-        <div class="col-md-3 d-flex align-items-end">
+        <div class="col-md-2 d-flex align-items-end mt-1">
             <button class="btn btn-bg w-100" onclick="fetchBestSellingProducts()">Lọc</button>
         </div>
     </div>
@@ -48,6 +52,33 @@ Thống kê lượt bán sản phẩm
 
 @section('custom-scripts')
 <script>
+// Thiết lập ngày bắt đầu và kết thúc mặc định là tháng hiện tại
+window.addEventListener('DOMContentLoaded', () => {
+    const today = new Date();
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+    const fromDateInput = document.getElementById('fromDate');
+    const toDateInput = document.getElementById('toDate');
+
+    // Format YYYY-MM-DD
+    const formatDateToInput = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
+    if (!fromDateInput.value) {
+        fromDateInput.value = formatDateToInput(startOfMonth);
+    }
+
+    if (!toDateInput.value) {
+        toDateInput.value = formatDateToInput(endOfMonth);
+    }
+});
+
+
 async function fetchBestSellingProducts() {
     let fromDate = document.getElementById("fromDate").value;
     let toDate = document.getElementById("toDate").value;
@@ -73,8 +104,7 @@ async function fetchBestSellingProducts() {
     let tableBody = "";
     if (products.length > 0) {
         const formatter = new Intl.NumberFormat("vi-VN", {
-            style: "currency",
-            currency: "VND"
+            minimumFractionDigits: 0,
         });
 
         products.forEach((product, index) => {
@@ -84,8 +114,8 @@ async function fetchBestSellingProducts() {
                     <td class="text-center">${index + 1}</td>
                     <td class="text-center">${product.item.name}</td>
                     <td class="text-center">${product.total_sold}</td>
-                    <td class="text-center">${formatter.format(product.item.price)}</td>
-                    <td class="text-center">${formatter.format(revenue)}</td>
+                    <td class="text-center">${formatter.format(product.item.price)} VNĐ</td>
+                    <td class="text-center">${formatter.format(revenue)} VNĐ</td>
                 </tr>
             `;
         });

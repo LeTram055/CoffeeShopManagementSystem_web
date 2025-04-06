@@ -12,15 +12,22 @@ Thống kê doanh thu
 <div class="container">
     <!-- Bộ lọc ngày -->
     <div class="row mb-4 d-flex justify-content-center">
-        <div class="col-md-3">
+        <div class="col-md-2 d-flex align-items-end">
+            <a class="btn btn-outline-secondary w-100" href={{ route('admin.reports.revenueSummaryPage') }}>Làm mới</a>
+        </div>
+        <div class="col-md-2 d-flex align-items-end mt-1">
+            <button id="toggleChartBtn" class="btn btn-outline-warning w-100" onclick="toggleChart()">Biểu đồ
+                Cột</button>
+        </div>
+        <div class="col-md-2">
             <label for="startDate">Ngày bắt đầu:</label>
             <input type="date" id="startDate" class="form-control">
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
             <label for="endDate">Ngày kết thúc:</label>
             <input type="date" id="endDate" class="form-control">
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
             <label for="timeFrame">Thời gian:</label>
             <select id="timeFrame" class="form-control">
                 <option value="daily">Hàng ngày</option>
@@ -29,25 +36,27 @@ Thống kê doanh thu
                 <option value="yearly">Hàng năm</option>
             </select>
         </div>
-        <div class="col-md-3 d-flex align-items-end">
+        <div class="col-md-2 d-flex align-items-end mt-1">
             <button class="btn btn-bg w-100" onclick="fetchRevenueData()">Lọc</button>
+
+
         </div>
     </div>
 
-    <div class="row mt-3 d-flex justify-content-center">
+    <!-- <div class="row mt-3 d-flex justify-content-center">
         <div class="col-md-3">
             <button id="toggleChartBtn" class="btn btn-outline-primary w-100" onclick="toggleChart()">Hiển thị Biểu đồ
                 Cột</button>
         </div>
-    </div>
+    </div> -->
 
 
 
     <!-- Biểu đồ đường -->
-    <canvas id="revenueChart" class="mt-2"></canvas>
+    <canvas id="revenueChart" class="my-4"></canvas>
 
     <!-- Biểu đồ cột -->
-    <canvas id="revenueBarChart" class="mt-2" style="display: none;"></canvas>
+    <canvas id="revenueBarChart" class="my-4" style="display: none;"></canvas>
 
 
 </div>
@@ -57,6 +66,33 @@ Thống kê doanh thu
 @section('custom-scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+// Thiết lập ngày bắt đầu và kết thúc mặc định là tháng hiện tại
+window.addEventListener('DOMContentLoaded', () => {
+    const today = new Date();
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+    const startDateInput = document.getElementById('startDate');
+    const endDateInput = document.getElementById('endDate');
+
+    // Format YYYY-MM-DD
+    const formatDateToInput = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
+    if (!startDateInput.value) {
+        startDateInput.value = formatDateToInput(startOfMonth);
+    }
+
+    if (!endDateInput.value) {
+        endDateInput.value = formatDateToInput(endOfMonth);
+    }
+});
+
+
 let revenueChart = null;
 let revenueBarChart = null;
 
@@ -170,12 +206,12 @@ function toggleChart() {
         // Hiển thị biểu đồ đường, ẩn biểu đồ cột
         lineChart.style.display = 'block';
         barChart.style.display = 'none';
-        toggleBtn.innerText = 'Hiển thị Biểu đồ Cột';
+        toggleBtn.innerText = 'Biểu đồ Cột';
     } else {
         // Hiển thị biểu đồ cột, ẩn biểu đồ đường
         lineChart.style.display = 'none';
         barChart.style.display = 'block';
-        toggleBtn.innerText = 'Hiển thị Biểu đồ Đường';
+        toggleBtn.innerText = 'Biểu đồ Đường';
     }
 }
 </script>

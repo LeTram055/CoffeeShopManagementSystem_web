@@ -24,8 +24,8 @@ class ReportController extends Controller
     public function revenueSummary(Request $request)
     {
         $timeFrame = $request->input('timeFrame', 'daily');
-        $startDate = $request->input('startDate');
-        $endDate = $request->input('endDate');
+        $startDate = $request->input('startDate') ?: Carbon::now()->startOfMonth()->toDateString();
+        $endDate = $request->input('endDate') ?: Carbon::now()->endOfMonth()->toDateString();
 
         $query = Payments::query();
         if ($startDate && $endDate) {
@@ -64,8 +64,8 @@ class ReportController extends Controller
 
     public function revenueByProduct(Request $request)
     {
-        $startDate = $request->query('startDate');
-        $endDate = $request->query('endDate');
+        $startDate = $request->query('startDate') ?: Carbon::now()->startOfMonth()->toDateString();
+        $endDate = $request->query('endDate') ?: Carbon::now()->endOfMonth()->toDateString();
 
         $query = OrderItems::query();
 
@@ -102,8 +102,8 @@ class ReportController extends Controller
 
     public function revenueByHour(Request $request)
     {
-        $startDate = $request->query('startDate');
-        $endDate = $request->query('endDate');
+        $startDate = $request->query('startDate') ?: Carbon::now()->startOfMonth()->toDateString();
+        $endDate = $request->query('endDate') ?: Carbon::now()->endOfMonth()->toDateString();
 
         $query = Payments::query();
 
@@ -133,43 +133,41 @@ class ReportController extends Controller
     }
 
     public function netProfit(Request $request)
-{
-    $query = OrderItems::query();
+    {
+        $query = OrderItems::query();
 
-    // Lọc theo khoảng thời gian nếu có
-    if ($request->has('from_date') && $request->has('to_date') && !empty($request->from_date) && !empty($request->to_date)) {
-        $fromDate = $request->from_date . ' 00:00:00';
-        $toDate = $request->to_date . ' 23:59:59';
+        // Lấy ngày đầu tiên và ngày cuối cùng của tháng hiện tại nếu không có bộ lọc
+        $fromDate = $request->from_date ? $request->from_date . ' 00:00:00' : Carbon::now()->startOfMonth()->toDateTimeString();
+        $toDate = $request->to_date ? $request->to_date . ' 23:59:59' : Carbon::now()->endOfMonth()->toDateTimeString();
 
         $query->whereHas('order', function ($q) use ($fromDate, $toDate) {
             $q->whereBetween('created_at', [$fromDate, $toDate]);
         });
-    }
 
-    $orderItems = $query->get();
-    $totalRevenue = 0;
-    $totalCost = 0;
+        $orderItems = $query->get();
+        $totalRevenue = 0;
+        $totalCost = 0;
 
-    foreach ($orderItems as $orderItem) {
-        $menuItem = MenuItems::find($orderItem->item_id);
-        if (!$menuItem) continue;
+        foreach ($orderItems as $orderItem) {
+            $menuItem = MenuItems::find($orderItem->item_id);
+            if (!$menuItem) continue;
 
-        $totalRevenue += $orderItem->quantity * $menuItem->price;
+            $totalRevenue += $orderItem->quantity * $menuItem->price;
 
-        $menuIngredients = MenuIngredients::where('item_id', $menuItem->item_id)->get();
-        foreach ($menuIngredients as $menuIngredient) {
-            $ingredient = Ingredients::find($menuIngredient->ingredient_id);
-            if (!$ingredient) continue;
-            $totalCost += $orderItem->quantity * $menuIngredient->quantity * $ingredient->cost;
+            $menuIngredients = MenuIngredients::where('item_id', $menuItem->item_id)->get();
+            foreach ($menuIngredients as $menuIngredient) {
+                $ingredient = Ingredients::find($menuIngredient->ingredient_id);
+                if (!$ingredient) continue;
+                $totalCost += $orderItem->quantity * $menuIngredient->quantity * $ingredient->cost;
+            }
         }
-    }
 
-    return response()->json([
-        'total_revenue' => $totalRevenue,
-        'total_cost' => $totalCost,
-        'net_profit' => $totalRevenue - $totalCost,
-    ]);
-}
+        return response()->json([
+            'total_revenue' => $totalRevenue,
+            'total_cost' => $totalCost,
+            'net_profit' => $totalRevenue - $totalCost,
+        ]);
+    }
 
 
     public function bestSellingProductsPage()
@@ -185,19 +183,28 @@ class ReportController extends Controller
         ->with('item');
 
     // Kiểm tra nếu có khoảng thời gian
-    if ($request->has('from_date') || $request->has('to_date')) {
-        $fromDate = $request->from_date ? $request->from_date . ' 00:00:00' : null;
-        $toDate = $request->to_date ? $request->to_date . ' 23:59:59' : now(); // Lấy ngày hiện tại nếu không có
+    // if ($request->has('from_date') || $request->has('to_date')) {
+    //     $fromDate = $request->from_date ? $request->from_date . ' 00:00:00' : null;
+    //     $toDate = $request->to_date ? $request->to_date . ' 23:59:59' : now(); // Lấy ngày hiện tại nếu không có
 
-        $query->whereHas('order', function ($q) use ($fromDate, $toDate) {
-            if ($fromDate) {
-                $q->where('created_at', '>=', $fromDate);
-            }
-            if ($toDate) {
-                $q->where('created_at', '<=', $toDate);
-            }
-        });
-    }
+    //     $query->whereHas('order', function ($q) use ($fromDate, $toDate) {
+    //         if ($fromDate) {
+    //             $q->where('created_at', '>=', $fromDate);
+    //         }
+    //         if ($toDate) {
+    //             $q->where('created_at', '<=', $toDate);
+    //         }
+    //     });
+    // }
+
+    // Lấy ngày đầu tiên và ngày cuối cùng của tháng hiện tại
+    $fromDate = $request->from_date ? $request->from_date . ' 00:00:00' : Carbon::now()->startOfMonth()->toDateTimeString();
+    $toDate = $request->to_date ? $request->to_date . ' 23:59:59' : Carbon::now()->endOfMonth()->toDateTimeString();
+
+    // Áp dụng bộ lọc ngày
+    $query->whereHas('order', function ($q) use ($fromDate, $toDate) {
+        $q->whereBetween('created_at', [$fromDate, $toDate]);
+    });
 
     $bestSellingProducts = $query->get();
 
