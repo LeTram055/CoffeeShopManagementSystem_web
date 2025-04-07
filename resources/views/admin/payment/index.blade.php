@@ -229,51 +229,81 @@ Quản lý hóa đơn
             <div class="modal-body">
                 <div class="row">
                     <!-- Thông tin thanh toán -->
-                    <div class="col">
-                        <h6 class="mb-2">Thông tin thanh toán</h6>
+                    <h6 class="mb-3 fw-bold" style="color: #0049ab;">Thông tin thanh toán</h6>
+                    <div class="col-md-6 pe-md-4">
+
                         <ul class="list-group list-group-flush">
-                            <li class="list-group-item"><strong>Mã hóa đơn:</strong> <span id="detailPaymentId"></span>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong class="text-start">Mã hóa đơn:</strong>
+                                <span id="detailPaymentId" class="text-end"></span>
                             </li>
-                            <li class="list-group-item"><strong>Nhân viên xử lý:</strong> <span
-                                    id="detailEmployeeName"></span></li>
-                            <li class="list-group-item"><strong>Khách hàng:</strong> <span
-                                    id="detailCustomerName"></span></li>
-                            <li class="list-group-item"><strong>Phương thức:</strong> <span
-                                    id="detailPaymentMethod"></span></li>
-                            <li class="list-group-item"><strong>Loại đơn hàng:</strong> <span
-                                    id="detailOrderType"></span>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong class="text-start">Nhân viên xử lý:</strong>
+                                <span id="detailEmployeeName" class="text-end"></span>
                             </li>
-                            <li class="list-group-item"><strong>Bàn:</strong> <span id="detailTable"></span>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong class="text-start">Khách hàng:</strong>
+                                <span id="detailCustomerName" class="text-end"></span>
                             </li>
-                            <li class="list-group-item"><strong>Khuyến mãi:</strong> <span id="detailPromotion"></span>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong class="text-start">Phương thức:</strong>
+                                <span id="detailPaymentMethod" class="text-end"></span>
                             </li>
-                            <li class="list-group-item"><strong>Tổng tiền:</strong> <span id="detailTotalPrice"></span>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong class="text-start">Loại đơn hàng:</strong>
+                                <span id="detailOrderType" class="text-end"></span>
                             </li>
-                            <li class="list-group-item"><strong>Tiền giảm giá:</strong> <span
-                                    id="detailDiscountAmount"></span></li>
-                            <li class="list-group-item"><strong>Tiền thanh toán:</strong> <span
-                                    id="detailFinalPrice"></span></li>
-                            <li class="list-group-item"><strong>Tổng đã nhận:</strong> <span
-                                    id="detailAmountReceived"></span>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong class="text-start">Bàn:</strong>
+                                <span id="detailTable" class="text-end"></span>
                             </li>
-                            <li class="list-group-item"><strong>Tổng thừa:</strong> <span id="detailChange"></span>
-                            </li>
-                            <li class="list-group-item"><strong>Thời gian:</strong> <span id="detailPaymentTime"></span>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong class="text-start">Thời gian:</strong>
+                                <span id="detailPaymentTime" class="text-end"></span>
                             </li>
                         </ul>
                     </div>
 
+                    <!-- Chi tiết thanh toán -->
+                    <div class="col-md-6 ps-md-4">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong class="text-start">Khuyến mãi:</strong>
+                                <span id="detailPromotion" class="text-end"></span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong class="text-start">Tổng tiền:</strong>
+                                <span id="detailTotalPrice" class="text-end"></span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong class="text-start">Tiền giảm giá:</strong>
+                                <span id="detailDiscountAmount" class="text-end"></span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong class="text-start">Tiền thanh toán:</strong>
+                                <span id="detailFinalPrice" class="text-end"></span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong class="text-start">Tổng đã nhận:</strong>
+                                <span id="detailAmountReceived" class="text-end"></span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong class="text-start">Tổng thừa:</strong>
+                                <span id="detailChange" class="text-end"></span>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
                 <hr>
                 <!-- Chi tiết sản phẩm -->
-                <h6>Chi tiết sản phẩm đã mua</h6>
+                <h6 class="mb-3 fw-bold" style="color: #0049ab;">Chi tiết sản phẩm đã mua</h6>
                 <div class="table-responsive">
                     <table class="table table-bordered table-sm">
                         <thead>
                             <tr>
-                                <th>Tên sản phẩm</th>
-                                <th>Số lượng</th>
-                                <th>Giá</th>
+                                <th class="text-center">Tên sản phẩm</th>
+                                <th class="text-center">Số lượng</th>
+                                <th class="text-center">Giá</th>
                             </tr>
                         </thead>
                         <tbody id="detailOrderItems">
@@ -316,24 +346,26 @@ $(document).ready(function() {
                     '');
                 $('#detailPromotion').text(data.promotion ? data.promotion
                     .name : 'Không có');
-                $('#detailDiscountAmount').text(data.discount_amount);
-                $('#detailFinalPrice').text(data.final_price);
-                $('#detailAmountReceived').text(data.amount_received);
-                $('#detailChange').text(data.amount_received - data.final_price);
+                $('#detailDiscountAmount').text(formatCurrency(data.discount_amount));
+                $('#detailFinalPrice').text(formatCurrency(data.final_price));
+                $('#detailAmountReceived').text(formatCurrency(data.amount_received));
+                $('#detailChange').text(formatCurrency(data.amount_received - data
+                    .final_price));
+
                 $('#detailPaymentTime').text(moment(data.payment_time).format(
                     'HH:mm:ss DD/MM/YYYY'));
 
                 $('#detailCustomerName').text(data.order.customer.name);
-                $('#detailTotalPrice').text(data.order.total_price);
+                $('#detailTotalPrice').text(formatCurrency(data.order.total_price));
 
                 let orderItemsHtml = '';
 
                 data.order.orderItems.forEach(function(orderItem) {
                     orderItemsHtml += `
                           <tr>
-                            <td>${orderItem.item ? orderItem.item.name : 'N/A'}</td>
-                            <td>${orderItem.quantity}</td>
-                            <td>${orderItem.item ? orderItem.item.price : 'N/A'}</td>
+                            <td class = "text-center">${orderItem.item ? orderItem.item.name : 'N/A'}</td>
+                            <td class = "text-center">${orderItem.quantity}</td>
+                            <td class = "text-center">${orderItem.item ? formatCurrency(orderItem.item.price) : 'N/A'}</td>
                           </tr>
                         `;
                 });
@@ -347,6 +379,13 @@ $(document).ready(function() {
             }
         });
     });
+
+    function formatCurrency(amount) {
+        return new Intl.NumberFormat('vi-VN', {
+
+            minimumFractionDigits: 0
+        }).format(amount);
+    }
 
     // Tự động đóng thông báo sau 5 giây
     setTimeout(function() {
