@@ -90,12 +90,28 @@ class SalaryController extends Controller
         $employees = Employees::where('status', 'active')
                                 ->where('role', '!=', 'admin')
                                 ->get();
+        
 
         // Nếu không chọn nhân viên, tạo bảng lương cho tất cả nhân viên
         if (is_null($employeeId)) {
             foreach ($employees as $employee) {
                 $salaryData = $employee->calculateSalary($month, $year);
+                $finalSalary = $salaryData['total_salary'] + $salaryData['total_bonus_penalty'];
 
+                // Kiểm tra nếu bảng lương đã tồn tại với trạng thái "đã trả" và số tiền giống nhau
+                $existingSalary = Salaries::where('employee_id', $employee->employee_id)
+                    ->where('month', $month)
+                    ->where('year', $year)
+                    ->where('status', 'paid')
+                    ->first();
+
+                if ($existingSalary) {
+                    // Nếu trạng thái là "đã trả" và số tiền giống nhau, bỏ qua
+                    if ($existingSalary->final_salary == $finalSalary) {
+                        continue; // Bỏ qua không tạo mới
+                    }
+
+                }
                 // Lưu vào database với trạng thái 'pending'
                 Salaries::updateOrCreate(
                     ['employee_id' => $employee->employee_id, 'month' => $month, 'year' => $year],
@@ -114,6 +130,23 @@ class SalaryController extends Controller
             $employee = Employees::findOrFail($employeeId);
             $salaryData = $employee->calculateSalary($month, $year);
 
+            // Kiểm tra nếu bảng lương đã tồn tại với trạng thái "đã trả" và số tiền giống nhau
+            $existingSalary = Salaries::where('employee_id', $employee->employee_id)
+                ->where('month', $month)
+                ->where('year', $year)
+                ->where('status', 'paid')
+                ->first();
+
+            if ($existingSalary) {
+                // Nếu trạng thái là "đã trả" và số tiền giống nhau, bỏ qua
+                if ($existingSalary->final_salary == ($salaryData['total_salary'] + $salaryData['total_bonus_penalty'])) {
+                    return response()->json([
+                    'status' => 'error',
+                    'message' => 'Bảng lương đã tồn tại và đã được trả cho nhân viên này.'
+                ], 400);
+                }
+            }
+
             Salaries::updateOrCreate(
                 ['employee_id' => $employee->employee_id, 'month' => $month, 'year' => $year],
                 [
@@ -127,7 +160,10 @@ class SalaryController extends Controller
             );
         }
 
-        return redirect()->route('admin.salary.index')->with('alert-success', 'Bảng lương đã được tạo thành công.');
+        return response()->json([
+                    'status' => 'success',
+                    'message' => 'Bảng lương được tạo thành công.'
+                ], 200);
     }
 
     public function exportExcel(Request $request)

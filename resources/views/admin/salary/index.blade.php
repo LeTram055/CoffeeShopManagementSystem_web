@@ -253,11 +253,11 @@ $yearLimit = $currentYear;
 
                     <div class="mb-3">
                         <label class="form-label">Năm</label>
-                        < name="year" class="form-select">
+                        <select name="year" class="form-select">
                             @for ($y = $yearLimit - 5; $y <= $yearLimit; $y++) <option value="{{ $y }}"
                                 {{ $y == $yearLimit ? 'selected' : '' }}>{{ $y }}</option>
                                 @endfor
-                                </select>
+                        </select>
                     </div>
 
                     <div class="mb-3">
@@ -370,10 +370,37 @@ $(document).ready(function() {
             data: formData,
             success: function(response) {
                 $('#createSalaryModal').modal('hide'); // Ẩn modal
+                $('.flash-message').html(`
+                    <p class="alert alert-success position-relative">
+                        ${response.message}
+                        <button type="button" class="btn-close position-absolute end-0 me-2" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </p>
+                `);
+
+                setTimeout(function() {
+                    $('.flash-message .alert').fadeOut('slow');
+                }, 5000);
+
                 location.reload(); // Làm mới trang để hiển thị dữ liệu mới
             },
             error: function(xhr) {
-                alert("Có lỗi xảy ra, vui lòng thử lại!");
+                if (xhr.status === 400) {
+                    let response = xhr.responseJSON;
+                    $('#createSalaryModal').modal('hide');
+                    // Hiển thị thông báo lỗi
+                    $('.flash-message').html(`
+                        <p class="alert alert-danger position-relative">
+                            ${response.message}
+                            <button type="button" class="btn-close position-absolute end-0 me-2" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </p>
+                    `);
+                    setTimeout(function() {
+                        $('.flash-message .alert').fadeOut('slow');
+                    }, 5000);
+
+                } else {
+                    alert("Có lỗi xảy ra, vui lòng thử lại!");
+                }
             }
         });
     });
@@ -400,5 +427,10 @@ $(document).ready(function() {
         $('#exportExcelModal').modal('hide');
     });
 });
+
+// Tự động đóng thông báo sau 5 giây
+setTimeout(function() {
+    $('.flash-message .alert').fadeOut('slow');
+}, 5000);
 </script>
 @endsection
