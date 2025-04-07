@@ -4,7 +4,7 @@
     <div class="d-flex justify-content-between flex-fill d-sm-none">
         <ul class="pagination mb-0">
             {{-- First --}}
-            @if ($paginator->onFirstPage())
+            <!-- @if ($paginator->onFirstPage())
             <li class="page-item disabled">
                 <span class="page-link text-muted">&laquo;&laquo;</span>
             </li>
@@ -12,7 +12,7 @@
             <li class="page-item">
                 <a class="page-link text-dark" href="{{ $paginator->url(1) }}" rel="first">&laquo;&laquo;</a>
             </li>
-            @endif
+            @endif -->
 
             {{-- Previous --}}
             @if ($paginator->onFirstPage())
@@ -37,7 +37,7 @@
             @endif
 
             {{-- Last --}}
-            @if ($paginator->hasMorePages())
+            <!-- @if ($paginator->hasMorePages())
             <li class="page-item">
                 <a class="page-link text-dark" href="{{ $paginator->url($paginator->lastPage()) }}"
                     rel="last">&raquo;&raquo;</a>
@@ -46,7 +46,7 @@
             <li class="page-item disabled">
                 <span class="page-link text-muted">&raquo;&raquo;</span>
             </li>
-            @endif
+            @endif -->
         </ul>
     </div>
 
@@ -67,7 +67,7 @@
         <div>
             <ul class="pagination">
                 {{-- First --}}
-                @if ($paginator->onFirstPage())
+                <!-- @if ($paginator->onFirstPage())
                 <li class="page-item disabled">
                     <span class="page-link text-muted">&laquo;&laquo;</span>
                 </li>
@@ -75,7 +75,7 @@
                 <li class="page-item">
                     <a class="page-link text-dark" href="{{ $paginator->url(1) }}" rel="first">&laquo;&laquo;</a>
                 </li>
-                @endif
+                @endif -->
 
                 {{-- Previous --}}
                 @if ($paginator->onFirstPage())
@@ -89,7 +89,7 @@
                 @endif
 
                 {{-- Page Numbers --}}
-                <!-- @foreach ($elements as $element)
+                @foreach ($elements as $element)
                 @if (is_string($element))
                 <li class="page-item disabled"><span class="page-link text-muted">{{ $element }}</span></li>
                 @endif
@@ -107,7 +107,7 @@
                 @endif
                 @endforeach
                 @endif
-                @endforeach -->
+                @endforeach
 
                 {{-- Next --}}
                 @if ($paginator->hasMorePages())
@@ -121,7 +121,7 @@
                 @endif
 
                 {{-- Last --}}
-                @if ($paginator->hasMorePages())
+                <!-- @if ($paginator->hasMorePages())
                 <li class="page-item">
                     <a class="page-link text-dark" href="{{ $paginator->url($paginator->lastPage()) }}"
                         rel="last">&raquo;&raquo;</a>
@@ -130,7 +130,7 @@
                 <li class="page-item disabled">
                     <span class="page-link text-muted">&raquo;&raquo;</span>
                 </li>
-                @endif
+                @endif -->
             </ul>
         </div>
     </div>
