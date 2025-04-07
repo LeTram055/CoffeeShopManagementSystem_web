@@ -10,6 +10,8 @@ use App\Models\Payments;
 use App\Models\MenuItems;
 use App\Models\MenuIngredients;
 use App\Models\Ingredients;
+use App\Models\IngredientLogs;
+use App\Models\Salaries;
 use Carbon\Carbon;
 
 class ReportController extends Controller
@@ -125,6 +127,43 @@ class ReportController extends Controller
         ], array_keys($revenueByHour), array_values($revenueByHour)));
     }
 
+    //Doanh thu theo hình thức phục vụ
+    public function revenueByOrderTypePage()
+    {
+        return view('admin.report.revenue_by_order_type');
+    }
+    public function revenueByOrderType(Request $request)
+    {
+        $startDate = $request->query('startDate') ?: Carbon::now()->startOfMonth()->toDateString();
+        $endDate = $request->query('endDate') ?: Carbon::now()->endOfMonth()->toDateString();
+
+        $query = Payments::query()->with('order');
+
+        if ($startDate && $endDate) {
+            $query->whereBetween('payment_time', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+        }
+
+        $payments = $query->get();
+
+        $revenueByType = [
+            'dine_in' => 0,
+            'takeaway' => 0
+        ];
+
+        foreach ($payments as $payment) {
+            $orderType = optional($payment->order)->order_type;
+            if (isset($revenueByType[$orderType])) {
+                $revenueByType[$orderType] += $payment->final_price;
+            }
+        }
+
+        return response()->json([
+            ['order_type' => 'dine_in', 'total_revenue' => $revenueByType['dine_in']],
+            ['order_type' => 'takeaway', 'total_revenue' => $revenueByType['takeaway']],
+        ]);
+    }
+
+
 
     // Lợi nhuận ròng sau khi trừ chi phí nguyên liệu
     public function netProfitPage()
@@ -140,30 +179,50 @@ class ReportController extends Controller
         $fromDate = $request->from_date ? $request->from_date . ' 00:00:00' : Carbon::now()->startOfMonth()->toDateTimeString();
         $toDate = $request->to_date ? $request->to_date . ' 23:59:59' : Carbon::now()->endOfMonth()->toDateTimeString();
 
-        $query->whereHas('order', function ($q) use ($fromDate, $toDate) {
-            $q->whereBetween('created_at', [$fromDate, $toDate]);
-        });
+        // 1. Doanh thu và chi phí khuyến mãi từ payments
+        $payments = Payments::whereBetween('payment_time', [$fromDate, $toDate])->get();
+        $totalRevenue = $payments->sum('final_price');
+        $totalPromotion = $payments->sum('discount_amount');
 
-        $orderItems = $query->get();
-        $totalRevenue = 0;
-        $totalCost = 0;
+        // 2. Chi phí nguyên liệu xuất (log export & adjustment quantity < 0)
+        $ingredientExportCost = IngredientLogs::whereIn('log_type', ['export', 'adjustment'])
+            ->where('quantity_change', '<', 0)
+            ->whereBetween('changed_at', [$fromDate, $toDate])
+            ->get()
+            ->sum(function ($log) {
+                return abs($log->quantity_change) * $log->new_cost_price;
+            });
 
-        foreach ($orderItems as $orderItem) {
-            $menuItem = MenuItems::find($orderItem->item_id);
-            if (!$menuItem) continue;
+        // 3. Chi phí nhập nguyên liệu
+        $ingredientImportCost = IngredientLogs::where('log_type', 'import')
+            ->where('quantity_change', '>', 0)
+            ->whereBetween('changed_at', [$fromDate, $toDate])
+            ->get()
+            ->sum(function ($log) {
+                return $log->quantity_change * $log->price;
+            });
 
-            $totalRevenue += $orderItem->quantity * $menuItem->price;
+        // 4. Chi phí lương: từ bảng salaries theo tháng
+        $month = Carbon::parse($fromDate)->month;
+        $year = Carbon::parse($fromDate)->year;
+        $salaryCost = Salaries::where('month', $month)
+            ->where('year', $year)
+            ->sum('final_salary');
 
-            $menuIngredients = MenuIngredients::where('item_id', $menuItem->item_id)->get();
-            foreach ($menuIngredients as $menuIngredient) {
-                $ingredient = Ingredients::find($menuIngredient->ingredient_id);
-                if (!$ingredient) continue;
-                $totalCost += $orderItem->quantity * $menuIngredient->quantity * $ingredient->cost;
-            }
-        }
+        // 5. Chi phí thực sự của order
+        $realOrderCost = Orders::whereBetween('created_at', [$fromDate, $toDate])
+            ->sum('total_price');
+            
+        //Tông chi phí
+        $totalCost = $ingredientExportCost + $salaryCost;
 
         return response()->json([
             'total_revenue' => $totalRevenue,
+            'ingredient_export_cost' => $ingredientExportCost,
+            'ingredient_import_cost' => $ingredientImportCost,
+            'salary_cost' => $salaryCost,
+            'real_order_cost' => $realOrderCost,
+            'promotion_cost' => $totalPromotion,
             'total_cost' => $totalCost,
             'net_profit' => $totalRevenue - $totalCost,
         ]);

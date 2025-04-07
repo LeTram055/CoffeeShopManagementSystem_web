@@ -330,6 +330,17 @@ Route::get('admin/reports/revenue-by-hour',
 [ReportController::class, 'revenueByHour'])
 ->name('admin.reports.revenueByHour');
 
+Route::get('/admin/reports/revenue-by-order-type-page',
+ [ReportController::class, 'revenueByOrderTypePage'])
+ ->name('admin.reports.revenueByOrderTypePage');
+
+Route::get('/admin/reports/revenue-by-order-type', 
+[ReportController::class, 'revenueByOrderType'])
+->name('admin.reports.revenueByOrderType');
+
+
+
+
 Route::get('admin/reports/net-profit-page', 
 [ReportController::class, 'netProfitPage'])
 ->name('admin.reports.netProfitPage');
