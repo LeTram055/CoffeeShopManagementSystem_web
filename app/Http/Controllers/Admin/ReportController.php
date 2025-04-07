@@ -12,6 +12,7 @@ use App\Models\MenuIngredients;
 use App\Models\Ingredients;
 use App\Models\IngredientLogs;
 use App\Models\Salaries;
+use App\Models\WorkSchedules;
 use Carbon\Carbon;
 
 class ReportController extends Controller
@@ -203,11 +204,19 @@ class ReportController extends Controller
             });
 
         // 4. Chi phí lương: từ bảng salaries theo tháng
-        $month = Carbon::parse($fromDate)->month;
-        $year = Carbon::parse($fromDate)->year;
-        $salaryCost = Salaries::where('month', $month)
-            ->where('year', $year)
-            ->sum('final_salary');
+        $salaryCost = WorkSchedules::with('employee')
+            ->whereBetween('work_date', [Carbon::parse($fromDate)->toDateString(), Carbon::parse($toDate)->toDateString()])
+            ->where('status', 'completed')
+            ->get()
+            ->sum(function ($schedule) {
+                return $schedule->work_hours * ($schedule->employee->hourly_rate ?? 0);
+            });
+
+        // $month = Carbon::parse($fromDate)->month;
+        // $year = Carbon::parse($fromDate)->year;
+        // $salaryCost = Salaries::where('month', $month)
+        //     ->where('year', $year)
+        //     ->sum('final_salary');
 
         // 5. Chi phí thực sự của order
         $realOrderCost = Orders::whereBetween('created_at', [$fromDate, $toDate])

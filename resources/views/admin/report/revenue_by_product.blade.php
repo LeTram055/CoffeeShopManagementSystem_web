@@ -29,7 +29,7 @@ Thống kê doanh thu theo sản phẩm
         </div>
     </div>
 
-    <canvas id="productChart" class="mb-2"></canvas>
+    <canvas id="productChart" class="my-4"></canvas>
 
 </div>
 @endsection
@@ -61,6 +61,19 @@ window.addEventListener('DOMContentLoaded', () => {
     if (!endDateInput.value) {
         endDateInput.value = formatDateToInput(endOfMonth);
     }
+
+    // Ngày kết thúc không được trước ngày bắt đầu
+    endDateInput.min = startDateInput.value;
+
+    startDateInput.addEventListener('change', () => {
+        // Cập nhật ngày min cho endDate
+        endDateInput.min = startDateInput.value;
+
+        // Nếu ngày kết thúc đang nhỏ hơn ngày bắt đầu thì set lại bằng ngày bắt đầu
+        if (endDateInput.value < startDateInput.value) {
+            endDateInput.value = startDateInput.value;
+        }
+    });
 });
 
 

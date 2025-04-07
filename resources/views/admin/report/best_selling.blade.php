@@ -28,7 +28,7 @@ Thống kê lượt bán sản phẩm
         </div>
     </div>
 
-    <table class="table table-striped table-hover">
+    <table class="table table-striped table-hover my-4">
         <thead>
             <tr>
                 <th class="text-center">Số thứ tự</th>
@@ -76,6 +76,19 @@ window.addEventListener('DOMContentLoaded', () => {
     if (!toDateInput.value) {
         toDateInput.value = formatDateToInput(endOfMonth);
     }
+
+    // Ngày kết thúc không được trước ngày bắt đầu
+    toDateInput.min = fromDateInput.value;
+
+    fromDateInput.addEventListener('change', () => {
+        // Cập nhật ngày min cho toDate
+        toDateInput.min = fromDateInput.value;
+
+        // Nếu ngày kết thúc đang nhỏ hơn ngày bắt đầu thì set lại bằng ngày bắt đầu
+        if (toDateInput.value < fromDateInput.value) {
+            toDateInput.value = fromDateInput.value;
+        }
+    });
 });
 
 
