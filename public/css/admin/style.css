@@ -33,6 +33,12 @@ body {
     font-size: 1.5rem;
 }
 
+.navbar-nav .nav-item .nav-link {
+    font-family: 'Prata', serif;
+    font-size: 16px;
+    padding: 8px 15px;
+    transition: color 0.3s ease-in-out;
+}
 
 /*  */
 .navbar-nav {

@@ -30,8 +30,9 @@ body {
 }
 
 .navbar-nav .nav-item .nav-link {
-    font-size: 18px;
-    padding: 5px 15px;
+    font-family: 'Prata', serif;
+    font-size: 16px;
+    padding: 8px 15px;
     transition: color 0.3s ease-in-out;
 }
 
