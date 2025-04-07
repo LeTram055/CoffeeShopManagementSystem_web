@@ -53,7 +53,7 @@ class AuthController extends Controller
             if ($employee->role === 'admin') {
                 return redirect()->route('admin.home.index');
             } elseif ($employee->role === 'staff_counter') {
-                return redirect()->route('staff_counter.home.index');
+                return redirect()->route('staff_counter.confirmorder.index');
             } elseif ($employee->role === 'staff_barista') {
                 return redirect()->route('staff_baristas.order.index');
             } else {

@@ -5,7 +5,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <!-- Logo -->
-        <a class="navbar-brand" href="{{ route('staff_counter.home.index') }}">
+        <a class="navbar-brand" href="{{ route('staff_counter.confirmorder.index') }}">
             <img src="{{ asset('images/logo_nbg.png') }}" alt="Ánh Dương Hotel" style="height: 40px;">
             Hope Cafe
         </a>
