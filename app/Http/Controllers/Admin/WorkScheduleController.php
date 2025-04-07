@@ -181,7 +181,7 @@ class WorkScheduleController extends Controller
             'shift_id' => 'required|exists:shifts,shift_id',
             'work_date' => 'required|date',
             'status' => 'required|in:scheduled,completed,absent',
-            'work_hours' => 'required|numeric|min:0|max:24',
+            // 'work_hours' => 'required|numeric|min:0|max:24',
         ],
         [
             'employee_id.required' => 'Vui lòng chọn nhân viên.',
@@ -192,10 +192,10 @@ class WorkScheduleController extends Controller
             'work_date.date' => 'Ngày làm việc không hợp lệ.',
             'status.required' => 'Vui lòng chọn trạng thái.',
             'status.in' => 'Trạng thái không hợp lệ.',
-            'work_hours.required' => 'Vui lòng nhập số giờ làm việc.',
-            'work_hours.numeric' => 'Số giờ làm việc phải là số.',
-            'work_hours.min' => 'Số giờ làm việc không được nhỏ hơn 0.',
-            'work_hours.max' => 'Số giờ làm việc không được lớn hơn 24.',
+            // 'work_hours.required' => 'Vui lòng nhập số giờ làm việc.',
+            // 'work_hours.numeric' => 'Số giờ làm việc phải là số.',
+            // 'work_hours.min' => 'Số giờ làm việc không được nhỏ hơn 0.',
+            // 'work_hours.max' => 'Số giờ làm việc không được lớn hơn 24.',
         ]);
 
         WorkSchedules::create([
@@ -203,7 +203,7 @@ class WorkScheduleController extends Controller
             'shift_id' => $request->shift_id,
             'work_date' => $request->work_date,
             'status' => $request->status,
-            'work_hours' => $request->work_hours,
+            'work_hours' => 0,
         ]);
 
         Session::flash('alert-success', 'Phân công ca làm việc thành công.');
@@ -246,15 +246,32 @@ class WorkScheduleController extends Controller
         ]);
 
         $schedule = WorkSchedules::findOrFail($request->schedule_id);
+
+        $workHours = $request->work_hours;
+            if ($request->status === 'completed' && $workHours == 0) {
+                $shift = Shifts::findOrFail($request->shift_id);
+                $start = Carbon::parse($shift->start_time);
+                $end = Carbon::parse($shift->end_time);
+
+                // Nếu ca kết thúc sau 0h (qua ngày), xử lý đúng thời gian
+                if ($end->lessThanOrEqualTo($start)) {
+                    $end->addDay();
+                }
+
+                $workHours = $end->diffInMinutes($start) / 60; // Tính số giờ
+            }
+
+        $workHours = abs($workHours); // Đảm bảo số giờ là dương
+
         $schedule->update([
             'employee_id' => $request->employee_id,
             'shift_id' => $request->shift_id,
             'work_date' => $request->work_date,
             'status' => $request->status,
-            'work_hours' => $request->work_hours,
+            'work_hours' => $workHours,
         ]);
 
-        $schedule->update($request->all());
+        
         Session::flash('alert-success', 'Cập nhật lịch làm việc thành công.');
         return redirect()->route('admin.workschedule.index');
     }

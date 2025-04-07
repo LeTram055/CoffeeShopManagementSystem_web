@@ -90,14 +90,14 @@ Quản lý lịch làm việc
             </div>
 
             <!-- Nhập Số Giờ Làm -->
-            <div class="form-group mb-3">
+            <!-- <div class="form-group mb-3">
                 <label for="work_hours" class="form-label fw-semibold">Số giờ làm:</label>
                 <input type="number" step="0.1" class="form-control rounded-2" id="work_hours" name="work_hours"
                     value="{{ old('work_hours', 0) }}" placeholder="Nhập số giờ làm">
                 @error('work_hours')
                 <small class="form-text text-danger">{{ $message }}</small>
                 @enderror
-            </div>
+            </div> -->
 
             <!-- Nút Lưu -->
             <button type="submit" class="btn btn-primary fw-semibold">Lưu</button>

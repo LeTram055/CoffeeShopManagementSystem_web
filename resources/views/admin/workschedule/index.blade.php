@@ -128,7 +128,9 @@ Quản lý lịch làm việc
             <tr>
                 <td class="text-center">{{ $schedule->schedule_id }}</td>
                 <td class="text-center">{{ $schedule->employee->name ?? 'Không xác định' }}</td>
-                <td class="text-center">{{ $schedule->shift->name ?? 'Không có ca' }}</td>
+                <td class="text-center">{{ $schedule->shift->name ?? 'Không có ca' }}
+                    ({{ $schedule->shift->start_time->format('H:i') }} -
+                    {{ $schedule->shift->end_time->format('H:i') }})</td>
                 <td class="text-center">{{ $schedule->work_date->format('d/m/Y') }}</td>
                 <td class="text-center">
                     <span
