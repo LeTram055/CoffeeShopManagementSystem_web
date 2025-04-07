@@ -141,9 +141,14 @@
                                 giờ</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link {{ request()->is('admin/reports/revenue-by-order-type-page') ? 'active' : '' }}"
+                                href="{{ route('admin.reports.revenueByOrderTypePage') }}"><i
+                                    class="fa-solid fa-square-poll-vertical"></i> Doanh thu theo hình thức phục vụ</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link {{ request()->is('admin/reports/net-profit-page') ? 'active' : '' }}"
                                 href="{{ route('admin.reports.netProfitPage') }}"><i
-                                    class="fa-solid fa-hand-holding-dollar"></i> Lợi nhuận</a>
+                                    class="fa-solid fa-hand-holding-dollar"></i> Doanh thu - chi phí</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {{ request()->is('admin/reports/best-selling-page') ? 'active' : '' }}"
