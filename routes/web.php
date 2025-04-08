@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\ShiftController;
 use App\Http\Controllers\Admin\BonusPenaltyController;
 use App\Http\Controllers\Admin\SalaryController;
 use App\Http\Controllers\Admin\WorkScheduleController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\ChatController;
 use Illuminate\Support\Facades\Redis;
 
@@ -487,6 +488,16 @@ Route::post('admin/salary/update',
 Route::get('/admin/salary/{salary_id}',
  [SalaryController::class, 'showDetails'])
 ->name('admin.salary.details');
+
+
+//Setting
+Route::get('/admin/settings/edit', 
+[SettingController::class, 'edit'])
+->name('admin.settings.edit');
+
+Route::post('/admin/settings/update', 
+[SettingController::class, 'update'])
+->name('admin.settings.update');
 
 //-----------------------------------------------------------------------------//
 //Staff Counter

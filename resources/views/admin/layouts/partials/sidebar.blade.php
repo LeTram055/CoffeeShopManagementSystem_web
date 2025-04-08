@@ -158,5 +158,11 @@
                     </ul>
                 </div>
             </li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->is('admin/settings*') ? 'active' : '' }}"
+                    href="{{ route('admin.settings.edit') }}">
+                    <i class="fa-solid fa-cog"></i> Cài đặt quán
+                </a>
+            </li>
         </ul>
     </nav>
