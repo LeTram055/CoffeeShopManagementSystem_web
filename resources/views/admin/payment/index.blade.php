@@ -312,6 +312,8 @@ Quản lý hóa đơn
                 </div>
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="viewInvoiceButton" style="display: none;">Xem hóa
+                    đơn</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
             </div>
         </div>
@@ -327,6 +329,7 @@ Quản lý hóa đơn
 $(document).ready(function() {
     $('.view-payment-detail').on('click', function() {
         let paymentId = $(this).data('id');
+
         $.ajax({
             url: '/admin/payment/' + paymentId,
             type: 'GET',
@@ -339,6 +342,7 @@ $(document).ready(function() {
                 let typeText = data.order.order_type === 'dine_in' ? 'Dùng tại quán' :
                     (data.order.order_type === 'takeaway' ? 'Mang đi' :
                         'Không xác định');
+                let orderId = data.order.order_id;
                 $('#detailPaymentMethod').text(methodText);
                 $('#detailOrderType').text(typeText);
                 $('#detailTable').text(data.order.table ? data.order.table
@@ -346,17 +350,19 @@ $(document).ready(function() {
                     '');
                 $('#detailPromotion').text(data.promotion ? data.promotion
                     .name : 'Không có');
-                $('#detailDiscountAmount').text(formatCurrency(data.discount_amount));
-                $('#detailFinalPrice').text(formatCurrency(data.final_price));
-                $('#detailAmountReceived').text(formatCurrency(data.amount_received));
+                $('#detailDiscountAmount').text(formatCurrency(data.discount_amount) +
+                    'VNĐ');
+                $('#detailFinalPrice').text(formatCurrency(data.final_price) + 'VNĐ');
+                $('#detailAmountReceived').text(formatCurrency(data.amount_received) +
+                    'VNĐ');
                 $('#detailChange').text(formatCurrency(data.amount_received - data
-                    .final_price));
+                    .final_price) + 'VNĐ');
 
                 $('#detailPaymentTime').text(moment(data.payment_time).format(
                     'HH:mm:ss DD/MM/YYYY'));
 
                 $('#detailCustomerName').text(data.order.customer.name);
-                $('#detailTotalPrice').text(formatCurrency(data.order.total_price));
+                $('#detailTotalPrice').text(formatCurrency(data.order.total_price) + 'VNĐ');
 
                 let orderItemsHtml = '';
 
@@ -365,9 +371,16 @@ $(document).ready(function() {
                           <tr>
                             <td class = "text-center">${orderItem.item ? orderItem.item.name : 'N/A'}</td>
                             <td class = "text-center">${orderItem.quantity}</td>
-                            <td class = "text-center">${orderItem.item ? formatCurrency(orderItem.item.price) : 'N/A'}</td>
+                            <td class = "text-center">${orderItem.item ? formatCurrency(orderItem.item.price) : 'N/A'} VNĐ</td>
                           </tr>
                         `;
+                });
+
+                // Hiển thị nút "Xem hóa đơn"
+                $('#viewInvoiceButton').show().off('click').on('click', function() {
+                    let invoiceUrl =
+                        `/admin/payment/print-invoice/${orderId}`;
+                    window.open(invoiceUrl, '_blank');
                 });
 
                 $('#detailOrderItems').html(orderItemsHtml);

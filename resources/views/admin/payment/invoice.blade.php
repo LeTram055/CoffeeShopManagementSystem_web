@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Hóa đơn - #{{ $order->payments->first()->payment_id }}</title>
+    <title>Hóa đơn - Order #{{ $order->payments->first()->payment_id }}</title>
 
     <style>
     body {
@@ -72,7 +72,7 @@
         </div>
         @php
 
-        //$payment = $order->payments->first();
+        $payment = $order->payments->first();
         @endphp
         <table>
             <tr>
@@ -93,17 +93,17 @@
 
             <tr>
                 <td>
-                    <strong>Khách hàng:</strong> {{ $customer ? $customer->name : 'N/A' }}
+                    <strong>Khách hàng:</strong> {{ $order->customer ? $order->customer->name : 'N/A' }}
                 </td>
                 <td>
-                    <strong>Nhân viên:</strong> {{ $employee ? $employee->name : 'N/A' }}
+                    <strong>Nhân viên:</strong> {{ $payment->employee ? $payment->employee->name : 'N/A' }}
                 </td>
             </tr>
 
         </table>
         <div style="margin-bottom: 20px;">
             @if($order->order_type === 'dine_in')
-            <p><strong>Bàn:</strong> {{ $table ? 'Bàn ' . $table->table_number : '' }}</p>
+            <p><strong>Bàn:</strong> {{ $order->table ? 'Bàn ' . $order->table->table_number : '' }}</p>
 
             @endif
 
@@ -111,12 +111,12 @@
             <p><strong>Thời gian thanh toán:</strong> {{ $payment->payment_time->format('H:i:s d/m/Y') }}</p>
             <p><strong>Phương thức thanh toán:</strong>
                 {{ $payment->payment_method == 'cash' ? 'Tiền mặt' : 'Chuyển khoản' }}</p>
-            @if($promotion)
+            @if($payment->promotion)
             <p>
                 <strong>Khuyến mãi:</strong>
-                {{ $promotion->name }} - Giảm
-                {{ number_format($promotion->discount_value, 0, ',', '.') }}
-                {{ $promotion->discount_type === 'percentage' ? '%' : 'đ' }}
+                {{ $payment->promotion->name }} - Giảm
+                {{ number_format($payment->promotion->discount_value, 0, ',', '.') }}
+                {{ $payment->promotion->discount_type === 'percentage' ? '%' : 'đ' }}
             </p>
             @else
             <p><strong>Khuyến mãi:</strong></p>
@@ -130,7 +130,7 @@
                 <td style="text-align: right;">Đơn giá</td>
                 <td style="text-align: right;">Thành tiền</td>
             </tr>
-            @foreach($orderItems as $item)
+            @foreach($order->orderItems as $item)
             <tr class="item">
                 <td style="text-align: center;">{{ $item->item->name }}</td>
                 <td style="text-align: center;">{{ $item->quantity }}</td>

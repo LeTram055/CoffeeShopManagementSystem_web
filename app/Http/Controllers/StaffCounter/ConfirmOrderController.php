@@ -279,9 +279,10 @@ class ConfirmOrderController extends Controller
         
     public function printInvoice(Request $request, $order_id)
     {
-        $order = Orders::with(['customer', 'orderItems.item'])->findOrFail($order_id);
+        $order = Orders::with(['customer', 'orderItems.item', 'payments'])->findOrFail($order_id);
+        $payment = $order->payments->first();
         $pdf = PDF::loadView('staff_counter.confirmorder.invoice', compact('order'));
-        return $pdf->stream('invoice_' . $order->order_id . '.pdf');
+        return $pdf->stream('invoice_' . $payment->payment_id. '.pdf');
     }
 
 }

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Hóa đơn - Order #{{ $order->order_id }}</title>
+    <title>Hóa đơn - #{{ $order->payments->first()->payment_id }}</title>
 
     <style>
     body {

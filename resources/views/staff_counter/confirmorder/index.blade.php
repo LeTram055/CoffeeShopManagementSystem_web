@@ -85,6 +85,15 @@
     font-weight: bold;
     box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
 }
+
+.text-end {
+    text-align: right !important;
+}
+
+/* #paymentTimeRow,
+#paymentMethodRow {
+    display: none !important;
+} */
 </style>
 @endsection
 
@@ -122,7 +131,7 @@
                         ];
                         @endphp
                         <p>Trạng thái: <strong>{{ $statusLabels[$order->status] ?? 'Không xác định' }}</strong></p>
-                        <p>Tổng tiền: {{ number_format($order->total_price, 0, ',', '.') }} VND</p>
+                        <p>Tổng tiền: {{ number_format($order->total_price, 0, ',', '.') }} VNĐ</p>
                         <button class="btn btn-primary btn-sm view-order-btn" data-id="{{ $order->order_id }}">Xem chi
                             tiết</button>
                         @if($order->status == 'pending_payment')
@@ -177,7 +186,7 @@
                         ];
                         @endphp
                         <p>Trạng thái: <strong>{{ $statusLabels[$order->status] ?? 'Không xác định' }}</strong></p>
-                        <p>Tổng tiền: {{ number_format($order->total_price, 0, ',', '.') }} VND</p>
+                        <p>Tổng tiền: {{ number_format($order->total_price, 0, ',', '.') }} VNĐ</p>
                         <button class="btn btn-primary btn-sm view-order-btn" data-id="{{ $order->order_id }}">Xem chi
                             tiết</button>
                         @if($order->status == 'confirmed')
@@ -199,22 +208,119 @@
     </div>
 </div>
 <!-- Modal Xem chi tiết đơn hàng (read-only) -->
-<div class="modal fade" id="orderDetailModal" tabindex="-1" aria-labelledby="orderDetailModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+<div class="modal fade" id="paymentDetailModal" tabindex="-1" aria-labelledby="paymentDetailModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="orderDetailModalLabel">Chi tiết đơn hàng</h5>
-                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                <h5 class="modal-title" id="paymentDetailModalLabel">Chi tiết hóa đơn</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
             </div>
-            <div class="modal-body" id="orderDetailContent">
-                <!-- Nội dung hiển thị thông tin đơn hàng-->
+            <div class="modal-body">
+                <div class="row">
+                    <!-- Cột thông tin chung -->
+                    <div class="col-md-6 pe-md-4">
+                        <h6 class="mb-3 fw-bold" style="color: #0049ab;">Thông tin chung</h6>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong class="text-start">Mã hóa đơn:</strong>
+                                <span id="detailPaymentId" class="text-end"></span>
+                            </li>
+
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong class="text-start">Khách hàng:</strong>
+                                <span id="detailCustomerName" class="text-end"></span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong class="text-start">Loại đơn hàng:</strong>
+                                <span id="detailOrderType" class="text-end"></span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong class="text-start">Bàn:</strong>
+                                <span id="detailTable" class="text-end"></span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong class="text-start" id="dynamicLabel"></strong>
+                                <span id="dynamicValue" class="text-end"></span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong class="text-start">Thời gian đặt hàng:</strong>
+                                <span id="detailOrderTime" class="text-end"></span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between" id="paymentTimeRow">
+                                <strong class="text-start">Thời gian thanh toán:</strong>
+                                <span id="detailPaymentTime" class="text-end"></span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between" id="paymentMethodRow">
+                                <strong class="text-start">Phương thức thanh toán:</strong>
+                                <span id="detailPaymentMethod" class="text-end"></span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Cột thông tin thanh toán (ẩn nếu chưa thanh toán) -->
+                    <div class="col-md-6 ps-md-4" id="paymentInfoColumn" style="display: none;">
+                        <h6 class="mb-3 fw-bold" style="color: #0049ab;">Thông tin thanh toán</h6>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong class="text-start">Mã thanh toán:</strong>
+                                <span id="detailPaymentCode" class="text-end"></span>
+                            </li>
+
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong class="text-start">Khuyến mãi:</strong>
+                                <span id="detailPromotion" class="text-end"></span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong class="text-start">Tổng tiền:</strong>
+                                <span id="detailTotalPrice" class="text-end"></span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong class="text-start">Tiền giảm giá:</strong>
+                                <span id="detailDiscountAmount" class="text-end"></span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong class="text-start">Tiền thanh toán:</strong>
+                                <span id="detailFinalPrice" class="text-end"></span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong class="text-start">Tổng đã nhận:</strong>
+                                <span id="detailAmountReceived" class="text-end"></span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong class="text-start">Tiền thừa:</strong>
+                                <span id="detailChange" class="text-end"></span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <hr>
+                <!-- Chi tiết sản phẩm -->
+                <h6 class="mb-3 fw-bold" style="color: #0049ab;">Chi tiết sản phẩm đã mua</h6>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-sm">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Tên sản phẩm</th>
+                                <th class="text-center">Số lượng</th>
+                                <th class="text-center">Giá</th>
+                            </tr>
+                        </thead>
+                        <tbody id="detailOrderItems">
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="viewInvoiceButton" style="display: none;">Xem hóa
+                    đơn</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
             </div>
         </div>
     </div>
 </div>
+
 <!-- Modal Chỉnh sửa đơn hàng (cho đơn hàng mang đi confirmed) -->
 <div class="modal fade" id="editOrderModal" tabindex="-1" aria-labelledby="editOrderModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
@@ -296,10 +402,10 @@
                     </div>
 
                     <div class="mb-3">
-                        <p>Tiền phải trả: <span id="finalAmount">0</span> VND</p>
+                        <p>Tiền phải trả: <span id="finalAmount">0</span> VNĐ</p>
                     </div>
                     <div class="mb-3">
-                        <p>Tiền thối: <span id="changeAmountPayment">0</span> VND</p>
+                        <p>Tiền thối: <span id="changeAmountPayment">0</span> VNĐ</p>
                     </div>
                     <button type="submit" class="btn btn-primary">Xác nhận thanh toán</button>
                 </form>
@@ -336,6 +442,106 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
 $(document).ready(function() {
+    $('.view-order-btn').on('click', function() {
+        let orderId = $(this).data('id');
+        $.ajax({
+            url: `/staff_counter/confirmorder/${orderId}`,
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                let order = response.order;
+
+                // Cập nhật thông tin chung
+                $('#detailPaymentId').text(order.order_id);
+
+                $('#detailCustomerName').text(order.customer ? order.customer.name : 'N/A');
+                $('#detailOrderType').text(order.order_type === 'dine_in' ? 'Tại chỗ' :
+                    'Mang đi');
+                $('#detailTable').text(order.table ? 'Bàn ' + order.table.table_number :
+                    '');
+                $('#detailOrderTime').text(new Date(order.created_at).toLocaleString(
+                    'vi-VN'));
+
+
+                // Kiểm tra trạng thái thanh toán
+                if (order.status === 'paid') {
+                    let payment = order.payments[0];
+
+                    // Nếu đã thanh toán, hiển thị nhân viên thanh toán
+                    $('#dynamicLabel').text('Nhân viên thanh toán:');
+                    $('#dynamicValue').text(payment.employee ? payment.employee.name :
+                        'N/A');
+
+                    $('#detailPaymentCode').text(payment.payment_id || '');
+                    $('#detailPaymentTime').text(new Date(payment.payment_time)
+                        .toLocaleString('vi-VN'));
+                    $('#detailPaymentMethod').text(payment.payment_method === 'cash' ?
+                        'Tiền mặt' : 'Chuyển khoản');
+
+                    // Hiển thị các hàng liên quan đến thanh toán
+                    $('#paymentTimeRow').attr('style', 'display: flex !important;');
+                    $('#paymentMethodRow').attr('style', 'display: flex !important;');
+
+
+                    $('#paymentInfoColumn').show(); // Hiển thị cột thông tin thanh toán
+
+                    $('#detailPromotion').text(payment.promotion ? payment.promotion.name :
+                        'Không có');
+                    $('#detailTotalPrice').text(new Intl.NumberFormat('vi-VN').format(order
+                        .total_price) + ' VNĐ');
+                    $('#detailDiscountAmount').text(new Intl.NumberFormat('vi-VN').format(
+                        payment.discount_amount) + ' VNĐ');
+                    $('#detailFinalPrice').text(new Intl.NumberFormat('vi-VN').format(
+                        payment
+                        .final_price) + ' VNĐ');
+                    $('#detailAmountReceived').text(new Intl.NumberFormat('vi-VN').format(
+                        payment.amount_received) + ' VNĐ');
+                    $('#detailChange').text(new Intl.NumberFormat('vi-VN').format(payment
+                        .amount_received - payment.final_price) + ' VNĐ');
+
+                    // Hiển thị nút "Xem hóa đơn"
+                    $('#viewInvoiceButton').show().off('click').on('click', function() {
+                        let invoiceUrl =
+                            `/staff_counter/confirmorder/print-invoice/${orderId}`;
+                        window.open(invoiceUrl, '_blank');
+                    });
+                } else {
+                    // Nếu chưa thanh toán, hiển thị tổng tiền đơn hàng
+                    $('#dynamicLabel').text('Tổng tiền đơn hàng:');
+                    $('#dynamicValue').text(new Intl.NumberFormat('vi-VN').format(order
+                        .total_price) + ' VNĐ');
+                    $('#paymentInfoColumn').hide(); // Ẩn cột thông tin thanh toán
+                    $('#viewInvoiceButton').hide();
+
+                    // Ẩn các hàng liên quan đến thanh toán
+                    $('#paymentTimeRow').attr('style', 'display: none !important;');
+                    $('#paymentMethodRow').attr('style', 'display: none !important;');
+
+                }
+
+                // Cập nhật chi tiết sản phẩm
+                let itemsHtml = '';
+                order.order_items.forEach(function(item) {
+                    itemsHtml += `
+                        <tr>
+                            <td class = "text-center">${item.item.name}</td>
+                            <td class="text-center">${item.quantity}</td>
+                            <td class = "text-center">${new Intl.NumberFormat('vi-VN').format(item.item.price)} VNĐ</td>
+                        </tr>`;
+                });
+                $('#detailOrderItems').html(itemsHtml);
+
+                // Hiển thị modal
+                $('#paymentDetailModal').modal('show');
+            },
+            error: function() {
+                alert('Lỗi khi tải thông tin hóa đơn.');
+            }
+        });
+    });
+});
+
+$(document).ready(function() {
     // Hàm hiển thị thông báo
     function notify(message, type = 'success') {
         let alertHtml = `<div class="alert alert-${type} alert-dismissible fade show" role="alert">
@@ -348,83 +554,7 @@ $(document).ready(function() {
             $('#notification').fadeOut();
         }, 3000);
     }
-    // Khi nhấn nút "Xem chi tiết" hiển thị modal chi tiết đơn hàng
-    $('.view-order-btn').on('click', function() {
-        let orderId = $(this).data('id');
-        $.ajax({
-            url: `/staff_counter/confirmorder/${orderId}`,
-            type: 'GET',
-            dataType: 'json',
-            success: function(response) {
-                let order = response.order;
-                let statusLabels = {
-                    'pending_payment': 'Chờ thanh toán',
-                    'paid': 'Đã thanh toán',
-                    'cancelled': 'Đã hủy',
-                    'confirmed': 'Đã xác nhận',
-                    'received': 'Đã nhận món'
-                };
-                let html = `<p><strong>Mã hóa đơn:</strong> ${order.order_id}</p>`;
-                html +=
-                    `<p><strong>Trạng thái:</strong> ${statusLabels[order.status] || 'Không xác định'}</p>`;
-                html +=
-                    `<p><strong>Khách hàng:</strong> ${order.customer ? order.customer.name : 'N/A'}</p>`;
-                if (order.order_type === 'dine_in') {
-                    html +=
-                        `<p><strong>Bàn:</strong> ${order.table ? 'Bàn ' + order.table.table_number : 'N/A'}</p>`;
-                }
-                html +=
-                    `<p><strong>Ngày đặt:</strong> ${new Date(order.created_at).toLocaleString('vi-VN')}</p>`;
-                html +=
-                    `<p><strong>Tổng tiền:</strong> ${new Intl.NumberFormat('vi-VN').format(order.total_price)} VND</p>`;
-                if (order.order_items.length > 0) {
-                    html += `<h6>Chi tiết đơn hàng:</h6>`;
-                    html +=
-                        `<table class="table table-bordered">
-                            <thead class="table-light">
-                                <tr>
-                                    <th class="text-center">Tên món</th>
-                                    <th class="text-center">Số lượng</th>
-                                    <th class="text-center">Giá</th>
-                                </tr>
-                            </thead>
-                        <tbody>`;
-                    order.order_items.forEach(function(item) {
-                        html += `<tr>
-                            <td>${item.item.name}</td>
-                            <td class="text-center">${item.quantity}</td>
-                            <td class="text-end">${new Intl.NumberFormat('vi-VN').format(item.item.price)} VND</td>
-                        </tr>`;
-                    });
-                    html += `</tbody></table>`;
-                } else {
-                    html += `<p>Không có món ăn nào.</p>`;
-                }
-                // Nếu đơn hàng đã thanh toán thì thêm thông tin thanh toán và nút in hóa đơn
-                if (order.status === 'paid' && order.payments && order.payments.length >
-                    0) {
-                    let payment = order.payments[0];
-                    html += `<div class="payment-info" style="margin-top:15px; padding:10px; border: 1px solid #ccc;">
-                                <h6>Thông tin thanh toán</h6>
-                                <p><strong>Thời gian thanh toán:</strong> ${new Date(payment.payment_time).toLocaleString('vi-VN')}</p>
-                                <p><strong>Phương thức thanh toán:</strong> ${payment.payment_method == 'cash' ? 'Tiền mặt' : 'Chuyển khoản'}</p>
-                                <p><strong>Nhân viên xử lý:</strong> ${payment.employee ? payment.employee.name : 'N/A'}</p>
-                                <p><strong>Khuyến mãi:</strong> ${payment.promotion ? payment.promotion.name + ' - Giảm: ' + payment.promotion.discount_value + (payment.promotion.discount_type === 'percentage' ? '%' : 'đ') : 'N/A'}</p>
-                                <p><strong>Tiền khách đưa:</strong> ${new Intl.NumberFormat('vi-VN').format(payment.amount_received)} VND</p>
-                                <p><strong>Giảm giá:</strong> ${new Intl.NumberFormat('vi-VN').format(payment.discount_amount)} VND</p>
-                                <p><strong>Tiền phải trả:</strong> ${new Intl.NumberFormat('vi-VN').format(payment.final_price)} VND</p>
-                                <button class="btn btn-primary btn-sm print-invoice-btn" data-id="${order.order_id}">In hóa đơn</button>
-                              </div>`;
-                }
 
-                $('#orderDetailContent').html(html);
-                $('#orderDetailModal').modal('show');
-            },
-            error: function() {
-                notify('Lỗi khi tải đơn hàng.', 'danger');
-            }
-        });
-    });
 
     // Sự kiện click cho nút in hóa đơn được thêm vào modal chi tiết (nếu đơn hàng đã thanh toán)
     $(document).on('click', '.print-invoice-btn', function() {
@@ -449,7 +579,7 @@ $(document).ready(function() {
                 html +=
                     `<p><strong>Ngày đặt:</strong> ${new Date(order.created_at).toLocaleString('vi-VN')}</p>`;
                 html +=
-                    `<p><strong>Tổng tiền:</strong> ${new Intl.NumberFormat('vi-VN').format(order.total_price)} VND</p>`;
+                    `<p><strong>Tổng tiền:</strong> ${new Intl.NumberFormat('vi-VN').format(order.total_price)} VNĐ</p>`;
                 if (order.order_items.length > 0) {
                     html += `<h6>Chi tiết đơn hàng:</h6>`;
                     html +=
@@ -474,7 +604,7 @@ $(document).ready(function() {
                                 <button class="btn btn-outline-secondary btn-increase" type="button">+</button>
                                 </div>
                             </td>
-                            <td class="text-end">${new Intl.NumberFormat('vi-VN').format(item.item.price)} VND</td>
+                            <td class="text-end">${new Intl.NumberFormat('vi-VN').format(item.item.price)} VNĐ</td>
                             <td><input type="text" class="form-control form-control-sm note-input" value="${item.note ?? ''}" data-index="${index}" placeholder="Ghi chú..." style="width: 100%;"></td>
                             <td class="text-center"><button class="btn btn-sm btn-danger remove-edit-item" data-index="${index}"><i class="fa-solid fa-trash"></i></button></td>
                         </tr>`;
@@ -664,7 +794,8 @@ $(document).ready(function() {
                         <button class="btn btn-outline-secondary btn-increase" type="button">+</button>
                     </div>
                 </td>
-                <td class="text-end">${new Intl.NumberFormat('vi-VN').format(item.price)} VND</td>
+                <td class="text-end">${new Intl.NumberFormat('vi-VN').format(item.price)} VNĐ
+                </td>
                 <td><input type="text" class="form-control note-input" value="${note}" data-item-id="${item.item_id}" placeholder="Ghi chú..." style="width: 100%;"></td>
                 <td class="text-center"><button class="btn btn-sm btn-danger remove-edit-item" data-item-id="${item.item_id}"><i class="fa-solid fa-trash"></i></button></td>
             </tr>`;

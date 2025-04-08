@@ -10,6 +10,8 @@ use Carbon\Carbon;
 use App\Models\Payments;
 use App\Exports\PaymentsExport;
 use App\Models\MenuItems;
+use App\Models\Orders;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PaymentController extends Controller
 {
@@ -119,5 +121,14 @@ class PaymentController extends Controller
     public function exportExcel()
     {
         return Excel::download(new PaymentsExport, 'payments.xlsx');
+    }
+
+    public function printInvoice(Request $request, $order_id)
+    {
+        $order = Orders::with(['customer', 'orderItems.item', 'payments'])->findOrFail($order_id);
+        $payment = $order->payments->first();
+
+        $pdf = PDF::loadView('admin.payment.invoice', compact('order'));
+        return $pdf->stream('invoice_' . $payment->payment_id . '.pdf');
     }
 }

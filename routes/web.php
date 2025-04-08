@@ -275,6 +275,11 @@ Route::post('admin/payment/delete',
 [PaymentController::class, 'destroy'])
 ->name('admin.payment.delete');
 
+Route::get('/admin/payment/print-invoice/{order_id}', 
+[PaymentController::class, 'printInvoice'])
+->whereNumber('order_id')
+->name('admin.payment.printInvoice');
+
 //Table
 Route::get('admin/table/index',
 [TableController::class, 'index'])
