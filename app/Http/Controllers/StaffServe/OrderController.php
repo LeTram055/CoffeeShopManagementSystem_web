@@ -153,6 +153,8 @@ class OrderController extends Controller
         try{
             $order = Orders::findOrFail($request->order_id);
 
+            
+
             foreach ($order->orderItems as $oldItem) {
                 $menuItem = $oldItem->item;
 
@@ -190,9 +192,20 @@ class OrderController extends Controller
                     'errors'  => $errors,
                 ], 422);
             }
+
+            $table = Tables::findOrFail($order->table_id);
+            $table->status_id = 1;
+            $table->save();
+
+            
+            $tableNew = Tables::findOrFail($request->table_id);
+            $tableNew->status_id = 2;
+
+            $tableNew->save();
         
             $order->update([
                 'total_price' => $request->total_price,
+                'table_id' => $request->table_id,
             ]);
             $order->orderItems()->delete();
 
