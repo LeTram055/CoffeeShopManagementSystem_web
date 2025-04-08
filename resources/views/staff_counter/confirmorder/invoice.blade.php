@@ -63,9 +63,9 @@
 <body>
     <div class="invoice-box">
         <div class="store-info">
-            <h1>Hope Cafe</h1>
-            <p>3/2, Xuân Khánh, Ninh Kiều, Cần Thơ</p>
-            <p>0762863326</p>
+            <h1>{{ $setting->store_name }}</h1>
+            <p>&#x2691; </i> {{ $setting->address }}</p>
+            <p>&#x260E; {{ $setting->phone_number }}</p>
         </div>
         <div class="invoice-header">
             <h2>Hóa đơn</h2>

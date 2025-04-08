@@ -15,6 +15,7 @@ use App\Models\Payments;
 use App\Models\Promotions;
 use App\Models\MenuItems;
 use App\Events\NewOrderEvent;
+use App\Models\Setting;
 
 class ConfirmOrderController extends Controller
 {
@@ -281,7 +282,8 @@ class ConfirmOrderController extends Controller
     {
         $order = Orders::with(['customer', 'orderItems.item', 'payments'])->findOrFail($order_id);
         $payment = $order->payments->first();
-        $pdf = PDF::loadView('staff_counter.confirmorder.invoice', compact('order'));
+        $setting = Setting::first();
+        $pdf = PDF::loadView('staff_counter.confirmorder.invoice', compact('order', 'setting'));
         return $pdf->stream('invoice_' . $payment->payment_id. '.pdf');
     }
 

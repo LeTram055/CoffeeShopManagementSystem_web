@@ -11,6 +11,7 @@ use App\Models\Payments;
 use App\Exports\PaymentsExport;
 use App\Models\MenuItems;
 use App\Models\Orders;
+use App\Models\Setting;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class PaymentController extends Controller
@@ -128,7 +129,9 @@ class PaymentController extends Controller
         $order = Orders::with(['customer', 'orderItems.item', 'payments'])->findOrFail($order_id);
         $payment = $order->payments->first();
 
-        $pdf = PDF::loadView('admin.payment.invoice', compact('order'));
+        $setting = Setting::first();
+
+        $pdf = PDF::loadView('admin.payment.invoice', compact('order', 'setting'));
         return $pdf->stream('invoice_' . $payment->payment_id . '.pdf');
     }
 }

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use App\Models\Payments;
+use App\Models\Setting;
 
 class PaymentController extends Controller
 {
@@ -37,6 +38,7 @@ class PaymentController extends Controller
         $payment = Payments::with('employee', 'promotion', 'order.orderItems', 'order.customer', 'order.table')
             ->where('payment_id', $paymentId)
             ->firstOrFail();
+        $setting = Setting::first();
 
         $invoiceData = [
             'payment' => $payment,
@@ -46,6 +48,7 @@ class PaymentController extends Controller
             'promotion' => $payment->promotion,
             'table' => $payment->order->table,
             'orderItems' => $payment->order->orderItems,
+            'setting' => $setting,
         ];
 
         $pdf = PDF::loadView('staff_serve.invoice', $invoiceData);
