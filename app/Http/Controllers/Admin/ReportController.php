@@ -220,6 +220,7 @@ class ReportController extends Controller
 
         // 5. Chi phí thực sự của order
         $realOrderCost = Orders::whereBetween('created_at', [$fromDate, $toDate])
+            ->where('status', '!=', 'cancelled')    
             ->sum('total_price');
             
         //Tông chi phí
