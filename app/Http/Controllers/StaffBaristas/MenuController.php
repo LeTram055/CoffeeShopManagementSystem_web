@@ -19,10 +19,31 @@ class MenuController extends Controller
 public function toggleAvailability(Request $request, $id)
 {
     $item = MenuItems::findOrFail($id);
-    $item->is_available = !$item->is_available;
-    $item->save();
+    if (!$request->is_available) {
+    // Kiểm tra nếu không có lý do
+        if (!$request->has('reason') || empty(trim($request->reason))) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Vui lòng nhập lý do khi tắt trạng thái sản phẩm.'
+            ], 422);
+        }
 
-    return response()->json(['success' => true, 'status' => $item->is_available]);
+        // Cập nhật trạng thái và lưu lý do
+        $item->is_available = false;
+        $item->reason = $request->reason;
+        $item->save();
+    } else {
+        // Nếu bật trạng thái (is_available = true), xóa lý do
+        $item->is_available = true;
+        $item->reason = null;
+        $item->save();
+    }
+
+    return response()->json([
+        'success' => true,
+        'status' => $item->is_available,
+        'message' => $item->is_available ? 'Sản phẩm đã được cập nhật có sẵn.' : 'Sản phẩm đã được cập nhật không có sẵn.'
+    ]);
 }
 
 }

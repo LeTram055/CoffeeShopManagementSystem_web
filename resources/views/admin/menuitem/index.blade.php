@@ -284,6 +284,7 @@ Quản lý thực đơn
                 <!-- <p id="modalAvailable" class="fw-bold"></p> -->
 
                 <p id="modalDescription"></p>
+                <p id="modalReason" style="display: none;"></p>
                 <h6>Nguyên liệu:</h6>
                 <ul id="modalIngredients"></ul>
             </div>
@@ -338,6 +339,13 @@ $(document).ready(function() {
                 $('#modalName').text(data.name);
                 $('#modalPrice').text(new Intl.NumberFormat().format(data.price) + ' đ');
                 $('#modalDescription').text(data.description);
+
+                // Hiển thị lý do nếu sản phẩm không có sẵn
+                if (!data.is_available && data.reason) {
+                    $('#modalReason').html(`<strong>Lý do:</strong> ${data.reason}`).show();
+                } else {
+                    $('#modalReason').hide();
+                }
 
                 let ingredientsList = '';
                 data.ingredients.forEach(function(ing) {

@@ -16,7 +16,8 @@ class MenuItems extends Model
         'price', 
         'category_id', 
         'description',
-        'is_available'
+        'is_available',
+        'reason',
     ];
     protected $guarded = ['item_id'];
     protected $primaryKey = 'item_id';

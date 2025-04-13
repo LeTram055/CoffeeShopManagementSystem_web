@@ -211,6 +211,10 @@ Thực đơn
                     <button class="btn btn-link text-black toggle-ingredients" data-id="{{ $item->item_id }}">
                         <i class="fa-solid fa-angle-down"></i>
                     </button>
+
+                    @if (!$item->is_available && $item->reason)
+                    <p class="text-danger"><strong>Lý do:</strong> {{ $item->reason }}</p>
+                    @endif
                     <div class="ingredient-list" id="ingredients-{{ $item->item_id }}">
                         <ul>
                             @foreach($item->ingredients as $ingredient)
@@ -244,6 +248,9 @@ Thực đơn
                     <button class="btn btn-link text-black toggle-ingredients" data-id="{{ $item->item_id }}">
                         <i class="fa-solid fa-angle-down"></i>
                     </button>
+                    @if (!$item->is_available && $item->reason)
+                    <p class="text-danger"><strong>Lý do:</strong> {{ $item->reason }}</p>
+                    @endif
                     <div class="ingredient-list" id="ingredients-{{ $item->item_id }}">
                         <ul>
                             @foreach($item->ingredients as $ingredient)
@@ -263,6 +270,26 @@ Thực đơn
         </div>
     </div>
     @endforeach
+
+    <!-- Modal nhập lý do -->
+    <div class="modal fade" id="reasonModal" tabindex="-1" aria-labelledby="reasonModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reasonModalLabel">Nhập lý do tắt sản phẩm</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <textarea id="reasonInput" class="form-control" rows="3" placeholder="Nhập lý do..."></textarea>
+                    <small class="text-danger d-none" id="reasonError">Vui lòng nhập lý do.</small>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-primary" id="saveReasonButton">Lưu</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 
@@ -271,22 +298,67 @@ Thực đơn
 @section('custom-scripts')
 <script>
 $(document).ready(function() {
+    let currentItemId = null;
+    let isReasonSaved = false;
+
     // Xử lý bật/tắt trạng thái món
     $('.toggle-available').change(function() {
         let itemId = $(this).data('id');
         let isChecked = $(this).is(':checked');
 
+        if (!isChecked) {
+            // Nếu tắt trạng thái, hiển thị modal nhập lý do
+            currentItemId = itemId;
+            isReasonSaved = false;
+            $('#reasonModal').modal('show');
+        } else {
+            // Nếu bật trạng thái, cập nhật trực tiếp
+            updateAvailability(itemId, 1, null);
+        }
+    });
+
+    // Khi modal bị đóng mà không lưu lý do, bật lại trạng thái
+    $('#reasonModal').on('hidden.bs.modal', function() {
+        if (currentItemId !== null && !isReasonSaved) {
+            // Bật lại trạng thái checkbox
+            $(`.toggle-available[data-id="${currentItemId}"]`).prop('checked', true);
+            currentItemId = null; // Reset lại giá trị
+        }
+    });
+
+    // khi nhấn nút "Lưu" trong modal
+    $('#saveReasonButton').on('click', function() {
+        let reason = $('#reasonInput').val().trim();
+
+        if (reason === '') {
+            $('#reasonError').removeClass('d-none');
+            return;
+        }
+
+        $('#reasonError').addClass('d-none');
+        $('#reasonModal').modal('hide');
+
+        isReasonSaved = true;
+
+        // Gửi yêu cầu cập nhật trạng thái và lý do
+        updateAvailability(currentItemId, 0, reason);
+    });
+
+    // Hàm cập nhật trạng thái sản phẩm
+    function updateAvailability(itemId, isAvailable, reason) {
         $.ajax({
             url: `/staff_baristas/menu/toggle-availability/${itemId}`,
             method: 'POST',
             data: {
-                _token: '{{ csrf_token() }}'
+                _token: '{{ csrf_token() }}',
+                is_available: isAvailable,
+                reason: reason
             },
             success: function(response) {
                 if (response.success) {
                     let message = `
                         <p class="alert alert-success position-relative">
-                            Cập nhật thành công
+                            ${response.message}
                             <button type="button" class="btn-close position-absolute end-0 me-2" data-bs-dismiss="alert"
                                 aria-label="Close"></button>
                         </p>
@@ -295,12 +367,49 @@ $(document).ready(function() {
                     $('.flash-message').empty().append(message);
 
                     setTimeout(function() {
-                        $('.flash-message .alert').fadeOut('slow');
+                        location.reload();
                     }, 3000);
+                }
+            },
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                    let errorMessage = xhr.responseJSON.message;
+                    alert(errorMessage); // Hiển thị lỗi nếu không nhập lý do
                 }
             }
         });
-    });
+    }
+
+    // Xử lý bật/tắt trạng thái món
+    // $('.toggle-available').change(function() {
+    //     let itemId = $(this).data('id');
+    //     let isChecked = $(this).is(':checked');
+
+    //     $.ajax({
+    //         url: `/staff_baristas/menu/toggle-availability/${itemId}`,
+    //         method: 'POST',
+    //         data: {
+    //             _token: '{{ csrf_token() }}'
+    //         },
+    //         success: function(response) {
+    //             if (response.success) {
+    //                 let message = `
+    //                     <p class="alert alert-success position-relative">
+    //                         Cập nhật thành công
+    //                         <button type="button" class="btn-close position-absolute end-0 me-2" data-bs-dismiss="alert"
+    //                             aria-label="Close"></button>
+    //                     </p>
+    //                 `;
+
+    //                 $('.flash-message').empty().append(message);
+
+    //                 setTimeout(function() {
+    //                     $('.flash-message .alert').fadeOut('slow');
+    //                 }, 3000);
+    //             }
+    //         }
+    //     });
+    // });
 
     // Xử lý hiển thị danh sách nguyên liệu
     $('.toggle-ingredients').click(function() {
