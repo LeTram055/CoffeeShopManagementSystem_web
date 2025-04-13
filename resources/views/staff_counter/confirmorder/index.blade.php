@@ -111,6 +111,12 @@
                         thanh toán</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link {{ request('dine_in_status') == 'received' ? 'active' : '' }}"
+                        href="{{ route('staff_counter.confirmorder.index', ['dine_in_status' => 'received', 'takeaway_status' => request('takeaway_status', 'pending_payment')]) }}">
+                        Đã nhận món
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link {{ request('dine_in_status') == 'all' ? 'active' : '' }}"
                         href="{{ route('staff_counter.confirmorder.index', ['dine_in_status' => 'all', 'takeaway_status' => request('takeaway_status', 'pending_payment')]) }}">Tất
                         cả</a>
@@ -134,9 +140,16 @@
                         <p>Tổng tiền: {{ number_format($order->total_price, 0, ',', '.') }} VNĐ</p>
                         <button class="btn btn-primary btn-sm view-order-btn" data-id="{{ $order->order_id }}">Xem chi
                             tiết</button>
+
                         @if($order->status == 'pending_payment')
+
                         <button class="btn btn-warning btn-sm payment-btn" data-id="{{ $order->order_id }}">Thanh
                             toán</button>
+                        @endif
+
+                        @if($order->status == 'received')
+                        <button class="btn btn-warning btn-sm provisional-invoice-btn"
+                            data-id="{{ $order->order_id }}">In hóa đơn tạm tính</button>
                         @endif
                     </div>
                 </div>
@@ -436,6 +449,33 @@
     </div>
 </div>
 
+<!-- Modal Xác nhận thanh toán -->
+<div class="modal fade" id="confirmPaymentModal" tabindex="-1" aria-labelledby="confirmPaymentModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-white">
+                <h5 class="modal-title" id="confirmPaymentModalLabel">Xác nhận thanh toán</h5>
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body">
+                <p>Vui lòng xác nhận rằng bạn đã nhận đủ tiền từ phục vụ.</p>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="confirmReceivedMoney">
+                    <label class="form-check-label" for="confirmReceivedMoney">
+                        Tôi xác nhận đã nhận đủ tiền.
+                    </label>
+                </div>
+                <p id="confirmError" class="text-danger mt-2" style="display: none;">Bạn cần xác nhận trước khi tiếp
+                    tục.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" id="confirmPaymentButton">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('custom-scripts')
@@ -928,6 +968,12 @@ $(document).ready(function() {
 
     });
 
+    //Khi nhấn in hóa đơn tạm thời
+    $(document).on('click', '.provisional-invoice-btn', function() {
+        let orderId = $(this).data('id');
+        window.open(`/staff_counter/confirmorder/print-provisional-invoice/${orderId}`, '_blank');
+    });
+
     // Xử lý thanh toán qua form
     $('#paymentForm').on('submit', function(e) {
         e.preventDefault();
@@ -960,25 +1006,40 @@ $(document).ready(function() {
         let orderId = $('#paymentOrderId').val();
         let orderType = $('#paymentOrderType').val();
         if (orderType === 'dine_in') {
-            // Đơn tại chỗ: cập nhật trạng thái thanh toán và in hóa đơn
-            $.ajax({
-                url: `/staff_counter/confirmorder/mark-paid/${orderId}`,
-                type: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function(response) {
-                    notify(response.message, 'success');
-                    let invoiceUrl = '/staff_counter/confirmorder/print-invoice/' + orderId;
-                    let printWindow = window.open(invoiceUrl, '_blank');
-                    printWindow.focus();
-                    setTimeout(function() {
-                        location.reload();
-                    }, 1000);
-                },
-                error: function() {
-                    notify('Lỗi khi cập nhật trạng thái đơn hàng.', 'danger');
+            // Đơn tại chỗ: hiển thị modal xác nhận
+            $('#confirmPaymentModal').modal('show');
+
+            // Xử lý khi nhấn nút "Xác nhận" trong modal
+            $('#confirmPaymentButton').off('click').on('click', function() {
+                if (!$('#confirmReceivedMoney').is(':checked')) {
+                    $('#confirmError').show(); // Hiển thị lỗi nếu chưa tick checkbox
+                    return;
                 }
+
+                $('#confirmError').hide(); // Ẩn lỗi nếu đã tick checkbox
+                $('#confirmPaymentModal').modal('hide'); // Ẩn modal xác nhận
+
+                // Đơn tại chỗ: cập nhật trạng thái thanh toán và in hóa đơn
+                $.ajax({
+                    url: `/staff_counter/confirmorder/mark-paid/${orderId}`,
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        notify(response.message, 'success');
+                        let invoiceUrl =
+                            '/staff_counter/confirmorder/print-invoice/' + orderId;
+                        let printWindow = window.open(invoiceUrl, '_blank');
+                        printWindow.focus();
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1000);
+                    },
+                    error: function() {
+                        notify('Lỗi khi cập nhật trạng thái đơn hàng.', 'danger');
+                    }
+                });
             });
         } else {
             // Đơn takeaway: đơn hàng đã được cập nhật thanh toán thông qua form

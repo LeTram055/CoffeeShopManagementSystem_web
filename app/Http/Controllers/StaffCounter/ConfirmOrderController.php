@@ -268,6 +268,17 @@ class ConfirmOrderController extends Controller
         return response()->json(['message' => 'Thanh toán thành công']);
     }
 
+    
+    public function printProvisionalInvoice(Request $request, $order_id)
+    {
+        $order = Orders::with(['customer', 'orderItems.item'])->findOrFail($order_id);
+        $setting = Setting::first();
+
+        // Tạo PDF cho hóa đơn tạm tính
+        $pdf = PDF::loadView('staff_counter.confirmorder.provisional_invoice', compact('order', 'setting'));
+        return $pdf->stream('provisional_invoice_' . $order->order_id . '.pdf');
+    }
+
     public function markPaid(Request $request, $order_id)
     {
         $order = Orders::findOrFail($order_id);

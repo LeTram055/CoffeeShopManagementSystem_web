@@ -56,6 +56,10 @@ Route::post('staff_counter/confirmorder/payment_takeaway',
  [ConfirmOrderController::class, 'paymentTakeaway'])
 ->name('staff_counter.confirmorder.payment_takeaway');
 
+Route::get('/staff_counter/confirmorder/print-provisional-invoice/{order_id}', 
+[ConfirmOrderController::class, 'printProvisionalInvoice'])
+    ->name('staff_counter.confirmorder.printProvisionalInvoice');
+
 Route::get('/staff_counter/confirmorder/print-invoice/{order_id}', 
 [ConfirmOrderController::class, 'printInvoice'])
     ->name('staff_counter.confirmorder.printInvoice');

@@ -57,6 +57,15 @@ class OrderController extends Controller
 
     public function createOrder(Request $request)
     {
+        // Kiểm tra trạng thái bàn
+        $table = Tables::findOrFail($request->table_id);
+        if ($table->status_id != 1) { 
+            return response()->json([
+                'success' => false,
+                'message' => 'Bàn đã được sử dụng, không thể tạo đơn hàng mới.',
+            ], 422);
+        }
+
         $errors = [];
 
         foreach ($request->items as $itemData) {
