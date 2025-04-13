@@ -24,7 +24,7 @@ class AuthAppController extends Controller
             return response()->json(['message' => 'Mật khẩu không đúng'], 401);
         }
         // Chỉ cho phép staff_barista và staff_serve đăng nhập
-        if (!in_array($employee->role, ['staff_barista', 'staff_serve'])) {
+        if ($employee->role != 'staff_serve') {
             return response()->json(['message' => 'Bạn không có quyền đăng nhập'], 403);
         }
 
