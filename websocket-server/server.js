@@ -30,6 +30,10 @@ redis.subscribe("laravel_database_lowstock", function (err, count) {
     console.log("Subscribed to laravel_database_lowstock channel");
 });
 
+redis.subscribe("laravel_database_orderissue", function (err, count) {
+    console.log("Subscribed to laravel_database_orderissue channel");
+});
+
 
 redis.on("connect", function () {
     console.log("Redis connected successfully!");
@@ -70,6 +74,16 @@ redis.on("message", (channel, message) => {
             console.log(`✅ Đã gửi event lowstock.event tới client`);
         
 
+        } catch (error) {
+            console.error("Error JSON from Redis:", error);
+        }
+    }
+
+    if (channel === "laravel_database_orderissue") {
+        try {
+            const parsedMessage = JSON.parse(message);
+            io.emit("order.issue", parsedMessage);
+            console.log(`✅ Đã gửi event order.issue tới client`);
         } catch (error) {
             console.error("Error JSON from Redis:", error);
         }

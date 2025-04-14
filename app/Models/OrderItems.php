@@ -9,9 +9,19 @@ class OrderItems extends Model
 {
     use HasFactory;
     protected $table = 'order_items';
-    protected $fillable = ['order_id', 'item_id', 'quantity', 'note'];
+
+    protected $primaryKey = ['order_id', 'item_id'];
+    public $incrementing = false; 
+    protected $fillable = ['order_id', 'item_id', 'quantity', 'note', 'status'];
+
 
     public $timestamps = false;
+
+    
+    public function getKey()
+    {
+        return [$this->order_id, $this->item_id];
+    }
 
     public function order()
     {
@@ -22,4 +32,6 @@ class OrderItems extends Model
     {
         return $this->belongsTo(MenuItems::class, 'item_id', 'item_id');
     }
+
+
 }

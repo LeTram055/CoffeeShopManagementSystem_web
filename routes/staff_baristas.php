@@ -13,6 +13,11 @@ Route::get('staff_baristas/order/detail/{id}',
 [OrderController::class, 'showDetail'])
 ->name('staff_baristas.order.detail');
 
+Route::post('staff_baristas/order/report-issue/{id}',
+[OrderController::class, 'reportIssue'])
+->whereNumber('id')
+->name('staff_baristas.order.reportIssue');
+
 
 Route::post('staff_baristas/order/complete/{id}', 
 [OrderController::class, 'completeOrder'])

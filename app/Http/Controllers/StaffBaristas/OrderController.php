@@ -13,6 +13,7 @@ use App\Events\OrderCompletedEvent;
 use Illuminate\Support\Facades\Log; 
 use App\Events\NewOrderEvent;
 use App\Events\LowStockEvent;
+use App\Events\OrderIssueEvent;
 class OrderController extends Controller
 {
     public function index() {
@@ -38,6 +39,13 @@ class OrderController extends Controller
         if (!$order) {
             return response()->json(['message' => 'Không tìm thấy đơn hàng!'], 404);
         }
+
+        // Kiểm tra xem có món nào gặp trục trặc không
+        $hasIssues = $order->orderItems()->where('status', 'issue')->exists();
+            if ($hasIssues) {
+                return response()->json(['message' => 'Không thể hoàn thành đơn hàng vì có món gặp trục trặc!'], 400);
+        }
+
         if ($order->order_type == 'takeaway') {
             $order->status = 'pending_payment';
         } else {
@@ -91,5 +99,43 @@ class OrderController extends Controller
         }
         
         return response()->json(['message' => 'Đơn hàng đã hoàn thành!'], 200);
+    }
+
+    public function reportIssue(Request $request, $id)
+    {
+        $order = Orders::with('orderItems')->find($id);
+        
+        if (!$order) {
+            return response()->json(['message' => 'Không tìm thấy đơn hàng!'], 404);
+        }
+
+        // Lưu lý do gặp trục trặc cho món
+        $itemId = $request->input('item_id');
+        $reason = $request->input('reason');
+        $orderId = $order->order_id;
+
+        $updated = $order->orderItems()
+        ->where('item_id', $itemId)
+        ->update(['status' => 'issue']);
+
+    // Tìm món ăn trong đơn hàng
+    $orderItem = $order->orderItems()->where('item_id', $itemId)->first();
+
+    if ($orderItem) {
+        // Cập nhật trạng thái status
+        $orderItem->update(['status' => 'issue']);
+
+        // Lấy tên món ăn
+        $itemName = $orderItem->item->name;
+
+        // Phát thông báo cho nhân viên phục vụ
+        broadcast(new OrderIssueEvent($orderId, $itemName, $reason))->toOthers();
+
+        return response()->json(['message' => 'Lý do đã được gửi!'], 200);
+    } else {
+        return response()->json(['message' => 'Không tìm thấy món ăn!'], 404);
+    }
+
+    
     }
 }

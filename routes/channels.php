@@ -17,3 +17,7 @@ Broadcast::channel('ordercompleted', function () {
 Broadcast::channel('lowstock', function () {
     return true;
 });
+
+Broadcast::channel('orderissue', function () {
+    return true;
+});
