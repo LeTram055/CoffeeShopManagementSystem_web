@@ -208,13 +208,14 @@ Thực đơn
                 <div class="menu-info">
                     <h5>{{ $item->name }} - {{ number_format($item->price, 0, ',', '.') }}đ</h5>
                     <p>{{ $item->description }}</p>
+                    @if (!$item->is_available && $item->reason)
+                    <p class="text-danger"><strong>Lý do:</strong> {{ $item->reason }}</p>
+                    @endif
                     <button class="btn btn-link text-black toggle-ingredients" data-id="{{ $item->item_id }}">
                         <i class="fa-solid fa-angle-down"></i>
                     </button>
 
-                    @if (!$item->is_available && $item->reason)
-                    <p class="text-danger"><strong>Lý do:</strong> {{ $item->reason }}</p>
-                    @endif
+
                     <div class="ingredient-list" id="ingredients-{{ $item->item_id }}">
                         <ul>
                             @foreach($item->ingredients as $ingredient)
@@ -245,12 +246,13 @@ Thực đơn
                 <div class="menu-info">
                     <h5>{{ $item->name }} - {{ number_format($item->price, 0, ',', '.') }}đ</h5>
                     <p>{{ $item->description }}</p>
-                    <button class="btn btn-link text-black toggle-ingredients" data-id="{{ $item->item_id }}">
-                        <i class="fa-solid fa-angle-down"></i>
-                    </button>
                     @if (!$item->is_available && $item->reason)
                     <p class="text-danger"><strong>Lý do:</strong> {{ $item->reason }}</p>
                     @endif
+                    <button class="btn btn-link text-black toggle-ingredients" data-id="{{ $item->item_id }}">
+                        <i class="fa-solid fa-angle-down"></i>
+                    </button>
+
                     <div class="ingredient-list" id="ingredients-{{ $item->item_id }}">
                         <ul>
                             @foreach($item->ingredients as $ingredient)
