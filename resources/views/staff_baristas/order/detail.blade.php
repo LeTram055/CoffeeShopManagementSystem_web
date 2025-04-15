@@ -9,6 +9,7 @@
         <h5>Món đã đặt:</h5>
         <div class="row">
             @foreach($order->orderItems as $item)
+            @if($item->quantity - $item->completed_quantity > 0)
             <div class="col-lg-6 col-12 mb-3">
                 <div class="card p-2 d-flex flex-row align-items-center">
                     <img src="{{ asset('storage/uploads/' . $item->item->image_url) }}" alt="{{ $item->item->name }}"
@@ -19,8 +20,9 @@
 
                     </div>
 
-                    <strong class="text-end">x {{ $item->quantity }}</strong>
-                    @if ($order->order_type === 'dine_in' && $item->status === 'order')
+                    <strong class="text-end">x {{ $item->quantity - $item->completed_quantity }}</strong>
+                    @if ($order->order_type === 'dine_in' && ($item->status === 'order' || ($item->status ===
+                    'completed' && ($item->quantity - $item->completed_quantity) > 0)) )
                     <!-- Chỉ hiển thị nút nếu là đơn tại chỗ và chưa có lỗi -->
                     <button class="btn btn-danger btn-sm ms-2 report-issue" data-itemid="{{ $item->item_id }}"
                         data-orderid="{{ $item->order_id }}">Gặp trục trặc</button>
@@ -31,6 +33,7 @@
                     @endif
                 </div>
             </div>
+            @endif
             @endforeach
         </div>
     </div>

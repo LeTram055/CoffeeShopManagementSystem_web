@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Log;
 use App\Events\NewOrderEvent;
 use App\Events\LowStockEvent;
 use App\Events\OrderIssueEvent;
+use App\Models\OrderItems;
 class OrderController extends Controller
 {
     public function index() {
@@ -46,13 +47,15 @@ class OrderController extends Controller
                 return response()->json(['message' => 'Không thể hoàn thành đơn hàng vì có món gặp trục trặc!'], 400);
         }
 
-        if ($order->order_type == 'takeaway') {
-            $order->status = 'pending_payment';
-        } else {
-            $order->status = 'received';
+        // Cập nhật trạng thái các món trong đơn hàng thành 'completed'
+        foreach ($order->orderItems as $orderItem) {
+            OrderItems::where('order_id', $orderItem->order_id)
+                        ->where('item_id', $orderItem->item_id)
+                        ->update([
+                            'status' => 'completed',
+                'completed_quantity' => $orderItem->quantity,
+                        ]);
         }
-
-        $order->save();
 
         // Giảm số lượng nguyên liệu tương ứng với món ăn
         foreach ($order->orderItems as $orderItem) {
@@ -60,7 +63,7 @@ class OrderController extends Controller
             foreach ($menuItem->ingredients as $ingredient) {
                 $stock = Ingredients::where('ingredient_id', $ingredient->ingredient->ingredient_id)->first();
                 if ($stock) {
-                    $quantityUsed = $ingredient->quantity_per_unit * $orderItem->quantity;
+                    $quantityUsed = $ingredient->quantity_per_unit * ($orderItem->quantity - $orderItem->completed_quantity);
                     $stock->quantity -= $quantityUsed;
                     $stock->reserved_quantity -= $quantityUsed;
 
@@ -91,7 +94,13 @@ class OrderController extends Controller
                 }
             }
         }
+        if ($order->order_type == 'takeaway') {
+            $order->status = 'pending_payment';
+        } else {
+            $order->status = 'received';
+        }
 
+        $order->save();
         if($order->order_type == 'dine_in') {
             broadcast(new OrderCompletedEvent($order))->toOthers();
         } else {

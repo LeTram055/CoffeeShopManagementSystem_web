@@ -12,7 +12,7 @@ class OrderItems extends Model
 
     protected $primaryKey = ['order_id', 'item_id'];
     public $incrementing = false; 
-    protected $fillable = ['order_id', 'item_id', 'quantity', 'note', 'status'];
+    protected $fillable = ['order_id', 'item_id', 'quantity', 'note', 'status', 'completed_quantity'];
 
 
     public $timestamps = false;
@@ -22,6 +22,16 @@ class OrderItems extends Model
     {
         return [$this->order_id, $this->item_id];
     }
+
+    
+    protected function getKeyForSaveQuery()
+{
+    $query = $this->newQueryWithoutScopes();
+
+    // Sử dụng where để tìm kiếm theo order_id và item_id
+    return $query->where('order_id', $this->getAttribute('order_id'))
+                 ->where('item_id', $this->getAttribute('item_id'));
+}
 
     public function order()
     {
