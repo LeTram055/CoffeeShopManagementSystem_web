@@ -159,7 +159,11 @@ $yearLimit = $currentYear;
                         @endif
                     </a>
                 </th>
+
                 <th class="text-center">Trạng thái</th>
+                <th class="text-center">
+                    Ngày trả lương
+                </th>
                 <th class="text-center">Hành động</th>
             </tr>
         </thead>
@@ -175,10 +179,8 @@ $yearLimit = $currentYear;
                 <td class="text-center">{{ number_format($salary->total_salary, 0, ',', '.') }} VNĐ</td>
                 <td class="text-center">{{ number_format($salary->total_bonus_penalty, 0, ',', '.') }} VNĐ</td>
                 <td class="text-center">{{ number_format($salary->final_salary, 0, ',', '.') }} VNĐ</td>
-                <td class="text-center">
-                    <!-- <span class="badge bg-{{ $salary->status == 'paid' ? 'success' : 'warning' }}">
-                        {{ ucfirst($salary->status) }}
-                    </span> -->
+                <!-- <td class="text-center">
+                    
                     <form method="POST" action="{{ route('admin.salary.update') }}">
                         @csrf
                         <input type="hidden" name="salary_id" value="{{ $salary->salary_id }}">
@@ -188,7 +190,22 @@ $yearLimit = $currentYear;
                             <option value="paid" {{ $salary->status == 'paid' ? 'selected' : '' }}>Đã trả</option>
                         </select>
                     </form>
+                </td> -->
+
+                <td class="text-center">
+                    @if ($salary->status == 'paid')
+                    <span class="badge bg-success">Đã trả</span>
+                    @else
+                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                        data-bs-target="#confirmPayModal" data-salary-id="{{ $salary->salary_id }}"
+                        data-employee-name="{{ $salary->employee->name }}" data-month="{{ $salary->month }}"
+                        data-year="{{ $salary->year }}">
+                        Xác nhận trả lương
+                    </button>
+                    @endif
                 </td>
+
+                <td class="text-center">{{ $salary->paid_date? $salary->paid_date->format('H:i:s d/m/Y') : '' }}</td>
                 <td class="text-center">
                     <a href="#" class="text-info mx-2" data-bs-toggle="modal" data-bs-target="#salaryDetailsModal"
                         onclick="showSalaryDetails('{{ $salary->salary_id }}')">
@@ -292,6 +309,12 @@ $yearLimit = $currentYear;
             <div class="modal-body" id="salaryDetailsModalBody">
                 <!-- Nội dung modal sẽ được cập nhật bằng JavaScript -->
             </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-outline-danger d-none" id="exportPdfButton">
+                    <i class="fas fa-file-pdf"></i> Xuất PDF
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -335,29 +358,33 @@ $yearLimit = $currentYear;
     </div>
 </div>
 
+<!-- Modal Xác nhận trả lương -->
+<div class="modal fade" id="confirmPayModal" tabindex="-1" aria-labelledby="confirmPayModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmPayModalLabel">Xác nhận trả lương</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmPayMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <form id="confirmPayForm" method="POST" action="{{ route('admin.salary.update') }}">
+                    @csrf
+                    <input type="hidden" name="salary_id" id="confirmPaySalaryId">
+                    <button type="submit" class="btn btn-primary">Xác nhận</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('custom-scripts')
 <script>
-// $(document).ready(function() {
-//     let formToSubmit;
-
-//     $('.delete-salary-btn').on('click', function(e) {
-//         e.preventDefault();
-//         formToSubmit = $(this).closest('form');
-//         $('#delete-confirm').modal('show');
-//     });
-
-//     $('#confirm-delete').on('click', function() {
-//         formToSubmit.submit();
-//     });
-
-
-//     setTimeout(function() {
-//         $('.flash-message .alert').fadeOut('slow');
-//     }, 5000);
-// });
-
+//Thêm
 $(document).ready(function() {
     // Khi form được submit, hiển thị thông báo và đóng modal
     $('#salaryForm').on('submit', function(e) {
@@ -414,17 +441,49 @@ function showSalaryDetails(salaryId) {
         success: function(response) {
             $('#salaryDetailsModalBody').html(response); // Cập nhật nội dung modal
             $('#salaryDetailsModal').modal('show'); // Hiển thị modal
+
+            // Kiểm tra trạng thái lương
+            const salaryStatus = $('#salaryDetailsModalBody').find('#salaryStatus').text()
+                .trim(); // Lấy trạng thái từ HTML
+            if (salaryStatus === 'Đã trả') {
+                $('#exportPdfButton').removeClass('d-none'); // Hiển thị nút Xuất PDF
+                $('#exportPdfButton').attr('onclick', `exportSalaryPdf(${salaryId})`); // Gắn salaryId
+            } else {
+                $('#exportPdfButton').addClass('d-none'); // Ẩn nút Xuất PDF
+            }
         },
         error: function(xhr) {
             alert("Có lỗi xảy ra, vui lòng thử lại!");
         }
     });
+
+}
+
+function exportSalaryPdf(salaryId) {
+    const url = `/admin/salary/export-pdf/${salaryId}`;
+    window.open(url, '_blank');
 }
 
 $(document).ready(function() {
     $('#exportForm').on('submit', function() {
         // Đóng modal khi form được gửi
         $('#exportExcelModal').modal('hide');
+    });
+});
+
+$(document).ready(function() {
+    $('#confirmPayModal').on('show.bs.modal', function(event) {
+        var button = $(event.relatedTarget); // Nút được nhấn
+        var salaryId = button.data('salary-id');
+        var employeeName = button.data('employee-name');
+        var month = button.data('month');
+        var year = button.data('year');
+
+        // Cập nhật nội dung modal
+        var message =
+            `Nếu bạn xác nhận, bảng lương tháng ${month}/${year} của nhân viên "${employeeName}" sẽ được hoàn thành và không thể chỉnh sửa nữa. Nếu bạn muốn cho nhân viên ứng lương hãy tạo trong bảng thưởng/phạt.`;
+        $('#confirmPayMessage').text(message);
+        $('#confirmPaySalaryId').val(salaryId);
     });
 });
 

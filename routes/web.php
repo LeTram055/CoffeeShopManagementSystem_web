@@ -489,6 +489,11 @@ Route::get('/admin/salary/{salary_id}',
  [SalaryController::class, 'showDetails'])
 ->name('admin.salary.details');
 
+Route::get('/admin/salary/export-pdf/{salaryId}',
+ [SalaryController::class, 'exportPdf'])
+ ->whereNumber('salaryId')
+->name('admin.salary.exportPdf');
+
 
 //Setting
 Route::get('/admin/settings/edit', 

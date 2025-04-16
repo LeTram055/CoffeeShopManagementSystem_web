@@ -14,7 +14,11 @@ class Salaries extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'employee_id', 'month', 'year', 'total_hours', 'salary_per_hour', 'total_salary', 'total_bonus_penalty', 'status'
+        'employee_id', 'month', 'year', 'total_hours', 'salary_per_hour', 'total_salary', 'total_bonus_penalty', 'status', 'paid_date'
+    ];
+
+    protected $casts = [
+        'paid_date' => 'datetime',
     ];
 
     public function employee()

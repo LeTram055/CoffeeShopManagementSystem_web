@@ -9,6 +9,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\SalariesExport;
 use App\Models\Salaries;
 use App\Models\Employees;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SalaryController extends Controller
 {
@@ -98,7 +99,7 @@ class SalaryController extends Controller
                 $salaryData = $employee->calculateSalary($month, $year);
                 $finalSalary = $salaryData['total_salary'] + $salaryData['total_bonus_penalty'];
 
-                // Kiểm tra nếu bảng lương đã tồn tại với trạng thái "đã trả" và số tiền giống nhau
+                // Kiểm tra nếu bảng lương đã tồn tại với trạng thái "đã trả"
                 $existingSalary = Salaries::where('employee_id', $employee->employee_id)
                     ->where('month', $month)
                     ->where('year', $year)
@@ -106,11 +107,7 @@ class SalaryController extends Controller
                     ->first();
 
                 if ($existingSalary) {
-                    // Nếu trạng thái là "đã trả" và số tiền giống nhau, bỏ qua
-                    if ($existingSalary->final_salary == $finalSalary) {
-                        continue; // Bỏ qua không tạo mới
-                    }
-
+                    continue;
                 }
                 // Lưu vào database với trạng thái 'pending'
                 Salaries::updateOrCreate(
@@ -130,7 +127,7 @@ class SalaryController extends Controller
             $employee = Employees::findOrFail($employeeId);
             $salaryData = $employee->calculateSalary($month, $year);
 
-            // Kiểm tra nếu bảng lương đã tồn tại với trạng thái "đã trả" và số tiền giống nhau
+            // Kiểm tra nếu bảng lương đã tồn tại với trạng thái "đã trả"
             $existingSalary = Salaries::where('employee_id', $employee->employee_id)
                 ->where('month', $month)
                 ->where('year', $year)
@@ -138,13 +135,13 @@ class SalaryController extends Controller
                 ->first();
 
             if ($existingSalary) {
-                // Nếu trạng thái là "đã trả" và số tiền giống nhau, bỏ qua
-                if ($existingSalary->final_salary == ($salaryData['total_salary'] + $salaryData['total_bonus_penalty'])) {
+                // Nếu trạng thái là "đã trả"
+                
                     return response()->json([
                     'status' => 'error',
                     'message' => 'Bảng lương đã tồn tại và đã được trả cho nhân viên này.'
                 ], 400);
-                }
+                
             }
 
             Salaries::updateOrCreate(
@@ -177,11 +174,25 @@ class SalaryController extends Controller
     public function update(Request $request)
     {
         $salary = Salaries::findOrFail($request->salary_id);
-        $salary->status = $request->status;
-        $salary->save();
+        // $salary->status = $request->status;
+        // $salary->save();
 
-        Session::flash('alert-success', 'Cập nhật trạng thái thành công.');
-        return back();
+        // Session::flash('alert-success', 'Cập nhật trạng thái thành công.');
+        // return back();
+
+        if ($salary->status == 'paid') {
+            return redirect()->back()->withErrors([
+                'error' => 'Bảng lương này đã được trả trước đó.'
+            ]);
+        }
+
+        $salary->update([
+            'status' => 'paid',
+            'paid_date' => now(), // Lưu ngày trả lương
+        ]);
+
+        Session::flash('alert-success', 'Bảng lương đã được xác nhận trả thành công.');
+        return redirect()->route('admin.salary.index');
     }
 
 
@@ -192,5 +203,18 @@ class SalaryController extends Controller
             ->findOrFail($salary_id);
 
         return view('admin.salary.details', compact('salary'));
+    }
+
+    
+    public function exportPdf($salaryId)
+    {
+
+        $salary = Salaries::with(['employee', 'employee.workSchedules', 'employee.bonusesPenalties'])
+        ->findOrFail($salaryId);
+        // Tạo view PDF
+        $pdf = PDF::loadView('admin.salary.pdf', compact('salary'));
+
+        // Xuất file PDF
+        return $pdf->stream('salaries_'. ($salary->employee->name) . 'tháng' .  ($salary->month) . '_' . ($salary->year) . '.pdf');
     }
 }
