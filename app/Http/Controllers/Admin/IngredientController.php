@@ -88,7 +88,7 @@ class IngredientController extends Controller
     public function destroy(Request $request)
     {
         $ingredient = Ingredients::find($request->input('ingredient_id'));
-        if ($ingredient->menuIngredients()->count() > 0) {
+        if ($ingredient->menuIngredients()->count() > 0 || $ingredient->logs()->count() > 0) {
             Session::flash('alert-danger', 'Không thể xóa nguyên liệu này vì nó đang được sử dụng.');
             return redirect()->route('admin.ingredient.index');
         }

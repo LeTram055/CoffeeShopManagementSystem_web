@@ -62,6 +62,10 @@ class MenuItemController extends Controller
     public function destroy(Request $request)
     {
         $menuItem = MenuItems::find($request->item_id);
+        if ($menuItem->orderItems()->count() > 0) {
+            Session::flash('alert-danger', 'Không thể xóa sản phẩm này vì đã có đơn hàng liên quan');
+            return redirect()->route('admin.menuitem.index');
+        }
         MenuIngredients::where('item_id', $request->item_id)->delete();
         if ($menuItem->image_url) {
             Storage::disk('public')->delete('uploads/' . $menuItem->image_url);

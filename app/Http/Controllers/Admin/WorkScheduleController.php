@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\WorkSchedules;
 use App\Models\Employees;
 use App\Models\Shifts;
+use App\Models\Salaries;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Maatwebsite\Excel\Facades\Excel;
+
 use Carbon\Carbon;
 
 class WorkScheduleController extends Controller
@@ -158,6 +160,27 @@ class WorkScheduleController extends Controller
     public function destroy(Request $request)
     {
         $schedule = WorkSchedules::find($request->schedule_id);
+        // $employeeId = $schedule->employee_id;
+        // $workDate = Carbon::parse($schedule->work_date);
+        // $month = $workDate->month;
+        // $year = $workDate->year;
+
+        // // Kiểm tra bảng lương đã được trả chưa
+        // $salary = Salaries::where('employee_id', $employeeId)
+        //     ->where('month', $month)
+        //     ->where('year', $year)
+        //     ->where('status', 'paid')
+        //     ->first();
+
+        // if ($salary) {
+        //     Session::flash('alert-danger', 'Không thể xóa lịch làm việc vì bảng lương của nhân viên trong tháng này đã được trả.');
+        //     return redirect()->route('admin.workschedule.index');
+        // }
+
+        if ($schedule->status == 'completed') {
+            Session::flash('alert-danger', 'Không thể xóa lịch làm việc đã được hoàn thành');
+            return redirect()->route('admin.workschedule.index');
+        }
         $schedule->delete();
         Session::flash('alert-success', 'Lịch làm việc đã được xóa');
         return redirect()->route('admin.workschedule.index');
@@ -198,6 +221,23 @@ class WorkScheduleController extends Controller
             // 'work_hours.max' => 'Số giờ làm việc không được lớn hơn 24.',
         ]);
 
+        $employeeId = $request->employee_id;
+        $workDate = Carbon::parse($request->work_date);
+        $month = $workDate->month;
+        $year = $workDate->year;
+
+        // Kiểm tra bảng lương đã được trả chưa
+        $salary = Salaries::where('employee_id', $employeeId)
+            ->where('month', $month)
+            ->where('year', $year)
+            ->where('status', 'paid')
+            ->first();
+
+        if ($salary) {
+            Session::flash('alert-danger', 'Không thể thêm lịch làm việc vì bảng lương của nhân viên trong tháng này đã được trả.');
+            return redirect()->route('admin.workschedule.index');
+        }
+
         WorkSchedules::create([
             'employee_id' => $request->employee_id,
             'shift_id' => $request->shift_id,
@@ -213,6 +253,24 @@ class WorkScheduleController extends Controller
     public function edit(Request $request)
     {
         $schedule = WorkSchedules::findOrFail($request->schedule_id);
+        
+        $employeeId = $schedule->employee_id;
+        $workDate = Carbon::parse($schedule->work_date);
+        $month = $workDate->month;
+        $year = $workDate->year;
+
+        // Kiểm tra bảng lương đã được trả chưa
+        $salary = Salaries::where('employee_id', $employeeId)
+            ->where('month', $month)
+            ->where('year', $year)
+            ->where('status', 'paid')
+            ->first();
+
+        if ($salary) {
+            Session::flash('alert-danger', 'Không thể sửa lịch làm việc vì bảng lương của nhân viên trong tháng này đã được trả.');
+            return redirect()->route('admin.workschedule.index');
+        }
+
         $employees = Employees::where('status', 'active')
                             ->where('role', '!=', 'admin')
                             ->get();

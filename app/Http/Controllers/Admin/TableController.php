@@ -42,6 +42,10 @@ class TableController extends Controller
     public function destroy(Request $request)
     {
         $table = Tables::find($request->table_id);
+        if ($table->orders()->count() > 0) {
+            Session::flash('alert-danger', 'Không thể xóa bàn này vì nó đã được sử dụng trong đơn hàng.');
+            return redirect()->route('admin.table.index');
+        }
         $table->delete();
 
         return redirect()->route('admin.table.index');

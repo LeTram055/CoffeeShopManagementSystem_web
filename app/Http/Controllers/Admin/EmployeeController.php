@@ -98,6 +98,10 @@ class EmployeeController extends Controller
     public function destroy(Request $request)
     {
         $employee = Employees::find($request->employee_id);
+        if ($employee->ingredientLogs->count() > 0 || $employee->payments->count() > 0 || $employee->workSchedules->count() > 0 || $employee->salaries->count() > 0 || $employee->bonusesPenalties->count() > 0) {
+            Session::flash('alert-danger', 'Không thể xóa nhân viên này vì đã có dữ liệu liên quan');
+            return redirect()->route('admin.employee.index');
+        }
         
         $employee->delete();
 

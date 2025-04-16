@@ -9,6 +9,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Models\BonusesPenalties;
 use App\Models\Employees;
 use App\Exports\BonusesPenaltiesExport;
+use App\Models\Salaries;
 use Carbon\Carbon;
 
 class BonusPenaltyController extends Controller
@@ -84,12 +85,30 @@ class BonusPenaltyController extends Controller
     {
         try {
             $bonusPenalty = BonusesPenalties::findOrFail($request->bonuspenalty_id);
+            $employeeId = $bonusPenalty->employee_id;
+            $date = Carbon::parse($bonusPenalty->date);
+            $month = $date->month;
+            $year = $date->year;
+
+            // Kiểm tra bảng lương đã được trả chưa
+            $salary = Salaries::where('employee_id', $employeeId)
+                ->where('month', $month)
+                ->where('year', $year)
+                ->where('status', 'paid')
+                ->first();
+
+            if ($salary) {
+                
+                Session::flash('alert-danger', 'Không thể xóa thưởng/phạt vì bảng lương của nhân viên trong tháng này đã được trả.');
+                return redirect()->route('admin.bonuspenalty.index');
+            }
+            
             $bonusPenalty->delete();
 
-            Session::flash('success', 'Xóa thành công');
+            Session::flash('alert-success', 'Xóa thành công');
             return redirect()->route('admin.bonuspenalty.index');
         } catch (\Exception $e) {
-            Session::flash('danger', 'Có lỗi xảy ra khi xóa!');
+            Session::flash('alert-danger', 'Có lỗi xảy ra khi xóa!');
             return redirect()->route('admin.bonuspenalty.index');
         }
     }
@@ -132,6 +151,24 @@ class BonusPenaltyController extends Controller
             'date.date' => 'Ngày không hợp lệ',
         ]);
 
+        $employeeId = $request->employee_id;
+        $date = Carbon::parse($request->date);
+        $month = $date->month;
+        $year = $date->year;
+
+        // Kiểm tra bảng lương đã được trả chưa
+        $salary = Salaries::where('employee_id', $employeeId)
+            ->where('month', $month)
+            ->where('year', $year)
+            ->where('status', 'paid')
+            ->first();
+
+        if ($salary) {
+                
+            Session::flash('alert-danger', 'Không thể thêm thưởng/phạt vì bảng lương của nhân viên trong tháng này đã được trả.');
+            return redirect()->route('admin.bonuspenalty.index');
+        }
+
         $amount = $request->type === 'penalty' ? -abs($request->amount) : abs($request->amount);
 
         BonusesPenalties::create([
@@ -142,7 +179,7 @@ class BonusPenaltyController extends Controller
             'date' => $request->date,
         ]);
 
-        Session::flash('success', 'Thêm mới thành công');
+        Session::flash('alert-success', 'Thêm mới thành công');
 
         return redirect()->route('admin.bonuspenalty.index');
     }
@@ -150,6 +187,24 @@ class BonusPenaltyController extends Controller
     public function edit(Request $request)
     {
         $bonusPenalty = BonusesPenalties::findOrFail($request->bonus_penalty_id);
+        $employeeId = $bonusPenalty->employee_id;
+        $date = Carbon::parse($bonusPenalty->date);
+        $month = $date->month;
+        $year = $date->year;
+
+        // Kiểm tra bảng lương đã được trả chưa
+        $salary = Salaries::where('employee_id', $employeeId)
+            ->where('month', $month)
+            ->where('year', $year)
+            ->where('status', 'paid')
+            ->first();
+        
+
+        if ($salary) {
+                
+            Session::flash('alert-danger', 'Không thể sửa thưởng/phạt vì bảng lương của nhân viên trong tháng này đã được trả.');
+            return redirect()->route('admin.bonuspenalty.index');
+        }
         $employees = Employees::where('status', 'active')
                                 ->where('role', '!=', 'admin')
                                 ->get();
@@ -181,6 +236,7 @@ class BonusPenaltyController extends Controller
 
 
         $bonusPenalty = BonusesPenalties::findOrFail($request->bonus_penalty_id);
+        
         $amount = $request->type === 'penalty' ? -abs($request->amount) : abs($request->amount);
 
         $bonusPenalty->update([
@@ -191,7 +247,7 @@ class BonusPenaltyController extends Controller
             'date' => $request->date,
         ]);
 
-        Session::flash('success', 'Cập nhật thành công');
+        Session::flash('alert-success', 'Cập nhật thành công');
 
         return redirect()->route('admin.bonuspenalty.index');
     }

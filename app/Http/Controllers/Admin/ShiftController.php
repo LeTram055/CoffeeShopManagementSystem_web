@@ -55,6 +55,10 @@ class ShiftController extends Controller
     public function destroy(Request $request)
     {
         $shift = Shifts::find($request->shift_id);
+        if ($shift->workSchedules()->count() > 0) {
+            Session::flash('alert-danger', 'Không thể xóa ca làm việc này vì nó đã được sử dụng trong lịch làm việc.');
+            return redirect()->route('admin.shift.index');
+        }
         $shift->delete();
         Session::flash('alert-success', 'Ca làm việc đã được xóa');
         return redirect()->route('admin.shift.index');

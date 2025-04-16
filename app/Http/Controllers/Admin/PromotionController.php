@@ -71,7 +71,7 @@ class PromotionController extends Controller
     public function destroy(Request $request)
     {
         $promotion = Promotions::find($request->input('promotion_id'));
-        if ($promotion->order->count() > 0) {
+        if ($promotion->payments->count() > 0) {
             Session::flash('alert-danger', 'Không thể xóa quảng cáo này vì nó đang được sử dụng.');
             return redirect()->route('admin.promotion.index');
         }
