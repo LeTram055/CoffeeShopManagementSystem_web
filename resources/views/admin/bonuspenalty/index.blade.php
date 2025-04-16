@@ -39,9 +39,10 @@ $currentYear = date('Y'); // Lấy năm hiện tại
 <div class="flash-message">
     @foreach (['danger', 'warning', 'success', 'info'] as $msg)
     @if(Session::has('alert-' . $msg))
-    <p class="alert alert-{{ $msg }}">
+    <p class="alert alert-{{ $msg }} position-relative">
         {{ Session::get('alert-' . $msg) }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <button type="button" class="btn-close position-absolute end-0 me-2" data-bs-dismiss="alert"
+            aria-label="Close"></button>
     </p>
     @endif
     @endforeach

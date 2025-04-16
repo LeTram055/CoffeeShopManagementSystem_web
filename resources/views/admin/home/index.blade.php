@@ -146,12 +146,13 @@
     </div>
 
 
-    <!-- Danh sách 10 món bán chạy nhất -->
+    <!-- Danh sách 5 món bán chạy nhất -->
     <div class="row mb-4 mt-2">
         <div class="col-md-12">
             <div class="card shadow-lg border-2">
                 <div class="card-body">
-                    <h5 class="card-title text-center text-color"><i class="fas fa-star"></i> 5 Món Bán Chạy Nhất
+                    <h5 class="card-title text-center text-color"><i class="fas fa-star"></i> 5 Món Bán Chạy Nhất Hôm
+                        Nay
                     </h5>
                     <table class="table table-hover">
                         <thead class="bg-primary text-white text-center">
