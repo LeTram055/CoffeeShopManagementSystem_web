@@ -6,9 +6,20 @@
 @section('content')
 <div class="container mt-3">
     <div class="row mb-4 justify-content-center">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <label for="reportDate" class="fw-bold">Chọn ngày:</label>
             <input type="date" id="reportDate" class="form-control shadow-sm" value="{{ now()->toDateString() }}">
+        </div>
+        <div class="col-md-3">
+            <label for="shiftSelect" class="fw-bold">Chọn ca (tuỳ chọn):</label>
+            <select id="shiftSelect" class="form-select shadow-sm">
+                <option value="">-- Cả ngày --</option>
+                @foreach($shifts as $shift)
+                <option value="{{ $shift->shift_id }}">{{ $shift->name }} ({{ $shift->start_time->format('H:i') }} -
+                    {{ $shift->end_time->format('H:i') }})
+                </option>
+                @endforeach
+            </select>
         </div>
         <div class="col-md-3 d-flex align-items-end">
             <button class="btn btn-bg w-100 shadow" onclick="fetchCashierReport()">
@@ -67,7 +78,11 @@
 <script>
 async function fetchCashierReport() {
     let date = document.getElementById("reportDate").value;
-    let url = `{{ route("staff_counter.reports.getTotal") }}?date=${date}`;
+    const shiftId = document.getElementById("shiftSelect").value;
+    console.log("Selected date:", date);
+    console.log("Selected shift ID:", shiftId);
+    // Kiểm tra xem ngày có hợp lệ không
+    let url = `{{ route("staff_counter.reports.getTotal") }}?date=${date}&shift_id=${shiftId}`;
 
     try {
         const response = await fetch(url);
