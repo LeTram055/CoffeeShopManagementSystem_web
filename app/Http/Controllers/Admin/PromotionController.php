@@ -14,6 +14,10 @@ class PromotionController extends Controller
     // Hiển thị danh sách quảng cáo
     public function index(Request $request)
     {
+        Promotions::where('end_date', '<', now())
+        ->where('is_active', 1)
+        ->update(['is_active' => 0]);
+
         $sortField = $request->input('sort_field', 'promotion_id'); // Mặc định sắp xếp theo promotion_id
         $sortDirection = $request->input('sort_direction', 'asc'); // Mặc định tăng dần
         $activeTab = $request->input('tab', 'all-promotions');
