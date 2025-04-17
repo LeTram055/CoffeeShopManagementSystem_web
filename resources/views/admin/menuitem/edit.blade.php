@@ -21,7 +21,7 @@ Chỉnh sửa sản phẩm
 
 @section('content')
 <div class="row justify-content-center align-items-center">
-    <div class="col-8 border rounded-3 p-5 custom-shadow">
+    <div class="col-8 border rounded-3 p-5 custom-shadow mb-3">
         <h3 class="text-center title2 mb-4">Cập nhật sản phẩm</h3>
         <form name="frmEdit" id="frmEdit" method="post" action="{{ route('admin.menuitem.update') }}"
             enctype="multipart/form-data">

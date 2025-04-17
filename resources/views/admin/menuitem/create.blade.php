@@ -21,7 +21,7 @@ Quản lý sản phẩm
 
 @section('content')
 <div class="row justify-content-center align-items-center">
-    <div class="col-8 border rounded-3 p-5 custom-shadow">
+    <div class="col-8 border rounded-3 p-5 custom-shadow mb-3">
         <h3 class="text-center title2 mb-4">Thêm sản phẩm</h3>
         <form name="frmCreate" id="frmCreate" method="post" action="{{ route('admin.menuitem.save') }}"
             enctype="multipart/form-data">

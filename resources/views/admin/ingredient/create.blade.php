@@ -43,16 +43,16 @@ Quản lý nguyên liệu
             </div>
 
             <div class="form-group mb-3">
-                <label for="cost_price" class="form-label fw-semibold">Số lượng tối thiểu:</label>
+                <label for="cost_price" class="form-label fw-semibold">Giá/Đơn vị:</label>
                 <input type="number" step="0.01" class="form-control rounded-2" id="cost_price" name="cost_price"
-                    value="{{ old('cost_price') }}" placeholder="Nhập số lượng tối thiểu">
+                    value="{{ old('cost_price') }}" placeholder="Nhập giá nhập/đơn vị">
                 @error('cost_price')
                 <small class="form-text text-danger">{{ $message }}</small>
                 @enderror
             </div>
 
             <div class="form-group mb-3">
-                <label for="min_quantity" class="form-label fw-semibold">Giá/Đơn vị:</label>
+                <label for="min_quantity" class="form-label fw-semibold">Số lượng tối thiểu:</label>
                 <input type="number" step="0.01" class="form-control rounded-2" id="min_quantity" name="min_quantity"
                     value="{{ old('min_quantity') }}" placeholder="Nhập số lượng tối thiểu">
                 @error('min_quantity')
