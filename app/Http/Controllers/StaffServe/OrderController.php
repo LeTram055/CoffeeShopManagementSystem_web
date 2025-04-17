@@ -71,7 +71,9 @@ class OrderController extends Controller
 
         foreach ($request->items as $itemData) {
             $item = MenuItems::find($itemData['item_id']);
-
+            if ($item->ingredients->isEmpty()) {
+                continue;
+            }
             $maxServings = $item->calculateMaxServings();
             if ($maxServings === 0) {
                 $errors[] = "Món '{$item->name}' không còn nguyên liệu để phục vụ.";
@@ -108,6 +110,10 @@ class OrderController extends Controller
 
             $item = MenuItems::find($itemData['item_id']);
             $quantityOrdered = $itemData['quantity'];
+
+            if ($item->ingredients->isEmpty()) {
+                continue;
+            }
 
             foreach ($item->ingredients as $menuIngredient) {
                 $ingredient = $menuIngredient->ingredient;
@@ -156,97 +162,6 @@ class OrderController extends Controller
             return response()->json(['success' => false, 'message' => 'Lỗi khi lấy danh sách đơn hàng', 'error' => $e->getMessage()], 500);
         }
     }
-
-    // public function updateOrder(Request $request)
-    // {
-        
-    //     try{
-    //         $order = Orders::with('orderItems.item.ingredients')->findOrFail($request->order_id);
-
-            
-
-    //         foreach ($order->orderItems as $oldItem) {
-    //             $menuItem = $oldItem->item;
-
-    //             foreach ($menuItem->ingredients as $menuIngredient) {
-    //                 $ingredient = $menuIngredient->ingredient;
-    //                 $usedAmount = $oldItem->quantity * $menuIngredient->quantity_per_unit;
-
-    //                 $ingredient->reserved_quantity -= $usedAmount;
-    //                 if ($ingredient->reserved_quantity < 0) {
-    //                     $ingredient->reserved_quantity = 0;
-    //                 }
-    //                 $ingredient->save();
-    //             }
-    //         }
-
-    //         $errors = [];
-
-    //         if ($request->has('items')) {
-    //             foreach ($request->items as $itemData) {
-    //                 $menuItem = MenuItems::find($itemData['item_id']);
-
-    //                 if ($menuItem) {
-    //                     $maxServings = $menuItem->calculateMaxServings(); // Hàm bạn đã định nghĩa
-    //                     if ($itemData['quantity'] > $maxServings) {
-    //                         $errors[] = "Món '{$menuItem->name}' chỉ có thể phục vụ tối đa {$maxServings} phần.";
-    //                     }
-    //                 }
-    //             }
-    //         }
-
-    //         if (!empty($errors)) {
-    //             return response()->json([
-    //                 'success' => false,
-    //                 'message' => 'Không thể tạo đơn hàng',
-    //                 'errors'  => $errors,
-    //             ], 422);
-    //         }
-
-    //         $table = Tables::findOrFail($order->table_id);
-    //         $table->status_id = 1; // Trả bàn về trạng thái trống
-    //         $table->save();
-
-            
-    //         $tableNew = Tables::findOrFail($request->table_id);
-    //         $tableNew->status_id = 2; // Đặt bàn mới thành trạng thái đang sử dụng
-
-    //         $tableNew->save();
-        
-    //         $order->update([
-    //             'total_price' => $request->total_price,
-    //             'table_id' => $request->table_id,
-    //         ]);
-    //         $order->orderItems()->delete();
-
-    //         foreach ($request->items as $item) {
-    //             $menuItem = MenuItems::find($item['item_id']);
-    //             if ($menuItem) {
-    //                 OrderItems::create([
-    //                     'order_id' => $order->order_id,
-    //                     'item_id' => $item['item_id'],
-    //                     'quantity' => $item['quantity'],
-    //                     'note' => $item['note'],
-    //                 ]);
-
-    //                 // Cập nhật reserved_quantity mới
-    //                 foreach ($menuItem->ingredients as $menuIngredient) {
-    //                     $ingredient = $menuIngredient->ingredient;
-    //                     $usedAmount = $item['quantity'] * $menuIngredient->quantity_per_unit;
-
-    //                     $ingredient->reserved_quantity += $usedAmount;
-    //                     $ingredient->save();
-    //                 }
-    //             }
-                
-    //         }
-    //         broadcast(new NewOrderEvent($order, 'updated'))->toOthers();
-    //         return response()->json(['message' => 'Cập nhật thành công']);
-    //         } catch (\Exception $e) {
-    //             return response()->json(['success' => false, 'message' => 'Lỗi khi cập nhật đơn hàng', 'error' => $e->getMessage()], 500);
-    //     }
-    // }
-
     
     public function updateOrder(Request $request)
     {
@@ -260,6 +175,11 @@ class OrderController extends Controller
                     $menuItem = MenuItems::find($itemData['item_id']);
 
                     if ($menuItem) {
+                        // Kiểm tra xem món có nguyên liệu không
+                        if ($menuItem->ingredients->isEmpty()) {
+                            continue;
+                        }
+
                         $maxServings = $menuItem->calculateMaxServings(); // Hàm bạn đã định nghĩa
                         if ($itemData['quantity'] > $maxServings) {
                             $errors[] = "Món '{$menuItem->name}' chỉ có thể phục vụ tối đa {$maxServings} phần.";
@@ -283,7 +203,9 @@ class OrderController extends Controller
                     // Nếu món đã hoàn thành, giữ lại và không xóa
                     continue;
                 }
-
+                if ($orderItem->item->ingredients->isEmpty()) {
+                    continue;
+                }
                 // Nếu món chưa hoàn thành (order hoặc issue), giải phóng reserved_quantity và xóa
                 foreach ($orderItem->item->ingredients as $menuIngredient) {
                     $ingredient = $menuIngredient->ingredient;
@@ -315,6 +237,9 @@ class OrderController extends Controller
 
                     if ($quantityToAdd > 0) {
                         // Cập nhật reserved_quantity
+                        if ($orderItem->item->ingredients->isEmpty()) {
+                            continue;
+                        }
                         foreach ($orderItem->item->ingredients as $menuIngredient) {
                             $ingredient = $menuIngredient->ingredient;
                             $usedAmount = $quantityToAdd * $menuIngredient->quantity_per_unit;
@@ -352,6 +277,10 @@ class OrderController extends Controller
                         ]);
 
                         // Cập nhật reserved_quantity
+
+                        if ($menuItem->ingredients->isEmpty()) {
+                            continue;
+                        }
                         foreach ($menuItem->ingredients as $menuIngredient) {
                             $ingredient = $menuIngredient->ingredient;
                             $usedAmount = $itemData['quantity'] * $menuIngredient->quantity_per_unit;
@@ -387,132 +316,6 @@ class OrderController extends Controller
         }
     }
 
-    // public function updateOrder(Request $request)
-    // {
-    //     try {
-    //         $order = Orders::with('orderItems.item.ingredients')->findOrFail($request->order_id);
-
-    //         $errors = [];
-
-    //         // Kiểm tra số lượng món có vượt quá giới hạn không
-    //         if ($request->has('items')) {
-    //             foreach ($request->items as $itemData) {
-    //                 $menuItem = MenuItems::find($itemData['item_id']);
-
-    //                 if ($menuItem) {
-    //                     $maxServings = $menuItem->calculateMaxServings();
-    //                     if ($itemData['quantity'] > $maxServings) {
-    //                         $errors[] = "Món '{$menuItem->name}' chỉ có thể phục vụ tối đa {$maxServings} phần.";
-    //                     }
-    //                 }
-    //             }
-    //         }
-
-    //         if (!empty($errors)) {
-    //             return response()->json([
-    //                 'success' => false,
-    //                 'message' => 'Không thể cập nhật đơn hàng',
-    //                 'errors'  => $errors,
-    //             ], 422);
-    //         }
-
-    //         // Duyệt qua các món trong đơn hàng hiện tại
-    //         foreach ($order->orderItems as $orderItem) {
-                
-    //             if ($orderItem->status === 'completed') {
-    //                 // Nếu món đã hoàn thành, chỉ cập nhật số lượng nếu cần
-    //                 $newItem = collect($request->items)->firstWhere('item_id', $orderItem->item_id);
-    //                 if ($newItem) {
-    //                     $newQuantity = $newItem['quantity'];
-    //                     $quantityToAdd = $newQuantity - $orderItem->quantity;
-
-    //                     if ($quantityToAdd > 0) {
-    //                         // Cập nhật reserved_quantity
-    //                         foreach ($orderItem->item->ingredients as $menuIngredient) {
-    //                             $ingredient = $menuIngredient->ingredient;
-    //                             $usedAmount = $quantityToAdd * $menuIngredient->quantity_per_unit;
-
-    //                             $ingredient->reserved_quantity += $usedAmount;
-    //                             $ingredient->save();
-    //                         }
-    //                     }
-
-    //                     // Cập nhật số lượng mới
-    //                     $orderItem->quantity = $newQuantity;
-    //                     $orderItem->note = $newItem['note'] ?? $orderItem->note;
-    //                     $orderItem->save();
-    //                 }
-    //                 continue;
-    //             }
-
-    //             // Nếu món chưa hoàn thành, giải phóng reserved_quantity và xóa
-    //             foreach ($orderItem->item->ingredients as $menuIngredient) {
-    //                 $ingredient = $menuIngredient->ingredient;
-    //                 $usedAmount = $orderItem->quantity * $menuIngredient->quantity_per_unit;
-
-    //                 $ingredient->reserved_quantity -= $usedAmount;
-    //                 if ($ingredient->reserved_quantity < 0) {
-    //                     $ingredient->reserved_quantity = 0;
-    //                 }
-    //                 $ingredient->save();
-    //             }
-
-    //             // Xóa món chưa hoàn thành
-    //             $orderItem->delete();
-    //         }
-
-    //         // Duyệt qua các món mới từ yêu cầu
-    //         foreach ($request->items as $itemData) {
-    //             $orderItem = $order->orderItems->where('item_id', $itemData['item_id'])->first();
-
-    //             if (!$orderItem) {
-    //                 // Thêm món mới
-    //                 $menuItem = MenuItems::find($itemData['item_id']);
-    //                 if ($menuItem) {
-    //                     OrderItems::create([
-    //                         'order_id' => $order->order_id,
-    //                         'item_id' => $itemData['item_id'],
-    //                         'quantity' => $itemData['quantity'],
-    //                         'note' => $itemData['note'],
-    //                         'completed_quantity' => 0,
-    //                         'status' => 'order',
-    //                     ]);
-
-    //                     // Cập nhật reserved_quantity
-    //                     foreach ($menuItem->ingredients as $menuIngredient) {
-    //                         $ingredient = $menuIngredient->ingredient;
-    //                         $usedAmount = $itemData['quantity'] * $menuIngredient->quantity_per_unit;
-
-    //                         $ingredient->reserved_quantity += $usedAmount;
-    //                         $ingredient->save();
-    //                     }
-    //                 }
-    //             }
-    //         }
-
-    //         // Cập nhật trạng thái bàn cũ về trống
-    //         $table = Tables::findOrFail($order->table_id);
-    //         $table->status_id = 1;
-    //         $table->save();
-
-    //         // Cập nhật trạng thái bàn mới
-    //         $tableNew = Tables::findOrFail($request->table_id);
-    //         $tableNew->status_id = 2;
-    //         $tableNew->save();
-
-    //         // Cập nhật thông tin đơn hàng
-    //         $order->update([
-    //             'total_price' => $request->total_price,
-    //             'table_id' => $request->table_id,
-    //             'status' => 'confirmed',
-    //         ]);
-
-    //         return response()->json(['message' => 'Cập nhật đơn hàng thành công!']);
-    //     } catch (\Exception $e) {
-    //         Log::error('Lỗi khi cập nhật đơn hàng: ' . $e->getMessage());
-    //         return response()->json(['success' => false, 'message' => 'Lỗi khi cập nhật đơn hàng', 'error' => $e->getMessage()], 500);
-    //     }
-    // }
     
     public function cancelOrder($orderId)
     {
@@ -527,6 +330,9 @@ class OrderController extends Controller
 
             foreach ($order->orderItems as $orderItem) {
                 $menuItem = $orderItem->item;
+                if ($menuItem->ingredients->isEmpty()) {
+                    continue;
+                }
 
                 foreach ($menuItem->ingredients as $menuIngredient) {
                     $ingredient = $menuIngredient->ingredient;

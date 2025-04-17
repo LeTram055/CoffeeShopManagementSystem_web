@@ -73,6 +73,10 @@ class ConfirmOrderController extends Controller
         foreach ($order->orderItems as $oldItem) {
             $menuItem = $oldItem->item;
 
+            if ($menuItem->ingredients->isEmpty()) {
+                continue;
+            }
+
             foreach ($menuItem->ingredients as $menuIngredient) {
                 $ingredient = $menuIngredient->ingredient;
                 $usedAmount = $oldItem->quantity * $menuIngredient->quantity_per_unit;
@@ -92,6 +96,10 @@ class ConfirmOrderController extends Controller
                 $menuItem = MenuItems::find($itemData['id']);
 
                 if ($menuItem) {
+                    if ($menuItem->ingredients->isEmpty()) {
+                        continue;
+                    }
+
                     $maxServings = $menuItem->calculateMaxServings(); // Hàm bạn đã định nghĩa
                     if ($itemData['quantity'] > $maxServings) {
                         $errors[] = "Món '{$menuItem->name}' chỉ có thể phục vụ tối đa {$maxServings} phần.";
@@ -128,12 +136,14 @@ class ConfirmOrderController extends Controller
                     $total += $item['quantity'] * $menuItem->price;
 
                     // Cập nhật reserved_quantity mới
-                    foreach ($menuItem->ingredients as $menuIngredient) {
-                        $ingredient = $menuIngredient->ingredient;
-                        $usedAmount = $item['quantity'] * $menuIngredient->quantity_per_unit;
+                    if (!$menuItem->ingredients->isEmpty()) {
+                        foreach ($menuItem->ingredients as $menuIngredient) {
+                            $ingredient = $menuIngredient->ingredient;
+                            $usedAmount = $item['quantity'] * $menuIngredient->quantity_per_unit;
 
-                        $ingredient->reserved_quantity += $usedAmount;
-                        $ingredient->save();
+                            $ingredient->reserved_quantity += $usedAmount;
+                            $ingredient->save();
+                        }
                     }
                 }
             }
@@ -163,20 +173,23 @@ class ConfirmOrderController extends Controller
         }
 
         // Trừ lại nguyên liệu đã giữ (reserved_quantity)
+        
         foreach ($order->orderItems as $orderItem) {
             $menuItem = $orderItem->item;
 
-            foreach ($menuItem->ingredients as $menuIngredient) {
-                $ingredient = $menuIngredient->ingredient;
+            if (!$menuItem->ingredients->isEmpty()) {
+                foreach ($menuItem->ingredients as $menuIngredient) {
+                    $ingredient = $menuIngredient->ingredient;
 
-                $usedAmount = $orderItem->quantity * $menuIngredient->quantity_per_unit;
-                $ingredient->reserved_quantity -= $usedAmount;
+                    $usedAmount = $orderItem->quantity * $menuIngredient->quantity_per_unit;
+                    $ingredient->reserved_quantity -= $usedAmount;
 
-                if ($ingredient->reserved_quantity < 0) {
-                    $ingredient->reserved_quantity = 0;
+                    if ($ingredient->reserved_quantity < 0) {
+                        $ingredient->reserved_quantity = 0;
+                    }
+
+                    $ingredient->save();
                 }
-
-                $ingredient->save();
             }
         }
         

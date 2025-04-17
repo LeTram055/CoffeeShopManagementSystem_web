@@ -96,6 +96,10 @@ class OrderController extends Controller
         foreach ($validated['items'] as $itemData) {
             $item = MenuItems::find($itemData['id']);
 
+            if ($item->ingredients->isEmpty()) {
+                continue;
+            }
+
             $maxServings = $item->calculateMaxServings();
             if ($maxServings === 0) {
                 $errors[] = "Món '{$item->name}' không còn nguyên liệu để phục vụ.";
@@ -141,6 +145,10 @@ class OrderController extends Controller
 
             $item = MenuItems::find($itemData['id']);
             $quantityOrdered = $itemData['quantity'];
+
+            if ($item->ingredients->isEmpty()) {
+                continue;
+            }
 
             foreach ($item->ingredients as $menuIngredient) {
                 $ingredient = $menuIngredient->ingredient;

@@ -88,14 +88,12 @@ class MenuItemController extends Controller
     // Lưu sản phẩm mới
     public function save(Request $request)
     {   
-        
         $request->validate([
             'name' => 'required|string|max:255|unique:menu_items,name',
             'price' => 'required|numeric|min:0',
             'description' => 'nullable|string',
             'image_url' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'ingredients' => 'required|array|min:1', // Ít nhất 1 nguyên liệu
-            
+            'ingredients' => 'nullable|array', // Cho phép không thêm nguyên liệu
         ], [
             'name.required' => 'Vui lòng nhập tên sản phẩm',
             'name.unique' => 'Tên sản phẩm đã tồn tại',
@@ -106,14 +104,11 @@ class MenuItemController extends Controller
             'image_url.image' => 'Ảnh sản phẩm phải là ảnh',
             'image_url.mimes' => 'Ảnh sản phẩm phải có định dạng jpeg, png, jpg, gif',
             'image_url.max' => 'Dung lượng ảnh sản phẩm tối đa 2MB',
-            'ingredients.required' => 'Vui lòng chọn ít nhất một nguyên liệu',
-            'ingredients.min' => 'Vui lòng chọn ít nhất một nguyên liệu',
-            
         ]);
 
-        $ingredients = array_filter($request->ingredients, function ($ingredient) {
+        $ingredients = $request->ingredients ? array_filter($request->ingredients, function ($ingredient) {
             return is_array($ingredient) && isset($ingredient['ingredient_id']) && isset($ingredient['quantity_per_unit']);
-        });
+        }) : [];
 
         // Cập nhật lại request để validation hoạt động chính xác
         $request->merge(['ingredients' => $ingredients]);
@@ -134,13 +129,15 @@ class MenuItemController extends Controller
         $menuItem->save();
 
         // Lưu nguyên liệu vào bảng trung gian
-        foreach ($ingredients as $ingredient) {
-        MenuIngredients::create([
-            'item_id' => $menuItem->item_id,
-            'ingredient_id' => $ingredient['ingredient_id'],
-            'quantity_per_unit' => $ingredient['quantity_per_unit']
-        ]);
-    }
+        if (!empty($ingredients)) {
+            foreach ($ingredients as $ingredient) {
+                MenuIngredients::create([
+                    'item_id' => $menuItem->item_id,
+                    'ingredient_id' => $ingredient['ingredient_id'],
+                    'quantity_per_unit' => $ingredient['quantity_per_unit']
+                ]);
+            }
+        }
 
         
         Session::flash('alert-info', 'Thêm mới thành công');
@@ -178,7 +175,7 @@ class MenuItemController extends Controller
         'category_id' => 'required|exists:categories,category_id',
         // Ảnh có thể không thay đổi nên đặt nullable
         'image_url' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        'ingredients' => 'required|array|min:1',
+        'ingredients' => 'nullable|array',
         
     ], [
         'item_id.required' => 'Thiếu ID sản phẩm',
@@ -191,14 +188,13 @@ class MenuItemController extends Controller
         'image_url.image' => 'Ảnh sản phẩm phải là ảnh',
         'image_url.mimes' => 'Ảnh sản phẩm phải có định dạng jpeg, png, jpg, gif',
         'image_url.max' => 'Dung lượng ảnh sản phẩm tối đa 2MB',
-        'ingredients.required' => 'Vui lòng chọn ít nhất một nguyên liệu',
-        'ingredients.min' => 'Vui lòng chọn ít nhất một nguyên liệu',
+        
         
     ]);
     
-    $ingredients = array_filter($request->ingredients, function ($ingredient) {
-            return is_array($ingredient) && isset($ingredient['ingredient_id']) && isset($ingredient['quantity_per_unit']);
-        });
+    $ingredients = $request->ingredients ? array_filter($request->ingredients, function ($ingredient) {
+        return is_array($ingredient) && isset($ingredient['ingredient_id']) && isset($ingredient['quantity_per_unit']);
+    }) : [];
 
     // Cập nhật lại request để validation hoạt động chính xác
     $request->merge(['ingredients' => $ingredients]);
@@ -229,13 +225,15 @@ class MenuItemController extends Controller
     MenuIngredients::where('item_id', $menuItem->item_id)->delete();
 
     // Lưu nguyên liệu mới từ form
-    foreach ($request->ingredients as $ingredient) {
-        if (isset($ingredient['ingredient_id']) && isset($ingredient['quantity_per_unit'])) {
-            MenuIngredients::create([
-                'item_id' => $menuItem->item_id,
-                'ingredient_id' => $ingredient['ingredient_id'],
-                'quantity_per_unit' => $ingredient['quantity_per_unit']
-            ]);
+    if (!empty($ingredients)) {
+        foreach ($request->ingredients as $ingredient) {
+            if (isset($ingredient['ingredient_id']) && isset($ingredient['quantity_per_unit'])) {
+                MenuIngredients::create([
+                    'item_id' => $menuItem->item_id,
+                    'ingredient_id' => $ingredient['ingredient_id'],
+                    'quantity_per_unit' => $ingredient['quantity_per_unit']
+                ]);
+            }
         }
     }
 

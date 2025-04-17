@@ -40,6 +40,11 @@ class MenuItems extends Model
 
     public function calculateMaxServings(): int
     {
+        if ($this->ingredients->isEmpty()) {
+            // Nếu món ăn không có nguyên liệu, không giới hạn số lượng phục vụ
+            return PHP_INT_MAX;
+        }
+
         $maxServings = PHP_INT_MAX;
 
         $this->load('ingredients.ingredient');
