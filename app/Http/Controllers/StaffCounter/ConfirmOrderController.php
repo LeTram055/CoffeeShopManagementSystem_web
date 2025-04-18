@@ -16,6 +16,7 @@ use App\Models\Promotions;
 use App\Models\MenuItems;
 use App\Events\NewOrderEvent;
 use App\Models\Setting;
+use Illuminate\Support\Facades\Log;
 
 class ConfirmOrderController extends Controller
 {
@@ -68,32 +69,13 @@ class ConfirmOrderController extends Controller
 
     public function updateTakeaway(Request $request, $order_id)
     {
-        $order = Orders::findOrFail($order_id);
-
-        foreach ($order->orderItems as $oldItem) {
-            $menuItem = $oldItem->item;
-
-            if ($menuItem->ingredients->isEmpty()) {
-                continue;
-            }
-
-            foreach ($menuItem->ingredients as $menuIngredient) {
-                $ingredient = $menuIngredient->ingredient;
-                $usedAmount = $oldItem->quantity * $menuIngredient->quantity_per_unit;
-
-                $ingredient->reserved_quantity -= $usedAmount;
-                if ($ingredient->reserved_quantity < 0) {
-                    $ingredient->reserved_quantity = 0;
-                }
-                $ingredient->save();
-            }
-        }
+        $order = Orders::with('orderItems.item.ingredients')->findOrFail($order_id);
 
         $errors = [];
 
         if ($request->has('items')) {
-            foreach ($request->items as $itemData) {
-                $menuItem = MenuItems::find($itemData['id']);
+            foreach ($request->items as $item) {
+                $menuItem = MenuItems::find($item['id']);
 
                 if ($menuItem) {
                     if ($menuItem->ingredients->isEmpty()) {
@@ -101,7 +83,7 @@ class ConfirmOrderController extends Controller
                     }
 
                     $maxServings = $menuItem->calculateMaxServings(); // Hàm bạn đã định nghĩa
-                    if ($itemData['quantity'] > $maxServings) {
+                    if ($item['quantity'] > $maxServings) {
                         $errors[] = "Món '{$menuItem->name}' chỉ có thể phục vụ tối đa {$maxServings} phần.";
                     }
                 }
@@ -115,27 +97,86 @@ class ConfirmOrderController extends Controller
                 'errors'  => $errors,
             ], 422);
         }
-        
-        // Xóa tất cả các món ăn hiện tại
-        $order->orderItems()->delete();
+
+        foreach ($order->orderItems as $oldItem) {
+            $menuItem = $oldItem->item;
+            if ($oldItem->status === 'completed') {
+                    // Nếu món đã hoàn thành, giữ lại và không xóa
+                    continue;
+                }
+
+            if (!$menuItem->ingredients->isEmpty()) {
+            
+            
+
+            foreach ($menuItem->ingredients as $menuIngredient) {
+                $ingredient = $menuIngredient->ingredient;
+                $usedAmount = $oldItem->quantity * $menuIngredient->quantity_per_unit;
+
+                $ingredient->reserved_quantity -= $usedAmount;
+                if ($ingredient->reserved_quantity < 0) {
+                    $ingredient->reserved_quantity = 0;
+                }
+                $ingredient->save();
+            }
+        }
+            
+        OrderItems::where('order_id', $oldItem->order_id)
+            ->where('item_id', $oldItem->item_id)
+            ->delete();
+
+        }
+
         $total = 0;
 
         // Thêm các món ăn mới
-        if ($request->has('items')) {
-            foreach ($request->items as $item) {
-                
-                $menuItem = MenuItems::find($item['id']);
+        
+        foreach ($request->items as $item) {
+            $orderItem = OrderItems::where('order_id', $order->order_id)
+                ->where('item_id', $item['id'])->first();
 
-                if ($menuItem) {
-                    $order->orderItems()->create([
-                        'item_id'  => $item['id'],
-                        'quantity' => $item['quantity'],
-                        'note'     => $item['note'] ?? '',
+            if ($orderItem && $orderItem->status === 'completed') {
+                // Nếu món đã hoàn thành, chỉ cập nhật số lượng nếu cần
+                $newQuantity = $item['quantity'];
+                Log::info('New quantity: ' . $newQuantity);
+                $quantityToAdd = $newQuantity - $orderItem->quantity;
+
+                if ($quantityToAdd > 0) {
+                    // Cập nhật reserved_quantity
+                    if ($orderItem->item->ingredients->isEmpty()) {
+                        continue;
+                    }
+                    
+                    foreach ($orderItem->item->ingredients as $menuIngredient) {
+                        $ingredient = $menuIngredient->ingredient;
+                        $usedAmount = $quantityToAdd * $menuIngredient->quantity_per_unit;
+
+                        $ingredient->reserved_quantity += $usedAmount;
+                        $ingredient->save();
+                    }
+                }
+
+                OrderItems::where('order_id', $orderItem->order_id)
+                    ->where('item_id', $orderItem->item_id)
+                    ->update([
+                        'quantity' => $newQuantity,
+                        'note' => $item['note']
                     ]);
 
-                    $total += $item['quantity'] * $menuItem->price;
+            } else {
+                // Thêm món mới
+                $menuItem = MenuItems::find($item['id']);
+                if ($menuItem) {
+                    OrderItems::create([
+                        'order_id' => $order->order_id,
+                        'item_id' => $item['id'],
+                        'quantity' => $item['quantity'],
+                        'note' => $item['note'],
+                        'completed_quantity' => 0, // Món mới chưa hoàn thành
+                        'status' => 'order', // Món mới có trạng thái 'order'
+                    ]);
 
-                    // Cập nhật reserved_quantity mới
+                    // Cập nhật reserved_quantity
                     if (!$menuItem->ingredients->isEmpty()) {
                         foreach ($menuItem->ingredients as $menuIngredient) {
                             $ingredient = $menuIngredient->ingredient;
@@ -147,11 +188,18 @@ class ConfirmOrderController extends Controller
                     }
                 }
             }
+            $menuItem = MenuItems::find($item['id']);
+            if ($menuItem) {
+                $total += $menuItem->price * $item['quantity'];
+            }
         }
+        
 
         // Cập nhật tổng tiền của đơn hàng
-        $order->total_price = $total;
-        $order->save();
+        $order->update([
+                'total_price' => $total,
+                'status' => 'confirmed'
+            ]);
 
         broadcast(new NewOrderEvent($order, 'updated'))->toOthers();
 

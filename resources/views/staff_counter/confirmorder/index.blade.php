@@ -202,10 +202,13 @@
                         <p>Tổng tiền: {{ number_format($order->total_price, 0, ',', '.') }} VNĐ</p>
                         <button class="btn btn-primary btn-sm view-order-btn" data-id="{{ $order->order_id }}">Xem chi
                             tiết</button>
-                        @if($order->status == 'confirmed')
+                        @if($order->status == 'pending_payment' || $order->status == 'confirmed')
                         <button class="btn btn-success btn-sm edit-order-btn my-1"
                             data-id="{{ $order->order_id }}">Chỉnh
                             sửa</button>
+                        @endif
+                        @if($order->status == 'confirmed' && $order->orderItems->every(fn($item) =>
+                        $item->completed_quantity == 0))
                         <button class="btn btn-danger btn-sm cancel-order-btn" data-id="{{ $order->order_id }}">Hủy
                             đơn</button>
                         @endif
@@ -603,6 +606,8 @@ $(document).ready(function() {
         window.open('/staff_counter/confirmorder/print-invoice/' + orderId, '_blank');
     });
 
+    let originalTotalQuantity = 0;
+
     //Khi nhấn nút "Chỉnh sửa" cho đơn hàng mang đi confirmed
     $('.edit-order-btn').on('click', function() {
         let orderId = $(this).data('id');
@@ -635,18 +640,19 @@ $(document).ready(function() {
                             </thead>
                         <tbody>`;
                     order.order_items.forEach(function(item, index) {
-                        html += `<tr data-index="${index}" data-item-id="${item.item.item_id}">
+                        originalTotalQuantity += item.quantity;
+                        html += `<tr data-index="${index}" data-item-id="${item.item.item_id}" data-original-quantity="${item.quantity}">
                             <td>${item.item.name}</td>
                             <td>
                                 <div class="input-group input-group-sm justify-content-center">
                                 <button class="btn btn-outline-secondary btn-decrease" type="button">−</button>
-                                <input type="number" class="form-control quantity-input" value="${item.quantity}" data-index="${index}" style="max-width: 50px; text-align: center;">
+                                <input type="number" class="form-control quantity-input" value="${item.quantity}" data-index="${index}" data-completed-quantity="${item.completed_quantity}" style="max-width: 50px; text-align: center;">
                                 <button class="btn btn-outline-secondary btn-increase" type="button">+</button>
                                 </div>
                             </td>
                             <td class="text-end">${new Intl.NumberFormat('vi-VN').format(item.item.price)} VNĐ</td>
-                            <td><input type="text" class="form-control form-control-sm note-input" value="${item.note ?? ''}" data-index="${index}" placeholder="Ghi chú..." style="width: 100%;"></td>
-                            <td class="text-center"><button class="btn btn-sm btn-danger remove-edit-item" data-index="${index}"><i class="fa-solid fa-trash"></i></button></td>
+                            <td><input type="text" class="form-control note-input" value="${item.note ?? ''}" data-item-id="${item.item.item_id}" placeholder="Ghi chú..." style="width: 100%;" ${item.quantity === item.completed_quantity ? 'readonly' : ''}></td>
+                            <td class="text-center">${item.completed_quantity > 0 ? '' : `<button class="btn btn-sm btn-danger remove-edit-item" data-item-id="${item.item.item_id}"><i class="fa-solid fa-trash"></i></button>`}</td>
                         </tr>`;
                     });
                     html += `</tbody></table>`;
@@ -666,8 +672,9 @@ $(document).ready(function() {
     $(document).on('click', '.btn-decrease', function() {
         let input = $(this).closest('.input-group').find('.quantity-input');
         let currentVal = parseInt(input.val()) || 0;
-        if (currentVal > 1) {
-            input.val(currentVal - 1).change();
+        let completedQuantity = parseInt(input.data('completed-quantity')) || 1;
+        if (currentVal > completedQuantity) {
+            input.val(currentVal - 1).trigger('input');
         }
     });
 
@@ -675,25 +682,61 @@ $(document).ready(function() {
     $(document).on('click', '.btn-increase', function() {
         let input = $(this).closest('.input-group').find('.quantity-input');
         let currentVal = parseInt(input.val()) || 0;
-        input.val(currentVal + 1).change();
+        input.val(currentVal + 1).trigger('input');
+    });
+
+    // Sự kiện kiểm soát số lượng nhập
+    $(document).on('input', '.quantity-input', function() {
+        let input = $(this);
+        let currentVal = parseInt(input.val()) || 0;
+        let completedQuantity = parseInt(input.data('completed-quantity')) || 1;
+
+        // Nếu số lượng nhập nhỏ hơn số lượng đã hoàn thành, đặt lại giá trị bằng số lượng đã hoàn thành
+        if (currentVal < completedQuantity) {
+            input.val(completedQuantity);
+        }
+
+        // Cho phép chỉnh sửa ghi chú nếu số lượng thay đổi
+        let noteInput = input.closest('tr').find('.note-input');
+        if (currentVal !== completedQuantity) {
+
+            noteInput.prop('readonly', false);
+        } else {
+
+            noteInput.prop('readonly', true);
+        }
     });
 
     // Sự kiện xóa dòng sản phẩm khi nhấn nút "Xóa"
     $(document).on('click', '.remove-edit-item', function() {
-        if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?')) {
-            $(this).closest('tr').remove();
-        }
+        $(this).closest('tr').remove();
+        // if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?')) {
+        //     $(this).closest('tr').remove();
+        // }
     });
+
+
 
     // Xử lý lưu chỉnh sửa đơn hàng
     $('#editOrderForm').on('submit', function(e) {
         e.preventDefault();
         let orderId = $('#editOrderId').val();
         let items = [];
+        let hasChanges = false;
+        let currentTotalQuantity = 0;
         $('#orderEditItemsContainer table.order-edit-table tbody tr').each(function() {
             let itemId = $(this).data('item-id');
+            let originalQuantity = parseInt($(this).data('original-quantity')) || 0;
             let quantity = $(this).find('.quantity-input').val();
             let note = $(this).find('.note-input').val();
+
+            currentTotalQuantity += parseInt(quantity);
+
+            // Kiểm tra nếu có sự thay đổi
+            if (parseInt(quantity) !== originalQuantity) {
+                console.log('Quantity changed for item ID:', itemId);
+                hasChanges = true;
+            }
             // Nếu số lượng sản phẩm > 0 thì thêm vào danh sách items
             if (parseInt(quantity) > 0) {
                 items.push({
@@ -702,9 +745,23 @@ $(document).ready(function() {
                     note: note
                 });
             }
-
-
         });
+
+        // So sánh tổng số lượng trước và sau
+        if (currentTotalQuantity !== originalTotalQuantity) {
+            hasChanges = true;
+        }
+
+        console.log('Has changes:', hasChanges);
+        console.log('currentTotalQuantity:', currentTotalQuantity);
+        console.log('originalTotalQuantity:', originalTotalQuantity);
+
+        // Nếu không có thay đổi, hiển thị thông báo và dừng lại
+        if (hasChanges === false) {
+            notify('Không có thay đổi nào để cập nhật.', 'info');
+            $('#editOrderModal').modal('hide');
+            return;
+        }
 
         if (items.length === 0) {
             notify('Vui lòng chọn ít nhất một sản phẩm để chỉnh sửa đơn hàng.', 'danger');

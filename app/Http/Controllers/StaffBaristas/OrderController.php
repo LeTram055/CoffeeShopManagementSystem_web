@@ -132,17 +132,22 @@ class OrderController extends Controller
         // ->update(['status' => 'issue']);
 
         // Tìm món ăn trong đơn hàng
-        $orderItem = $order->orderItems()->where('item_id', $itemId)->first();
+        $orderItem = OrderItems::where('order_id', $orderId)
+            ->where('item_id', $itemId)
+            ->first();
 
         if ($orderItem) {
             // Cập nhật trạng thái status
-            $orderItem->update(['status' => 'issue']);
+            OrderItems::where('order_id', $orderId)
+                ->where('item_id', $itemId)
+                ->update(['status' => 'issue']);
 
             // Lấy tên món ăn
             $itemName = $orderItem->item->name;
 
             // Phát thông báo cho nhân viên phục vụ
-            broadcast(new OrderIssueEvent($orderId, $itemName, $reason))->toOthers();
+            $orderType = $order->order_type;
+            broadcast(new OrderIssueEvent($orderId, $itemName, $reason, $orderType))->toOthers();
 
             return response()->json(['message' => 'Lý do đã được gửi!'], 200);
         } else {

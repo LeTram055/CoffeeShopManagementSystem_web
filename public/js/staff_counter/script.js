@@ -13,6 +13,13 @@ $(document).ready(function() {
         } 
     
     });
+
+    socket.on("order.issue", (data) => {
+        
+        if(data.data.order_type == 'takeaway') {
+            showToast(`Đơn hàng #${data.data.order_id}, Món: ${data.data.item_name} gặp trục trặc: ${data.data.reason}`, "bg-danger");
+        }
+    });
     
     // Hàm hiển thị Toast
     function showToast(message, bgClass) {

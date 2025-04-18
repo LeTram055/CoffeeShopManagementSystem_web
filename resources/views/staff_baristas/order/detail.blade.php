@@ -1,3 +1,14 @@
+<style>
+.card-title {
+    white-space: nowrap;
+    /* Không cho xuống dòng */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+    display: inline-block;
+}
+</style>
+
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
         <strong>Đơn hàng #{{ $order->order_id }}</strong>
@@ -15,13 +26,14 @@
                     <img src="{{ asset('storage/uploads/' . $item->item->image_url) }}" alt="{{ $item->item->name }}"
                         class="rounded me-2" style="width: 60px; height: 60px; object-fit: cover;">
                     <div class="flex-grow-1">
-                        <strong>{{ $item->item->name }}</strong>
+                        <strong class="card-title" data-bs-toggle="tooltip"
+                            title="{{ $item->item->name }}">{{ $item->item->name }}</strong>
                         <p class="text-muted mb-1"><em>Ghi chú: {{ $item->note ?? 'Không có' }}</em></p>
 
                     </div>
 
                     <strong class="text-end">x {{ $item->quantity - $item->completed_quantity }}</strong>
-                    @if ($order->order_type === 'dine_in' && ($item->status === 'order' || ($item->status ===
+                    @if (($item->status === 'order' || ($item->status ===
                     'completed' && ($item->quantity - $item->completed_quantity) > 0)) )
                     <!-- Chỉ hiển thị nút nếu là đơn tại chỗ và chưa có lỗi -->
                     <button class="btn btn-danger btn-sm ms-2 report-issue" data-itemid="{{ $item->item_id }}"
@@ -62,6 +74,10 @@
 </div>
 
 <script>
+$(document).ready(function() {
+    // Kích hoạt tooltip của Bootstrap
+    $('[data-bs-toggle="tooltip"]').tooltip();
+});
 $(document).ready(function() {
     $('.report-issue').click(function() {
         let itemId = $(this).data('itemid');
@@ -106,7 +122,8 @@ $(document).ready(function() {
 
                 // Tự động ẩn thông báo sau 5 giây
                 setTimeout(function() {
-                    $('.flash-message').fadeOut('slow');
+                    // $('.flash-message').fadeOut('slow');
+                    location.reload();
                 }, 5000);
 
 

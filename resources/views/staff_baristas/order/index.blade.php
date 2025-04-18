@@ -42,11 +42,13 @@
         width: 28%;
         border-right: 1px solid #ddd;
         margin-right: 1%;
+        margin-bottom: 30px;
     }
 
     .order-details {
         width: 68%;
         margin-left: 1%;
+        margin-bottom: 30px;
     }
 }
 
@@ -94,7 +96,7 @@
 
 <div class="order-container">
     <!-- Danh sách đơn hàng -->
-    <div class="order-list">
+    <div class="order-list mb-3">
         <h3 class="title2">Đơn đặt món</h3>
         <div id="orders">
             @foreach($orders as $order)

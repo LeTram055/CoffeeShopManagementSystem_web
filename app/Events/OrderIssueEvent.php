@@ -15,8 +15,11 @@ class OrderIssueEvent implements ShouldBroadcast
     public $itemName;
     public $reason;
 
-    public function __construct($orderId, $itemName, $reason)
+    public $orderType;
+
+    public function __construct($orderId, $itemName, $reason, $orderType)
     {
+        $this->orderType = $orderType;
         $this->orderId = $orderId;
         $this->itemName = $itemName;
         $this->reason = $reason;
@@ -33,6 +36,7 @@ class OrderIssueEvent implements ShouldBroadcast
             'order_id' => $this->orderId,
             'item_name' => $this->itemName,
             'reason' => $this->reason,
+            'order_type' => $this->orderType,
         ];
     }
 
