@@ -32,6 +32,10 @@ class ConfirmOrderController extends Controller
         $startDate = $request->get('start_date', now()->startOfDay()->toDateString());
         $endDate = $request->get('end_date', now()->endOfDay()->toDateString());
 
+        // Đảm bảo end_date bao gồm toàn bộ thời gian trong ngày
+        $startDate = Carbon::parse($startDate)->startOfDay();
+        $endDate = Carbon::parse($endDate)->endOfDay();
+        
         // Lọc trạng thái đơn hàng
         if ($dineInStatus !== 'all') {
             $dineInQuery->where('status', $dineInStatus);

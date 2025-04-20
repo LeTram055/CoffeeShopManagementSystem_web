@@ -101,22 +101,17 @@
     /* Bo góc input */
 }
 
-button.btn-primary {
-    margin-top: 1rem;
-    /* Khoảng cách giữa nút và các input trên màn hình nhỏ */
-}
 
 .offcanvas {
     max-width: 300px;
-    z-index: 1050;
-    /* Đặt chiều rộng cho Offcanvas */
+    z-index: 200;
 }
 
 .filter-button {
     position: fixed;
     top: 70px;
     right: 20px;
-    z-index: 1040;
+    z-index: 90;
     border-radius: 40px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 5px 20px;
@@ -135,7 +130,8 @@ button.btn-primary {
     </button>
 
     <!-- Offcanvas Bộ lọc -->
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="filterOffcanvas" aria-labelledby="filterOffcanvasLabel">
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="filterOffcanvas" aria-labelledby="filterOffcanvasLabel"
+        data-bs-backdrop="false">
         <div class="offcanvas-header">
             <h5 class="offcanvas-title" id="filterOffcanvasLabel">Bộ lọc</h5>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -153,6 +149,8 @@ button.btn-primary {
                         value="{{ request('end_date', $endDate) }}">
                 </div>
                 <button type="submit" class="btn btn-primary w-100">Lọc</button>
+                <a href="{{ route('staff_counter.confirmorder.index') }}" class="btn btn-secondary w-100 mt-2">Hủy bộ
+                    lọc</a>
             </form>
         </div>
     </div>
