@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Employees extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
     protected $table = 'employees';
     
     protected $fillable = [
@@ -29,7 +30,6 @@ class Employees extends Authenticatable
         'start_date' => 'datetime',
     ];
     public $timestamps = false;
-
 
     public function ingredientLogs()
     {

@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class BonusesPenalties extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'bonuses_penalties';
     protected $primaryKey = 'bonus_penalty_id';
@@ -21,7 +22,6 @@ class BonusesPenalties extends Model
         'date' => 'datetime',
         
     ];
-
 
     public function employee()
     {
