@@ -203,7 +203,7 @@ class WorkScheduleController extends Controller
             'employee_id' => 'required|exists:employees,employee_id',
             'shift_id' => 'required|exists:shifts,shift_id',
             'work_date' => 'required|date',
-            'status' => 'required|in:scheduled,completed,absent',
+            // 'status' => 'required|in:scheduled,completed,absent',
             // 'work_hours' => 'required|numeric|min:0|max:24',
         ],
         [
@@ -213,8 +213,8 @@ class WorkScheduleController extends Controller
             'shift_id.exists' => 'Ca làm việc không tồn tại.',
             'work_date.required' => 'Vui lòng chọn ngày làm việc.',
             'work_date.date' => 'Ngày làm việc không hợp lệ.',
-            'status.required' => 'Vui lòng chọn trạng thái.',
-            'status.in' => 'Trạng thái không hợp lệ.',
+            // 'status.required' => 'Vui lòng chọn trạng thái.',
+            // 'status.in' => 'Trạng thái không hợp lệ.',
             // 'work_hours.required' => 'Vui lòng nhập số giờ làm việc.',
             // 'work_hours.numeric' => 'Số giờ làm việc phải là số.',
             // 'work_hours.min' => 'Số giờ làm việc không được nhỏ hơn 0.',
@@ -242,7 +242,7 @@ class WorkScheduleController extends Controller
             'employee_id' => $request->employee_id,
             'shift_id' => $request->shift_id,
             'work_date' => $request->work_date,
-            'status' => $request->status,
+            'status' => 'scheduled',
             'work_hours' => 0,
         ]);
 

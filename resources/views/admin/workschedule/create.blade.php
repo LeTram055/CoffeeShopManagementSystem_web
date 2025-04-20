@@ -16,7 +16,6 @@ Quản lý lịch làm việc
             @csrf
 
             <!-- Chọn Nhân Viên -->
-            <!-- Chọn Nhân Viên -->
             <div class="form-group mb-3">
                 <label for="employee_id" class="form-label fw-semibold">Nhân viên:</label>
                 <select class="form-control rounded-2" id="employee_id" name="employee_id">
@@ -77,7 +76,7 @@ Quản lý lịch làm việc
             </div>
 
             <!-- Chọn Trạng Thái -->
-            <div class="form-group mb-3">
+            <!-- <div class="form-group mb-3">
                 <label for="status" class="form-label fw-semibold">Trạng thái:</label>
                 <select class="form-control rounded-2" id="status" name="status">
                     <option value="scheduled" {{ old('status') == 'scheduled' ? 'selected' : '' }}>Đã lên lịch</option>
@@ -87,7 +86,7 @@ Quản lý lịch làm việc
                 @error('status')
                 <small class="form-text text-danger">{{ $message }}</small>
                 @enderror
-            </div>
+            </div> -->
 
             <!-- Nhập Số Giờ Làm -->
             <!-- <div class="form-group mb-3">
