@@ -28,6 +28,10 @@ class ConfirmOrderController extends Controller
         $dineInQuery = Orders::where('order_type', 'dine_in');
         $takeawayQuery = Orders::where('order_type', 'takeaway');
 
+        // Lấy ngày bắt đầu và kết thúc từ request, mặc định là hôm nay
+        $startDate = $request->get('start_date', now()->startOfDay()->toDateString());
+        $endDate = $request->get('end_date', now()->endOfDay()->toDateString());
+
         // Lọc trạng thái đơn hàng
         if ($dineInStatus !== 'all') {
             $dineInQuery->where('status', $dineInStatus);
@@ -41,7 +45,9 @@ class ConfirmOrderController extends Controller
                 $takeawayQuery->where('status', $takeawayStatus);
             }
         }
-        
+        // Lọc theo ngày
+        $dineInQuery->whereBetween('created_at', [$startDate, $endDate]);
+        $takeawayQuery->whereBetween('created_at', [$startDate, $endDate]);
 
         $dineInOrders = $dineInQuery->orderBy('created_at', 'desc')->get();
         $takeawayOrders = $takeawayQuery->orderBy('created_at', 'desc')->get();
@@ -53,6 +59,8 @@ class ConfirmOrderController extends Controller
             
             'dineInStatus' => $dineInStatus,
             'takeawayStatus' => $takeawayStatus,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
         ]);
 
     }

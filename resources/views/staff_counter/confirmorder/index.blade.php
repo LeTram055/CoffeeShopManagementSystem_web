@@ -90,16 +90,73 @@
     text-align: right !important;
 }
 
-/* #paymentTimeRow,
-#paymentMethodRow {
-    display: none !important;
-} */
+.form-label {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    /* Khoảng cách giữa label và input */
+}
+
+.form-control {
+    border-radius: 8px;
+    /* Bo góc input */
+}
+
+button.btn-primary {
+    margin-top: 1rem;
+    /* Khoảng cách giữa nút và các input trên màn hình nhỏ */
+}
+
+.offcanvas {
+    max-width: 300px;
+    z-index: 1050;
+    /* Đặt chiều rộng cho Offcanvas */
+}
+
+.filter-button {
+    position: fixed;
+    top: 70px;
+    right: 20px;
+    z-index: 1040;
+    border-radius: 40px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 5px 20px;
+}
 </style>
 @endsection
 
 @section('content')
-<div class="container mt-4">
+<div class="container">
+
     <div id="notification" style="display:none;"></div>
+    <!-- Nút mở bộ lọc -->
+    <button class="btn btn-secondary filter-button" type="button" data-bs-toggle="offcanvas"
+        data-bs-target="#filterOffcanvas" aria-controls="filterOffcanvas">
+        Bộ lọc
+    </button>
+
+    <!-- Offcanvas Bộ lọc -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="filterOffcanvas" aria-labelledby="filterOffcanvasLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="filterOffcanvasLabel">Bộ lọc</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <form method="GET" action="{{ route('staff_counter.confirmorder.index') }}">
+                <div class="mb-3">
+                    <label for="start_date" class="form-label">Từ ngày</label>
+                    <input type="date" id="start_date" name="start_date" class="form-control"
+                        value="{{ request('start_date', $startDate) }}">
+                </div>
+                <div class="mb-3">
+                    <label for="end_date" class="form-label">Đến ngày</label>
+                    <input type="date" id="end_date" name="end_date" class="form-control"
+                        value="{{ request('end_date', $endDate) }}">
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Lọc</button>
+            </form>
+        </div>
+    </div>
+
     <div class="order-container">
         <!-- Đơn hàng tại chỗ -->
         <div class="dinein-column">
@@ -107,18 +164,27 @@
             <ul class="nav nav-tabs custom-tabs">
                 <li class="nav-item">
                     <a class="nav-link {{ request('dine_in_status', 'pending_payment') == 'pending_payment' ? 'active' : '' }}"
-                        href="{{ route('staff_counter.confirmorder.index', ['dine_in_status' => 'pending_payment', 'takeaway_status' => request('takeaway_status', 'pending_payment')]) }}">Chờ
-                        thanh toán</a>
+                        href="{{ route('staff_counter.confirmorder.index', ['dine_in_status' => 'pending_payment',
+                        'takeaway_status' => request('takeaway_status', 'pending_payment'),
+                        'start_date' => request('start_date', $startDate),
+                        'end_date' => request('end_date', $endDate),
+                          ]) }}">Chờ thanh toán</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request('dine_in_status') == 'received' ? 'active' : '' }}"
-                        href="{{ route('staff_counter.confirmorder.index', ['dine_in_status' => 'received', 'takeaway_status' => request('takeaway_status', 'pending_payment')]) }}">
+                    <a class="nav-link {{ request('dine_in_status') == 'received' ? 'active' : '' }}" href="{{ route('staff_counter.confirmorder.index', ['dine_in_status' => 'received',
+                        'takeaway_status' => request('takeaway_status', 'pending_payment'),
+                        'start_date' => request('start_date', $startDate),
+                        'end_date' => request('end_date', $endDate),
+                         ]) }}">
                         Đã nhận món
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request('dine_in_status') == 'all' ? 'active' : '' }}"
-                        href="{{ route('staff_counter.confirmorder.index', ['dine_in_status' => 'all', 'takeaway_status' => request('takeaway_status', 'pending_payment')]) }}">Tất
+                    <a class="nav-link {{ request('dine_in_status') == 'all' ? 'active' : '' }}" href="{{ route('staff_counter.confirmorder.index', ['dine_in_status' => 'all', 
+                        'takeaway_status' => request('takeaway_status', 'pending_payment'),
+                        'start_date' => request('start_date', $startDate),
+                        'end_date' => request('end_date', $endDate),
+                        ]) }}">Tất
                         cả</a>
                 </li>
             </ul>
@@ -165,20 +231,29 @@
                 @endphp
 
                 <li class="nav-item">
-                    <a class="nav-link {{ $currentTakeawayStatus == 'pending_payment' ? 'active' : '' }}"
-                        href="{{ route('staff_counter.confirmorder.index', ['takeaway_status' => 'pending_payment', 'dine_in_status' => request('dine_in_status', 'pending_payment')]) }}">
+                    <a class="nav-link {{ $currentTakeawayStatus == 'pending_payment' ? 'active' : '' }}" href="{{ route('staff_counter.confirmorder.index', ['takeaway_status' => 'pending_payment', 
+                        'dine_in_status' => request('dine_in_status', 'pending_payment'),
+                        'start_date' => request('start_date', $startDate),
+                        'end_date' => request('end_date', $endDate),
+                        ]) }}">
                         Chờ thanh toán
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ $currentTakeawayStatus == 'confirmed' ? 'active' : '' }}"
-                        href="{{ route('staff_counter.confirmorder.index', ['takeaway_status' => 'confirmed', 'dine_in_status' => request('dine_in_status', 'pending_payment')]) }}">
+                    <a class="nav-link {{ $currentTakeawayStatus == 'confirmed' ? 'active' : '' }}" href="{{ route('staff_counter.confirmorder.index', ['takeaway_status' => 'confirmed', 
+                        'dine_in_status' => request('dine_in_status', 'pending_payment'),
+                        'start_date' => request('start_date', $startDate),
+                        'end_date' => request('end_date', $endDate),
+                        ]) }}">
                         Chờ nhận món
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link  {{ $currentTakeawayStatus == 'all' ? 'active' : '' }}"
-                        href="{{ route('staff_counter.confirmorder.index', ['takeaway_status' => 'all', 'dine_in_status' => request('dine_in_status', 'confirmed')]) }}">
+                    <a class="nav-link  {{ $currentTakeawayStatus == 'all' ? 'active' : '' }}" href="{{ route('staff_counter.confirmorder.index', ['takeaway_status' => 'all', 
+                        'dine_in_status' => request('dine_in_status', 'pending_payment'),
+                        'start_date' => request('start_date', $startDate),
+                        'end_date' => request('end_date', $endDate),
+                        ]) }}">
                         Tất cả
                     </a>
                 </li>
