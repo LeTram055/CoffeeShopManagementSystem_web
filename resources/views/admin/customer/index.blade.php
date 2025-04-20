@@ -31,7 +31,43 @@ Quản lý khách hàng
             <i class="fas fa-sync-alt"></i> Làm mới
         </a>
     </div>
+    <!-- <form method="GET" action="{{ route('admin.customer.index') }}"
+        class="d-flex flex-wrap gap-2 align-items-center mb-3">
+        <div class="input-group">
+            <label for="start_date" class="input-group-text">Từ ngày</label>
+            <input type="date" name="start_date" id="start_date" class="form-control"
+                value="{{ request('start_date') }}">
+        </div>
+        <div class="input-group">
+            <label for="end_date" class="input-group-text">Đến ngày</label>
+            <input type="date" name="end_date" id="end_date" class="form-control" value="{{ request('end_date') }}">
+        </div>
+        <button type="submit" class="btn btn-primary">Lọc</button>
+        <a href="{{ route('admin.customer.index') }}" class="btn btn-secondary">Xóa bộ lọc</a>
+    </form> -->
     <form method="GET" action="{{ route('admin.customer.index') }}" class="d-flex" style="max-width: 50%;">
+        <div class="dropdown me-2">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="filterDropdown"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                Bộ lọc
+            </button>
+            <div class="dropdown-menu p-3" style="min-width: 300px;">
+                <div class="mb-3">
+                    <label for="start_date" class="form-label">Từ ngày</label>
+                    <input type="date" name="start_date" id="start_date" class="form-control"
+                        value="{{ request('start_date') }}">
+                </div>
+                <div class="mb-3">
+                    <label for="end_date" class="form-label">Đến ngày</label>
+                    <input type="date" name="end_date" id="end_date" class="form-control"
+                        value="{{ request('end_date') }}">
+                </div>
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-primary">Lọc</button>
+                    <a href="{{ route('admin.customer.index') }}" class="btn btn-secondary">Xóa bộ lọc</a>
+                </div>
+            </div>
+        </div>
         <div class="input-group">
             <input type="text" name="search" class="form-control" placeholder="Tìm kiếm khách hàng..."
                 value="{{ request('search') }}">
@@ -48,7 +84,7 @@ Quản lý khách hàng
             <tr>
                 <th class="text-center">
                     <a
-                        href="{{ route('admin.customer.index', ['sort_field' => 'customer_id', 'sort_direction' => $sortField == 'customer_id' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                        href="{{ route('admin.customer.index', array_merge(request()->all(), ['sort_field' => 'customer_id', 'sort_direction' => $sortField == 'customer_id' && $sortDirection == 'asc' ? 'desc' : 'asc'])) }}">
                         Mã khách hàng
                         @if($sortField == 'customer_id')
                         <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -57,7 +93,7 @@ Quản lý khách hàng
                 </th>
                 <th class="text-center">
                     <a
-                        href="{{ route('admin.customer.index', ['sort_field' => 'name', 'sort_direction' => $sortField == 'name' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                        href="{{ route('admin.customer.index', array_merge(request()->all(), ['sort_field' => 'name', 'sort_direction' => $sortField == 'name' && $sortDirection == 'asc' ? 'desc' : 'asc'])) }}">
                         Tên khách hàng
                         @if($sortField == 'name')
                         <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
@@ -66,9 +102,18 @@ Quản lý khách hàng
                 </th>
                 <th class="text-center">
                     <a
-                        href="{{ route('admin.customer.index', ['sort_field' => 'phone_number', 'sort_direction' => $sortField == 'phone_number' && $sortDirection == 'asc' ? 'desc' : 'asc', 'search' => request('search')]) }}">
+                        href="{{ route('admin.customer.index', array_merge(request()->all(), ['sort_field' => 'phone_number', 'sort_direction' => $sortField == 'phone_number' && $sortDirection == 'asc' ? 'desc' : 'asc'])) }}">
                         Số điện thoại
                         @if($sortField == 'phone_number')
+                        <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
+                        @endif
+                    </a>
+                </th>
+                <th class="text-center">
+                    <a
+                        href="{{ route('admin.customer.index', array_merge(request()->all(), ['sort_field' => 'orders_count', 'sort_direction' => $sortField == 'orders_count' && $sortDirection == 'asc' ? 'desc' : 'asc'])) }}">
+                        Lượt mua
+                        @if($sortField == 'orders_count')
                         <i class="fas {{ $sortDirection == 'asc' ? 'fa-caret-up' : 'fa-caret-down' }}"></i>
                         @endif
                     </a>
@@ -83,6 +128,7 @@ Quản lý khách hàng
                 <td class="text-center">{{ $customer->customer_id }}</td>
                 <td>{{ $customer->name }}</td>
                 <td class="text-center">{{ $customer->phone_number }}</td>
+                <td class="text-center">{{ $customer->orders_count }}</td>
                 <td>{{ $customer->notes }}</td>
                 <td>
                     <div class="d-flex justify-content-center">

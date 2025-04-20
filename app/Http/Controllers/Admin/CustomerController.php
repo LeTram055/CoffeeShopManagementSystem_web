@@ -21,19 +21,50 @@ class CustomerController extends Controller
 
         $query = Customers::query();
 
+        // Lọc theo ngày hoặc tháng
+        $query->whereHas('orders', function ($q) use ($request) {
+            if ($request->filled('start_date')) {
+                $startDate = $request->input('start_date');
+                $q->whereDate('created_at', '>=', $startDate);
+            }
+            if ($request->filled('end_date')) {
+                $endDate = $request->input('end_date');
+                $q->whereDate('created_at', '<=', $endDate);
+            }
+            $q->where('status', '!=', 'cancelled'); // Loại bỏ đơn hàng "cancelled"
+        });
+
         if ($request->filled('search')) {
             $searchTerm = $request->input('search');
             $query->where('name', 'like', '%' . $searchTerm . '%')
                   ->orWhere('phone_number', 'like', '%' . $searchTerm . '%');
         }
 
-        if ($sortField == 'name') {
+        // Tính số lượt mua (orders_count)
+        $query->withCount(['orders' => function ($q) use ($request) {
+            if ($request->filled('start_date')) {
+                $startDate = $request->input('start_date');
+                $q->whereDate('created_at', '>=', $startDate);
+            }
+            if ($request->filled('end_date')) {
+                $endDate = $request->input('end_date');
+                $q->whereDate('created_at', '<=', $endDate);
+            }
+            $q->where('status', '!=', 'cancelled'); // Loại bỏ đơn hàng "cancelled"
+        }]);
+
+        // Sắp xếp
+        if ($sortField == 'orders_count') {
+            $query->orderBy('orders_count', $sortDirection);
+        } elseif ($sortField == 'name') {
             $query->orderByRaw("CONVERT($sortField USING utf8) COLLATE utf8_unicode_ci $sortDirection");
         } elseif ($sortField == 'customer_id' || $sortField == 'phone_number') {
             $query->orderByRaw("CAST($sortField AS DECIMAL) $sortDirection");
         } else {
             $query->orderByRaw("CONVERT(customer_id USING utf8) COLLATE utf8_unicode_ci asc");
         }
+
+        
 
         $customers = $query->paginate($perPage)->appends(request()->except('page'));
 
