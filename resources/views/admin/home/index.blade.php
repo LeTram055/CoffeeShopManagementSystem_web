@@ -1,7 +1,7 @@
 @extends('admin.layouts.master')
 
-@section('title', 'Trang Tổng Quan')
-@section('feature-title', 'Tổng quan')
+@section('title', 'Tổng Quan Hôm Nay')
+@section('feature-title', 'Tổng quan hôm nay')
 
 @section('custom-css')
 <style>

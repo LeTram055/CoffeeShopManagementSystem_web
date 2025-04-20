@@ -238,6 +238,10 @@ Quản lý hóa đơn
                                 <span id="detailPaymentId" class="text-end"></span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between">
+                                <strong class="text-start">Mã đơn đặt:</strong>
+                                <span id="detailOrderId" class="text-end"></span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
                                 <strong class="text-start">Nhân viên xử lý:</strong>
                                 <span id="detailEmployeeName" class="text-end"></span>
                             </li>
@@ -257,16 +261,17 @@ Quản lý hóa đơn
                                 <strong class="text-start">Bàn:</strong>
                                 <span id="detailTable" class="text-end"></span>
                             </li>
-                            <li class="list-group-item d-flex justify-content-between">
-                                <strong class="text-start">Thời gian:</strong>
-                                <span id="detailPaymentTime" class="text-end"></span>
-                            </li>
+
                         </ul>
                     </div>
 
                     <!-- Chi tiết thanh toán -->
                     <div class="col-md-6 ps-md-4">
                         <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong class="text-start">Thời gian:</strong>
+                                <span id="detailPaymentTime" class="text-end"></span>
+                            </li>
                             <li class="list-group-item d-flex justify-content-between">
                                 <strong class="text-start">Khuyến mãi:</strong>
                                 <span id="detailPromotion" class="text-end"></span>
@@ -335,6 +340,7 @@ $(document).ready(function() {
             type: 'GET',
             success: function(data) {
                 $('#detailPaymentId').text(data.payment_id);
+                $('#detailOrderId').text(data.order.order_id);
                 $('#detailEmployeeName').text(data.employee.name);
                 let methodText = data.payment_method === 'cash' ? 'Tiền mặt' :
                     (data.payment_method === 'bank_transfer' ? 'Chuyển khoản' :
