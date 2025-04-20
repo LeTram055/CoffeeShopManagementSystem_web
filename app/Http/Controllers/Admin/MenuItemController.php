@@ -176,7 +176,7 @@ class MenuItemController extends Controller
         // Ảnh có thể không thay đổi nên đặt nullable
         'image_url' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         'ingredients' => 'nullable|array',
-        
+        'reason' => 'required_if:is_available,0|string',
     ], [
         'item_id.required' => 'Thiếu ID sản phẩm',
         'name.required' => 'Vui lòng nhập tên sản phẩm',
@@ -188,6 +188,8 @@ class MenuItemController extends Controller
         'image_url.image' => 'Ảnh sản phẩm phải là ảnh',
         'image_url.mimes' => 'Ảnh sản phẩm phải có định dạng jpeg, png, jpg, gif',
         'image_url.max' => 'Dung lượng ảnh sản phẩm tối đa 2MB',
+        
+        'reason.required_if' => 'Vui lòng nhập lý do sản phẩm không có sẵn.',
         
         
     ]);
@@ -219,6 +221,7 @@ class MenuItemController extends Controller
     $menuItem->description = $request->description;
     $menuItem->category_id = $request->category_id;
     $menuItem->is_available = $request->is_available;
+    $menuItem->reason = $request->is_available == 0 ? $request->reason : null;
     $menuItem->save();
 
     // Xóa các bản ghi nguyên liệu cũ

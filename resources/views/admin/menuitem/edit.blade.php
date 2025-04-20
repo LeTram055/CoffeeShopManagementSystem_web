@@ -120,7 +120,7 @@ Chỉnh sửa sản phẩm
             <!-- Trạng thái -->
             <div class="form-group mb-3">
                 <label class="form-label fw-semibold">Trạng thái:</label>
-                <select class="form-select rounded-2" name="is_available">
+                <select class="form-select rounded-2" name="is_available" id="is_available">
                     <option value="1" @if(old('is_available', $menuItem->is_available) == 1) selected @endif>Còn
                         hàng</option>
                     <option value="0" @if(old('is_available', $menuItem->is_available) == 0) selected @endif>Hết
@@ -128,6 +128,15 @@ Chỉnh sửa sản phẩm
                 </select>
             </div>
 
+            <!-- Lý do hết hàng -->
+            <div class="form-group mb-3" id="reason-container" style="display: none;">
+                <label for="reason" class="form-label fw-semibold">Lý do hết hàng:</label>
+                <textarea class="form-control rounded-2" id="reason" name="reason" rows="3"
+                    placeholder="Nhập lý do">{{ old('reason', $menuItem->reason) }}</textarea>
+                @error('reason')
+                <small class="form-text text-danger">{{ $message }}</small>
+                @enderror
+            </div>
 
             <button type="submit" name="submit" class="btn btn-primary fw-semibold">Lưu</button>
             <a href="{{ route('admin.menuitem.index') }}" class="btn btn-secondary">Hủy</a>
@@ -189,6 +198,30 @@ $(document).ready(function() {
     });
     // Kích hoạt sự kiện change để hiển thị lại danh sách đã chọn khi tải trang
     $('#ingredients-select').trigger('change');
+});
+
+$(document).ready(function() {
+    const $isAvailableSelect = $('#is_available');
+    const $reasonContainer = $('#reason-container');
+    const $reasonInput = $('#reason');
+
+    // Hiển thị hoặc ẩn trường lý do dựa trên trạng thái
+    function toggleReasonField() {
+        if ($isAvailableSelect.val() == "0") { // Hết hàng
+            $reasonContainer.show();
+            //$reasonInput.attr('required', 'required'); // Bắt buộc nhập lý do
+        } else { // Còn hàng
+            $reasonContainer.hide();
+            //$reasonInput.removeAttr('required'); // Không bắt buộc nhập lý do
+            $reasonInput.val(''); // Xóa nội dung lý do nếu có
+        }
+    }
+
+    // Gọi hàm khi tải trang
+    toggleReasonField();
+
+    // Gọi hàm khi thay đổi trạng thái
+    $isAvailableSelect.on('change', toggleReasonField);
 });
 </script>
 @endsection
