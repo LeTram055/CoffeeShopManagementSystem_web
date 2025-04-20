@@ -68,6 +68,11 @@ class OrderController extends Controller
                 $stock = Ingredients::where('ingredient_id', $ingredient->ingredient->ingredient_id)->first();
                 if ($stock) {
                     $quantityUsed = $ingredient->quantity_per_unit * ($orderItem->quantity - $orderItem->completed_quantity);
+                    if ($quantityUsed == 0) {
+                        continue;
+                    }
+
+                    
                     $stock->quantity -= $quantityUsed;
                     $stock->reserved_quantity -= $quantityUsed;
 
