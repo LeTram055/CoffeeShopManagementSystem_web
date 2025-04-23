@@ -498,6 +498,9 @@
                         <p>Tiền phải trả: <span id="finalAmount">0</span> VNĐ</p>
                     </div>
                     <div class="mb-3">
+                        <p>Tiền đã giảm: <span id="discountAmount">0</span> VNĐ</p>
+                    </div>
+                    <div class="mb-3">
                         <p>Tiền thối: <span id="changeAmountPayment">0</span> VNĐ</p>
                     </div>
                     <button type="submit" class="btn btn-primary">Xác nhận thanh toán</button>
@@ -1083,6 +1086,7 @@ $(document).ready(function() {
         // Cập nhật hidden input và hiển thị dòng "Tiền phải trả"
         $('#paymentTotal').val(newTotal);
         $('#finalAmount').text(new Intl.NumberFormat('vi-VN').format(newTotal));
+        $('#discountAmount').text(new Intl.NumberFormat('vi-VN').format(discount));
     });
 
     // Tính tiền thối khi nhập số tiền khách đưa
