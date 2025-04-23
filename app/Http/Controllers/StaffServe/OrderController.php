@@ -167,6 +167,20 @@ class OrderController extends Controller
     {
         try {
             $order = Orders::with('orderItems.item.ingredients')->findOrFail($request->order_id);
+            
+            $currentItems = $order->orderItems->map(function ($item) {
+                return [
+                    'item_id' => $item->item_id,
+                    'quantity' => $item->quantity,
+                ];
+            })->toArray();
+
+            $newItems = collect($request->items)->map(function ($item) {
+                return [
+                    'item_id' => $item['item_id'],
+                    'quantity' => $item['quantity'],
+                ];
+            })->toArray();
 
             $errors = [];
 
@@ -203,19 +217,19 @@ class OrderController extends Controller
                     // Nếu món đã hoàn thành, giữ lại và không xóa
                     continue;
                 }
-                if ($orderItem->item->ingredients->isEmpty()) {
-                    continue;
-                }
-                // Nếu món chưa hoàn thành (order hoặc issue), giải phóng reserved_quantity và xóa
-                foreach ($orderItem->item->ingredients as $menuIngredient) {
-                    $ingredient = $menuIngredient->ingredient;
-                    $usedAmount = $orderItem->quantity * $menuIngredient->quantity_per_unit;
+                if (!$orderItem->item->ingredients->isEmpty()) {
+                    
+                    // Nếu món chưa hoàn thành (order hoặc issue), giải phóng reserved_quantity và xóa
+                    foreach ($orderItem->item->ingredients as $menuIngredient) {
+                        $ingredient = $menuIngredient->ingredient;
+                        $usedAmount = $orderItem->quantity * $menuIngredient->quantity_per_unit;
 
-                    $ingredient->reserved_quantity -= $usedAmount;
-                    if ($ingredient->reserved_quantity < 0) {
-                        $ingredient->reserved_quantity = 0;
+                        $ingredient->reserved_quantity -= $usedAmount;
+                        if ($ingredient->reserved_quantity < 0) {
+                            $ingredient->reserved_quantity = 0;
+                        }
+                        $ingredient->save();
                     }
-                    $ingredient->save();
                 }
 
                 // Xóa món chưa hoàn thành
@@ -246,12 +260,6 @@ class OrderController extends Controller
                         }
                     }
 
-
-
-                    //Cập nhật số lượng mới
-                    // $orderItem->quantity = $newQuantity;
-                    // $orderItem->note = $itemData['note']; // Cập nhật ghi chú nếu có
-                    // $orderItem->save();
                     OrderItems::where('order_id', $orderItem->order_id)
                         ->where('item_id', $orderItem->item_id)
                         ->update([
@@ -298,6 +306,18 @@ class OrderController extends Controller
             $tableNew->status_id = 2; // Đặt bàn mới thành trạng thái đang sử dụng
 
             $tableNew->save();
+
+            if (
+                $currentItems === $newItems
+            ) {
+                
+                $order->update([
+                    'total_price' => $request->total_price,
+                    'table_id' => $request->table_id,
+                    
+                ]);
+                return response()->json(['message' => 'Cập nhật bàn thành công!']);
+            }
         
             $order->update([
                 'total_price' => $request->total_price,
