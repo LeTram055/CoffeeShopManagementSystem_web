@@ -238,6 +238,16 @@ class WorkScheduleController extends Controller
             return redirect()->route('admin.workschedule.index');
         }
 
+        $existingSchedule = WorkSchedules::where('employee_id', $request->employee_id)
+            ->where('shift_id', $request->shift_id)
+            ->where('work_date', $request->work_date)
+            ->first();
+
+        if ($existingSchedule) {
+            Session::flash('alert-danger', 'Lịch làm việc đã tồn tại cho nhân viên này trong ngày và ca làm việc đã chọn.');
+            return redirect()->route('admin.workschedule.index');
+        }
+
         WorkSchedules::create([
             'employee_id' => $request->employee_id,
             'shift_id' => $request->shift_id,
@@ -304,6 +314,17 @@ class WorkScheduleController extends Controller
         ]);
 
         $schedule = WorkSchedules::findOrFail($request->schedule_id);
+
+        $existingSchedule = WorkSchedules::where('employee_id', $request->employee_id)
+            ->where('shift_id', $request->shift_id)
+            ->where('work_date', $request->work_date)
+            ->where('schedule_id', '!=', $schedule->schedule_id) // Loại trừ lịch hiện tại
+            ->first();
+
+        if ($existingSchedule) {
+            Session::flash('alert-danger', 'Lịch làm việc đã tồn tại cho nhân viên này trong ngày và ca làm việc đã chọn.');
+            return redirect()->route('admin.workschedule.index');
+        }
 
         $workHours = $request->work_hours;
             if ($request->status === 'completed' && $workHours == 0) {
