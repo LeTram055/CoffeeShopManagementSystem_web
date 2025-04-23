@@ -143,7 +143,7 @@
                         <li class="nav-item">
                             <a class="nav-link {{ request()->is('admin/reports/revenue-by-order-type-page') ? 'active' : '' }}"
                                 href="{{ route('admin.reports.revenueByOrderTypePage') }}"><i
-                                    class="fa-solid fa-square-poll-vertical"></i> Doanh thu theo hình thức phục vụ</a>
+                                    class="fa-solid fa-chart-pie"></i> Doanh thu theo hình thức phục vụ</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {{ request()->is('admin/reports/net-profit-page') ? 'active' : '' }}"
