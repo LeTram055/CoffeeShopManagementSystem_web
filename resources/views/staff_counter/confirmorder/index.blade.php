@@ -116,6 +116,10 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 5px 20px;
 }
+
+.input-group {
+    flex-wrap: nowrap;
+}
 </style>
 @endsection
 
@@ -716,8 +720,8 @@ $(document).ready(function() {
                         originalTotalQuantity += item.quantity;
                         html += `<tr data-index="${index}" data-item-id="${item.item.item_id}" data-original-quantity="${item.quantity}">
                             <td>${item.item.name}</td>
-                            <td>
-                                <div class="input-group input-group-sm justify-content-center">
+                            <td class="text-center">
+                                <div class="input-group input-group-sm justify-content-center" style="min-width: 100px">
                                 <button class="btn btn-outline-secondary btn-decrease" type="button">−</button>
                                 <input type="number" class="form-control quantity-input" value="${item.quantity}" data-index="${index}" data-completed-quantity="${item.completed_quantity}" style="max-width: 50px; text-align: center;">
                                 <button class="btn btn-outline-secondary btn-increase" type="button">+</button>

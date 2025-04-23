@@ -212,8 +212,8 @@ $(document).ready(function() {
             //$reasonInput.attr('required', 'required'); // Bắt buộc nhập lý do
         } else { // Còn hàng
             $reasonContainer.hide();
-            //$reasonInput.removeAttr('required'); // Không bắt buộc nhập lý do
-            $reasonInput.val(''); // Xóa nội dung lý do nếu có
+            $reasonInput.removeAttr('required'); // Không bắt buộc nhập lý do
+            //$reasonInput.val(''); // Xóa nội dung lý do nếu có
         }
     }
 

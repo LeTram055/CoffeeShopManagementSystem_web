@@ -234,15 +234,17 @@
 
                 <div class="mb-3">
                     <label for="newCustomerName" class="form-label">Tên khách hàng</label>
-                    <input type="text" id="newCustomerName" class="form-control" required>
+                    <input type="text" id="newCustomerName" class="form-control" placeholder="Nhập tên khách hàng"
+                        required>
                 </div>
                 <div class="mb-3">
                     <label for="newCustomerPhone" class="form-label">Số điện thoại</label>
-                    <input type="text" id="newCustomerPhone" class="form-control" required>
+                    <input type="text" id="newCustomerPhone" class="form-control" placeholder="Nhập số điện thoại"
+                        required>
                 </div>
                 <div class="mb-3">
                     <label for="newCustomerNotes" class="form-label">Ghi chú</label>
-                    <textarea id="newCustomerNotes" class="form-control"></textarea>
+                    <textarea id="newCustomerNotes" class="form-control" placeholder="Nhập ghi chú"></textarea>
                 </div>
             </div>
             <div class="modal-footer">
@@ -362,7 +364,7 @@ function renderOrderItems() {
                     <td>${item.name}</td>
                     <td class="text-end">${number_format(item.price)} đ</td>
                     <td class="text-center">
-                        <div class="input-group input-group-sm justify-content-center">
+                        <div class="input-group input-group-sm justify-content-center"  style="min-width: 100px">
                             <button class="btn btn-sm btn-outline-secondary decrease">-</button>
                             <input type="number" class="form-control quantity-input" value="${item.quantity}" style="width: 50px; text-align: center; display: inline-block;">
                             <button class="btn btn-sm btn-outline-secondary increase">+</button>

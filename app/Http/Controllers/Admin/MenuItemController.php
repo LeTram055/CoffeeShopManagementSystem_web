@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 use App\Models\MenuItems;
 use App\Exports\MenuItemsExport;
@@ -140,7 +141,7 @@ class MenuItemController extends Controller
         }
 
         
-        Session::flash('alert-info', 'Thêm mới thành công');
+        Session::flash('alert-success', 'Thêm mới thành công');
         return redirect()->route('admin.menuitem.index');
     }
 
@@ -175,8 +176,8 @@ class MenuItemController extends Controller
         'category_id' => 'required|exists:categories,category_id',
         // Ảnh có thể không thay đổi nên đặt nullable
         'image_url' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        'ingredients' => 'nullable|array',
-        'reason' => 'required_if:is_available,0|string',
+        'ingredients' => 'nullable|array', // Cho phép không thêm nguyên liệu
+        'reason' => 'required_if:is_available,0|string|nullable', // Lý do chỉ bắt buộc khi sản phẩm không có sẵn
     ], [
         'item_id.required' => 'Thiếu ID sản phẩm',
         'name.required' => 'Vui lòng nhập tên sản phẩm',
@@ -216,6 +217,7 @@ class MenuItemController extends Controller
         $menuItem->image_url = $originName;
     }
 
+    Log::info('Ingredients data:', $request->ingredients);
     $menuItem->name = $request->name;
     $menuItem->price = $request->price;
     $menuItem->description = $request->description;
@@ -240,7 +242,7 @@ class MenuItemController extends Controller
         }
     }
 
-    Session::flash('alert-info', 'Cập nhật sản phẩm thành công');
+    Session::flash('alert-success', 'Cập nhật sản phẩm thành công');
     return redirect()->route('admin.menuitem.index');
 }
 

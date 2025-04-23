@@ -94,7 +94,7 @@ class ConfirmOrderController extends Controller
                         continue;
                     }
 
-                    $maxServings = $menuItem->calculateMaxServings(); // Hàm bạn đã định nghĩa
+                    $maxServings = $menuItem->calculateMaxServings();
                     if ($item['quantity'] > $maxServings) {
                         $errors[] = "Món '{$menuItem->name}' chỉ có thể phục vụ tối đa {$maxServings} phần.";
                     }
@@ -153,12 +153,8 @@ class ConfirmOrderController extends Controller
                 Log::info('New quantity: ' . $newQuantity);
                 $quantityToAdd = $newQuantity - $orderItem->quantity;
 
-                if ($quantityToAdd > 0) {
+                if ($quantityToAdd > 0 && !$orderItem->item->ingredients->isEmpty()) {
                     // Cập nhật reserved_quantity
-                    if ($orderItem->item->ingredients->isEmpty()) {
-                        continue;
-                    }
-                    
                     foreach ($orderItem->item->ingredients as $menuIngredient) {
                         $ingredient = $menuIngredient->ingredient;
                         $usedAmount = $quantityToAdd * $menuIngredient->quantity_per_unit;
