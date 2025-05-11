@@ -149,10 +149,11 @@ class OrderController extends Controller
 
             // Lấy tên món ăn
             $itemName = $orderItem->item->name;
+            $table = $order->table->table_name;
 
             // Phát thông báo cho nhân viên phục vụ
             $orderType = $order->order_type;
-            broadcast(new OrderIssueEvent($orderId, $itemName, $reason, $orderType))->toOthers();
+            broadcast(new OrderIssueEvent($orderId, $itemName, $reason, $table, $orderType))->toOthers();
 
             return response()->json(['message' => 'Lý do đã được gửi!'], 200);
         } else {
